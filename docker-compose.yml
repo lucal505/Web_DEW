@@ -1,6 +1,7 @@
 services:
   web:
     build: .
+    container_name: DEW_web
     ports:
       - "8080:80" # localhost:8080
     volumes:
