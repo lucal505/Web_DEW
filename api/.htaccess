@@ -1,0 +1,12 @@
+# trimit orice request care nu e catre un fisier/director care exista local catre 'api/' la 'index.php'
+
+# pornesc functia de rescriere a url-urilor/request-urilor
+RewriteEngine On
+
+# conditie pentru fisiere care exista local
+RewriteCond %{REQUEST_FILENAME} !-f
+# conditie pentur directoare care exista local
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# rutare catre 'index.php' cu parametru 'route' care contine calea ceruta (fara '/api/')
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
