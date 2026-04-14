@@ -4,46 +4,59 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 
-// extragem metoda HTTP folosita (GET, POST, etc.)
-$http_method = $_SERVER['REQUEST_METHOD']; 
+// db path
+$db_path = __DIR__ . '/../data/drugs_data.db';
 
-// iau ruta de la .htaccess
+try {
+    // connecting to db
+    $pdo = new PDO("sqlite:" . $db_path);
+    
+    // config PDO sa arunce exceptii
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    // config PDO sa returneze ca array asociativ (cheie-valoare)
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    
+    // config PDO sa permita foreign keys
+    $pdo->exec("PRAGMA foreign_keys = ON");
+
+} catch (PDOException $e) {
+    // eroare in caz ca nu pot sa ma conectez la baza de date
+    http_response_code(500);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Database connection failed: " . $e->getMessage()
+    ]);
+    exit;
+}
+
+// extrag ruta si metoda HTTP folosita (GET/POST..)
 $route = isset($_GET['route']) ? $_GET['route'] : '';
-
-// sparg ruta in segmente
-$url_segments = explode('/', trim($route, '/'));
-
-$resource = isset($url_segments[0]) && $url_segments[0] !== '' ? $url_segments[0] : null;
+$method = $_SERVER['REQUEST_METHOD'];
 
 // route logic
-switch ($resource) {
-    case 'test':
-        echo json_encode([
-            "status" => "success",
-            "message" => "routing works",
-            "method" => $http_method
-        ]);
+switch ($route) {
+    case 'drugs':
+        if ($method === 'GET') {
+            // mock
+            $stmt = $pdo->query("SELECT * FROM drugs ORDER BY name ASC");
+            $results = $stmt->fetchAll();
+            echo json_encode($results);
+        }
         break;
 
-    case 'drugs':
-        if ($http_method === 'GET') {
-            echo json_encode([
-                "status" => "success",
-                "data" => [
-                    ["id" => 1, "name" => "Canabis", "category" => "Depresor"],
-                    ["id" => 2, "name" => "Cocaină", "category" => "Stimulent"]
-                ]
-            ]);
-        } else {
-            http_response_code(405);
-            echo json_encode(["error" => "Method $http_method is not allowed."]);
+    case 'seizures':
+        if ($method === 'GET') {
+            // mock
+            $sql = "SELECT ds.*, d.name as drug_name 
+                    FROM drug_seizures ds 
+                    JOIN drugs d ON ds.drug_id = d.id";
+            $stmt = $pdo->query($sql);
+            echo json_encode($stmt->fetchAll());
         }
         break;
 
     default:
-        http_response_code(404);
-        $resource_name = $resource ? $resource : 'api_root';
-        echo json_encode(["error" => "Endpoint '$resource_name' does not exist."]);
+        echo json_encode(["message" => "Welcome to Drugs Data API. Database is connected!"]);
         break;
 }
-?>
