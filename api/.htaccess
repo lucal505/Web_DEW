@@ -3,6 +3,9 @@
 # pornesc functia de rescriere a url-urilor/request-urilor
 RewriteEngine On
 
+# setez baza pentru rescrierea url-urilor la '/api/'
+RewriteBase /api/
+
 # conditie pentru fisiere care exista local
 RewriteCond %{REQUEST_FILENAME} !-f
 # conditie pentur directoare care exista local
