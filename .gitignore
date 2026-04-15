@@ -1,0 +1,43 @@
+# Baze de date SQLite (nu se urcă DB-ul populat în repo)
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+data/drugs_data.db
+
+# Fișiere de date brute (Excel, CSV, arhive)
+*.csv
+*.xls
+*.xlsx
+*.zip
+*.tar.gz
+
+# Folderul de uploads (dacă stochezi fișierele temporar înainte de parsare)
+uploads/
+/data/*.csv
+
+# Securitate / Variabile de mediu
+.env
+.env.local
+.env.*.local
+
+# Dependințe PHP (în caz că adaugi Composer mai târziu)
+vendor/
+
+# Editoare de cod (VS Code, PhpStorm)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Fișiere sistem de operare
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
