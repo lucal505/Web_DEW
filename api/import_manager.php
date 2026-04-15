@@ -7,6 +7,15 @@ try {
     $pdo = new PDO("sqlite:" . $db_path);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    // verific ca baza de date exista si are tabelele necesare 
+    // (pdo va crea fisierul .db daca nu exista, dar tabelele 
+    // vor lipsi daca nu e rulat si migrate.php)
+    $check = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='drugs'");
+    if (!$check->fetch()) {
+        echo "[warn]: Database tables not found. Running migration script...<br>";
+        require_once __DIR__ . '/migrate.php';
+    }
+
     $files = glob($upload_dir . '*.csv');
 
     foreach ($files as $file) {
@@ -57,18 +66,27 @@ function importSeizures($pdo, $file, $year) {
 
     if (($handle = fopen($file, "r")) !== false){
         $insertionsCount = 0;
+        $rowCount = 0;
 
         while (($data=fgetcsv($handle, 1000, ",")) !== false) {
-            $insertionsCount++;
-            
+            $rowCount++;
+
+            if ($rowCount <= 2) {
+                continue;
+            }
+
             $drugName = trim($data[0]);
             if (empty($drugName)) {
-                echo "[warn]: Skipping row $insertionsCount -> drug name is empty<br>";
+                echo "[warn]: Skipping row $rowCount -> drug name is empty<br>";
                 continue;
             }
 
             $stmt = $pdo->prepare("INSERT OR IGNORE INTO drugs (name) VALUES (:name)");
             $stmt->execute(['name' => $drugName]);
+
+            if ($stmt->rowCount() > 0) {
+                $insertionsCount++;
+            }
 
             $stmt = $pdo->prepare("SELECT id FROM drugs WHERE name = :name");
             $stmt->execute(['name' => $drugName]);
@@ -80,7 +98,7 @@ function importSeizures($pdo, $file, $year) {
             $milliliters = isset($data[4]) && $data[4] !== '' ? (float)$data[4] : null;
             $seizures_count = isset($data[5]) && $data[5] !== '' ? (int)$data[5] : null;   
 
-            $stmt = $pdo->prepare("INSERT OR REPLACE INTO drug_seizures
+            $stmt = $pdo->prepare("INSERT OR IGNORE INTO drug_seizures
                 (year, drug_id, grams, tablets, doses_units, milliliters, seizures_count) 
                 VALUES (:year, :drug_id, :grams, :tablets, :doses_units, :milliliters, :seizures_count)
             ");
@@ -93,11 +111,15 @@ function importSeizures($pdo, $file, $year) {
                 'milliliters' => $milliliters,
                 'seizures_count' => $seizures_count
             ]);
+
+            if ($stmt->rowCount() > 0) {
+                $insertionsCount++;
+            }
         }
         fclose($handle);
         echo "[info]: Imported $insertionsCount records for SEIZURES (year $year)<br>";
     } else {
-        echo "[err]: Could not open file $file<br>";
+        echo "[error]: Could not open file $file<br>";
     }
 }
 
@@ -152,19 +174,24 @@ function importCrimes($pdo, $file, $year) {
                     $crimesGeneral['convicted'] = $value;
                 }
             } elseif ($currentSection === 'article' && !empty($firstCell) && isset($data[1]) && $data[1] !== '') {
-                $stmt = $pdo->prepare("INSERT OR REPLACE INTO crimes_article (year, legal_article, count) 
-                                VALUES (:year, :article, :count)");
+                $stmt = $pdo->prepare("INSERT OR IGNORE INTO crimes_article 
+                                        (year, legal_article, count) 
+                                        VALUES (:year, :article, :count)");
                 $stmt->execute([
                     'year' => $year,
                     'article' => $firstCell,
                     'count' => (int)$data[1]
                 ]);
-                $insertionsCount++;
+
+                if ($stmt->rowCount() > 0) {
+                    $insertionsCount++;
+                }
             } elseif ($currentSection === 'demographic' && !empty($firstCell) && isset($data[1]) && $data[1] !== '') {
 
                 // Majori (col 1)
                 if (isset($data[1]) && $data[1] !== '') {
-                    $stmt = $pdo->prepare("INSERT OR REPLACE INTO crimes_demographic (year, gender, age_category, count) 
+                    $stmt = $pdo->prepare("INSERT OR IGNORE INTO crimes_demographic 
+                                            (year, gender, age_category, count) 
                                             VALUES (:year, :gender, :age_category, :count)");
                     $stmt->execute([
                         'year' => $year,
@@ -172,20 +199,27 @@ function importCrimes($pdo, $file, $year) {
                         'age_category' => 'Majori',
                         'count' => (int)$data[1]
                     ]);
-                    $insertionsCount++;
+
+                    if ($stmt->rowCount() > 0) {
+                        $insertionsCount++;
+                    }
                 }
                 
                 // Minori (col 2)
                 if (isset($data[2]) && $data[2] !== '') {
-                    $stmt = $pdo->prepare("INSERT OR REPLACE INTO crimes_demographic (year, gender, age_category, count)
-                                             VALUES (:year, :gender, :age_category, :count)");
+                    $stmt = $pdo->prepare("INSERT OR IGNORE INTO crimes_demographic 
+                                            (year, gender, age_category, count)
+                                            VALUES (:year, :gender, :age_category, :count)");
                     $stmt->execute([
                         'year' => $year,
                         'gender' => $firstCell,
                         'age_category' => 'Minori',
                         'count' => (int)$data[2]
                     ]);
-                    $insertionsCount++;
+
+                    if ($stmt->rowCount() > 0) {
+                        $insertionsCount++;
+                    }
                 }
             } elseif ($currentSection === 'group' && isset($data[1]) && $data[1] !== '') {
                 if (stripos($firstCell, 'identificate') !== false) {
@@ -208,25 +242,30 @@ function importCrimes($pdo, $file, $year) {
                         $count = isset($data[$index]) && $data[$index] !== '' ? (int)$data[$index] : 0;
                         
                         if ($count > 0) { // salvez in DB doar daca exista condamnari
-                            $stmt = $pdo->prepare("INSERT OR REPLACE INTO crimes_sentence (year, sentence_type, law_reference, count) VALUES (:year, :sentence_type, :law_reference, :count)");
+                            $stmt = $pdo->prepare("INSERT OR IGNORE INTO crimes_sentence 
+                                                    (year, sentence_type, law_reference, count) 
+                                                    VALUES (:year, :sentence_type, :law_reference, :count)");
                             $stmt->execute([
                                 'year' => $year,
                                 'sentence_type' => $firstCell,
                                 'law_reference' => $lawName,
                                 'count' => $count
                             ]);
-                            $insertionsCount++;
+
+                            if ($stmt->rowCount() > 0) {
+                                $insertionsCount++;
+                            }
                         }
                     }
                 }
-                $insertionsCount++;
             }
         }
         fclose($handle);
 
         // inserez datele acumulate pentru sectiunile 'general' si 'group'
         if ($crimesGeneral['investigated'] > 0) {
-            $stmt = $pdo->prepare("INSERT OR REPLACE INTO crimes_general (year, investigated_persons, indicted_persons, convicted_persons) 
+            $stmt = $pdo->prepare("INSERT OR IGNORE INTO crimes_general 
+                                    (year, investigated_persons, indicted_persons, convicted_persons) 
                                     VALUES (:year, :investigated_persons, :indicted_persons, :convicted_persons)");
             $stmt->execute([
                 'year' => $year,
@@ -234,22 +273,29 @@ function importCrimes($pdo, $file, $year) {
                 'indicted_persons' => $crimesGeneral['indicted'],
                 'convicted_persons' => $crimesGeneral['convicted']
             ]);
-            $insertionsCount++;
+
+            if ($stmt->rowCount() > 0) {
+                $insertionsCount++;
+            }
         }
 
         if ($crimesGroup['identified'] > 0) {
-            $stmt = $pdo->prepare("INSERT OR REPLACE INTO crimes_group (year, identified_groups, involved_persons) 
+            $stmt = $pdo->prepare("INSERT OR IGNORE INTO crimes_group 
+                                    (year, identified_groups, involved_persons) 
                                     VALUES (:year, :identified_groups, :involved_persons)");
             $stmt->execute([
                 'year' => $year,
                 'identified_groups' => $crimesGroup['identified'],
                 'involved_persons' => $crimesGroup['involved']
             ]);
-            $insertionsCount++;
+
+            if ($stmt->rowCount() > 0) {
+                $insertionsCount++;
+            }
         }
         echo "[info]: Imported $insertionsCount records for CRIMES (year $year)<br>";
     } else {
-        echo "[err]: Could not open file $file<br>";   
+        echo "[error]: Could not open file $file<br>";   
     }
 }
 
@@ -313,7 +359,7 @@ function importEmergencies($pdo, $file, $year) {
                     $count = isset($data[$colIndex]) && trim($data[$colIndex]) !== '' ? (int)$data[$colIndex] : 0;
                     
                     if ($count > 0) { 
-                        $stmt = $pdo->prepare("INSERT OR REPLACE INTO medical_emergencies 
+                        $stmt = $pdo->prepare("INSERT OR IGNORE INTO medical_emergencies 
                             (year, drug_type, category, value, count) 
                             VALUES (:year, :drug_type, :category, :value, :count)
                         ");
@@ -326,7 +372,9 @@ function importEmergencies($pdo, $file, $year) {
                             'count' => $count        
                         ]);
                         
-                        $insertionsCount++;
+                        if ($stmt->rowCount() > 0) {
+                            $insertionsCount++;
+                        }
                     }
                 }
             }
@@ -334,7 +382,7 @@ function importEmergencies($pdo, $file, $year) {
         fclose($handle);
         echo "[info]: Imported $insertionsCount records for EMERGIENCIES (year $year).<br>";
     } else {
-        echo "[err]: Could not open file $file<br>";
+        echo "[error]: Could not open file $file<br>";
     }
 }
 
@@ -382,7 +430,7 @@ function importPrevention($pdo, $file, $year) {
                 
                 // inserez doar daca nu e valoarea 0
                 if ($count > 0) {
-                    $stmt = $pdo->prepare("INSERT OR REPLACE INTO prevention_projects 
+                    $stmt = $pdo->prepare("INSERT OR IGNORE INTO prevention_projects 
                         (year, project_name, beneficiaries_count)
                         VALUES (:year, :name, :count)");
                     $stmt->execute([
@@ -390,7 +438,10 @@ function importPrevention($pdo, $file, $year) {
                         'name' => $firstCell,
                         'count' => $count
                     ]);
-                    $insertionsCount++;
+                    
+                    if ($stmt->rowCount() > 0) {
+                        $insertionsCount++;
+                    }
                 }
             }
             
@@ -399,7 +450,7 @@ function importPrevention($pdo, $file, $year) {
                 $count = (int)$data[1];
                 
                 if ($count > 0) {
-                    $stmt = $pdo->prepare("INSERT OR REPLACE INTO prevention_campaigns 
+                    $stmt = $pdo->prepare("INSERT OR IGNORE INTO prevention_campaigns 
                         (year, campaign_name, beneficiaries_count) 
                         VALUES (:year, :name, :count)");
                     $stmt->execute([
@@ -407,7 +458,10 @@ function importPrevention($pdo, $file, $year) {
                         'name' => $firstCell,
                         'count' => $count
                     ]);
-                    $insertionsCount++;
+                    
+                    if ($stmt->rowCount() > 0) {
+                        $insertionsCount++;
+                    }
                 }
             }
             
@@ -433,7 +487,7 @@ function importPrevention($pdo, $file, $year) {
                         // am constraint UNIQUE(year, setting) 
                         $specificSetting = $firstCell . ' (' . $type . ')';
                         
-                        $stmt = $pdo->prepare("INSERT OR REPLACE INTO prevention_activities 
+                        $stmt = $pdo->prepare("INSERT OR IGNORE INTO prevention_activities 
                             (year, setting, activities_count, beneficiaries_count, beneficiary_type) 
                             VALUES (:year, :setting, :activities_count, :beneficiaries_count, :beneficiary_type)");
                         $stmt->execute([
@@ -443,7 +497,10 @@ function importPrevention($pdo, $file, $year) {
                             'beneficiaries_count' => $count,
                             'beneficiary_type' => $type
                         ]);
-                        $insertionsCount++;
+                        
+                        if ($stmt->rowCount() > 0) {
+                            $insertionsCount++;
+                        }
                     }
                 }
             }
@@ -451,6 +508,6 @@ function importPrevention($pdo, $file, $year) {
         fclose($handle);
         echo "[info]: Imported $insertionsCount records for PREVENTION (year $year).<br>";
     } else {
-        echo "[err]: Could not open file $file<br>";
+        echo "[error]: Could not open file $file<br>";
     }
 }
