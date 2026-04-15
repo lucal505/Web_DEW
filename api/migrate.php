@@ -145,8 +145,8 @@ try {
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_seizures_year ON drug_seizures(year)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_emergencies_year ON medical_emergencies(year)");
 
-    echo "[info]: Migration completed successfully.";
+    echo "[info]: Migration completed successfully.<br> ";
 } catch (PDOException $e) {
     http_response_code(500);
-    echo "[err]: Migration failed -> " . $e->getMessage();
+    echo "[error]: Migration failed -> " . $e->getMessage();
 }
