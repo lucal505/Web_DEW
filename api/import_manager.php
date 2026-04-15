@@ -19,21 +19,25 @@ try {
             continue;
         }
 
-        echo "[info]: Parsing '$fileName' for year $year<br>";
-
         switch (true){
             case (strpos($fileName, 'capturi') !== false):
+                echo "[info]: Parsing '$fileName' for year $year<br>";
                 importSeizures($pdo, $file, $year);
                 break;
             case (strpos($fileName, 'infractionalitate') !== false):
+                echo "[info]: Parsing '$fileName' for year $year<br>";
                 importCrimes($pdo, $file, $year);
                 break;
             case (strpos($fileName, 'urgente') !== false):
+                echo "[info]: Parsing '$fileName' for year $year<br>";
                 importEmergencies($pdo, $file, $year);
                 break;
             case (strpos($fileName, 'proiecte') !== false):
+                echo "[info]: Parsing '$fileName' for year $year<br>";
                 importPrevention($pdo, $file, $year);
                 break;
+            default: 
+                echo "[warn]: Skipping '$fileName' -> unrecognized category<br>";
         }
     }
 } catch (PDOException $err) {
