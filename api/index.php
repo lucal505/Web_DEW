@@ -35,22 +35,12 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 // route logic
 switch ($route) {
-    // mock
-    case 'drugs':
+    // mock test endpoint
+    case 'test':
         if ($method === 'GET') {
             $stmt = $pdo->query("SELECT * FROM drugs ORDER BY name ASC");
             $results = $stmt->fetchAll();
             echo json_encode($results);
-        }
-        break;
-    // mock
-    case 'seizures':
-        if ($method === 'GET') {
-            $sql = "SELECT ds.*, d.name as drug_name 
-                    FROM drug_seizures ds 
-                    JOIN drugs d ON ds.drug_id = d.id";
-            $stmt = $pdo->query($sql);
-            echo json_encode($stmt->fetchAll());
         }
         break;
 
@@ -80,18 +70,12 @@ switch ($route) {
                 exit;
             }
 
-            // extrag variabilele comune pentru toate tabelele
-            $year      = isset($_GET['year']) ? (int)$_GET['year'] : null;
-            $count     = isset($_GET['count']) ? (int)$_GET['count'] : null;
-            $min_count = isset($_GET['min_count']) ? (int)$_GET['min_count'] : null;
-            $max_count = isset($_GET['max_count']) ? (int)$_GET['max_count'] : null; 
-
             // interogarea de baza
             $sql = "SELECT * FROM $table WHERE 1=1";
             $params = [];
 
             // default year and count column names
-            $year_column = 'year'; 
+            $year_column = 'year';
             $count_column = 'count';
 
             // logica specifica pe tabele
@@ -108,13 +92,11 @@ switch ($route) {
                     $sql .= " AND value = :val";
                     $params['val'] = $_GET['value'];
                 }
-            } 
-
-            elseif ($table === 'drug_seizures') {
+            } elseif ($table === 'drug_seizures') {
                 // suprascriu SQL pentru ca e nevoie de join
                 $sql = "SELECT ds.*, d.name as drug_name FROM drug_seizures ds 
                         JOIN drugs d ON ds.drug_id = d.id WHERE 1=1";
-                
+
                 // aici coloana year si count are alt nume deci suprascriu
                 $year_column = 'ds.year';
                 $count_column = 'ds.seizures_count';
@@ -123,9 +105,7 @@ switch ($route) {
                     $sql .= " AND d.name LIKE :drug";
                     $params['drug'] = "%" . $_GET['drug'] . "%";
                 }
-            } 
-            
-            elseif ($table === 'crimes_demographic') {
+            } elseif ($table === 'crimes_demographic') {
                 if (!empty($_GET['gender'])) {
                     $sql .= " AND gender = :gen";
                     $params['gen'] = $_GET['gender'];
@@ -134,16 +114,12 @@ switch ($route) {
                     $sql .= " AND age_category = :age";
                     $params['age'] = $_GET['age_category'];
                 }
-            }
-            
-            elseif ($table === 'crimes_article') {
+            } elseif ($table === 'crimes_article') {
                 if (!empty($_GET['law'])) {
                     $sql .= " AND legal_article LIKE :law";
                     $params['law'] = "%" . $_GET['law'] . "%";
                 }
-            }
-            
-            elseif (in_array($table, ['prevention_projects', 'prevention_campaigns'])) {
+            } elseif (in_array($table, ['prevention_projects', 'prevention_campaigns'])) {
                 $name_column = ($table === 'prevention_projects') ? 'project_name' : 'campaign_name';
 
                 // aici coloana count are alt nume deci suprascriu
@@ -153,9 +129,23 @@ switch ($route) {
                     $sql .= " AND $name_column LIKE :name";
                     $params['name'] = "%" . $_GET['name'] . "%";
                 }
-            } 
-            
-            elseif ($table === 'crimes_sentence') {
+            } elseif ($table==='prevention_activities') {
+                if (!empty($_GET['count_by'])) {
+                    $count_column = $_GET['count_by'];
+                } else {
+                    $count_column = 'beneficiaries_count'; // default count column
+                }
+
+                if(!empty($_GET['setting'])) {
+                    $sql .= " AND setting LIKE :setting";
+                    $params['setting'] = "%" . $_GET['setting'] . "%";
+                }
+
+                if (!empty($_GET['beneficiary_type'])) {
+                    $sql .= " AND beneficiary_type LIKE :btype";
+                    $params['btype'] = "%" . $_GET['beneficiary_type'] . "%";
+                }
+            } elseif ($table === 'crimes_sentence') {
                 if (!empty($_GET['law'])) {
                     $sql .= " AND law_reference LIKE :law";
                     $params['law'] = "%" . $_GET['law'] . "%";
@@ -165,6 +155,12 @@ switch ($route) {
                     $params['stype'] = $_GET['sentence_type'];
                 }
             }
+
+            // extrag variabilele comune pentru toate tabelele
+            $year      = isset($_GET['year']) ? (int)$_GET['year'] : null;
+            $count     = isset($_GET['count']) ? (int)$_GET['count'] : null;
+            $min_count = isset($_GET['min_count']) ? (int)$_GET['min_count'] : null;
+            $max_count = isset($_GET['max_count']) ? (int)$_GET['max_count'] : null;
 
             // aplic filtrele comune
             if ($year) {
