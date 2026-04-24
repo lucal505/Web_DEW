@@ -3,8 +3,12 @@
 # pornesc functia de rescriere a url-urilor/request-urilor
 RewriteEngine On
 
-# setez baza pentru rescrierea url-urilor la '/api/'
 RewriteBase /api/
+
+# Blochează accesul direct la orice fisier .php, in afara de index.php si admin.php
+RewriteCond %{REQUEST_URI} !^/api/(index|admin)\.php$ [NC]
+RewriteCond %{REQUEST_URI} \.php$ [NC]
+RewriteRule ^ - [F,L]
 
 # conditie pentru fisiere care exista local
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -12,4 +16,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
 # rutare catre 'index.php' cu parametru 'route' care contine calea ceruta (fara '/api/')
-RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]   
