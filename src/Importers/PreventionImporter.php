@@ -15,7 +15,7 @@ class PreventionImporter implements ImporterInterface{
     public function import(string $filePath, int $year): void{
         $handle=fopen($filePath, "r");
         if($handle===false){
-            echo "[error]: Could not open $filePath.<br>";
+            error_log("[error]: Could not open $filePath.<br>");
         }else{
             $insertionsCount = 0;
             $currentSection = null; 
@@ -132,7 +132,7 @@ class PreventionImporter implements ImporterInterface{
                 }
             }
             fclose($handle);
-            echo "[info]: Imported $insertionsCount records for PREVENTION (year $year).<br>";
+            error_log("[info]: Imported $insertionsCount records for PREVENTION (year $year).<br>");
         }
     }
 }
