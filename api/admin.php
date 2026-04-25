@@ -1,6 +1,21 @@
 <?php
 session_start();
 
+// autload pentru clasele din src
+spl_autoload_register(function ($class) {
+    $prefix = 'App\\';
+    $base_dir = __DIR__ . '/../src/';
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) === 0) {
+        $file = $base_dir . str_replace('\\', '/', substr($class, $len)) . '.php';
+        if (file_exists($file)) {
+            require $file;
+        }
+    }
+});
+
+use App\Services\ImportManager;
+
 $admin_username = "walter";
 $admin_password_hash = '$2y$10$6eb1SUelMLisg..K/LWdxup3Ix/XHr0CiKj10.sexgkjgCkKy/Zae';
 
@@ -57,9 +72,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
                 $target_path = $upload_dir . $safe_name;
 
-                // 4. Mutăm fișierul
+                // mut fisierul in folderul de upload
                 if (move_uploaded_file($tmp_name, $target_path)) {
                     $message = '<p style="color:green;">Fișierul ' . htmlspecialchars($safe_name) . ' a fost încărcat cu succes.</p>';
+
+                    try{
+                        // import fisierul uploadat
+                        $importManager = new ImportManager();
+                        $importManager->processFiles($upload_dir);
+                        
+                        $message .= '<p style="color:blue;">Datele au fost importate cu succes în baza de date!</p>';
+                    } catch (Exception $e) {
+                        $message = '<p style="color:red;">Error importing file: ' . $e->getMessage() . '</p>';
+                    }
                 } else {
                     $message = '<p style="color:red;">Failed to move uploaded file.</p>';
                 }
