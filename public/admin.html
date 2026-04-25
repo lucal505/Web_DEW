@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin page</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 500px; background: #fff; padding: 20px; margin: 0 auto; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input[type="text"], input[type="password"], input[type="file"] { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; border-radius: 10px; border: 2px solid #ccc; }
+        button { background: #333; color: #fff; padding: 10px 15px; border: none; cursor: pointer; border-radius: 10px; }
+        button:hover { background: #555; }
+        #message { margin-bottom: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Administrator Panel</h2>
+        <div id="message"></div>
+
+        <form id="loginForm" style="display: none;">
+            <label>Username:</label>
+            <input type="text" id="username" required>
+            <label>Password:</label>
+            <input type="password" id="password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <div id="uploadSection" style="display: none;">
+            <button id="logoutBtn" style="float: right; background: red;">Logout</button>
+            <p>You are logged in.</p>
+            <hr>
+            <h3>Upload Data File</h3>
+            <form id="uploadForm">
+                <label>Select a CSV or Excel file:</label>
+                <input type="file" id="fileToUpload" required accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                <button type="submit">Upload File</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:8080/api/admin.php';
+        const msgDiv = document.getElementById('message');
+        const loginForm = document.getElementById('loginForm');
+        const uploadSection = document.getElementById('uploadSection');
+
+        // afiseaza mesaj de succes sau eroare
+        function showMessage(text, isError = false) {
+            msgDiv.textContent = text;
+            msgDiv.style.color = isError ? 'red' : 'green';
+        }
+
+        // Verifică statusul sesiunii la încărcarea paginii
+        function checkSession() {
+            fetch(`${apiUrl}?action=check_session`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        loginForm.style.display = 'none';
+                        uploadSection.style.display = 'block';
+                    } else {
+                        loginForm.style.display = 'block';
+                        uploadSection.style.display = 'none';
+                    }
+                });
+        }
+
+        // login
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('action', 'login');
+            formData.append('username', document.getElementById('username').value);
+            formData.append('password', document.getElementById('password').value);
+
+            fetch(apiUrl, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage('Login success!');
+                        checkSession();
+                    } else {
+                        showMessage(data.message, true);
+                    }
+                });
+        });
+
+        // upload
+        document.getElementById('uploadForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('action', 'upload');
+            formData.append('fileToUpload', document.getElementById('fileToUpload').files[0]);
+
+            fetch(apiUrl, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message);
+                        document.getElementById('uploadForm').reset();
+                    } else {
+                        showMessage(data.message, true);
+                    }
+                })
+                .catch(() => showMessage('A network error occurred.', true));
+        });
+
+        // logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            fetch(`${apiUrl}?action=logout`)
+                .then(() => {
+                    showMessage('Logged out.');
+                    checkSession();
+                });
+        });
+
+        // check if user is logged in
+        checkSession();
+    </script>
+</body>
+</html>
