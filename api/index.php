@@ -104,9 +104,9 @@ if ($route === 'filters' && $method === 'GET') {
             exit;
     }
     
-    exit; // Ieșim din script după ce am procesat cu succes ruta
+    exit; 
 }
 
-// Daca ruta nu a fost gasita:
+// bad call
 http_response_code(404);
 echo json_encode(["error" => "Route or table not found."]);
