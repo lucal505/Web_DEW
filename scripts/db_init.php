@@ -21,6 +21,8 @@ try {
     // activate exceptions for error handling
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    chmod($db_path, 0666); // gives write permissions for the db file
+
     echo "[info]: Started DB migration.<br>";
 
     // SQL commands for creating tables + indices
