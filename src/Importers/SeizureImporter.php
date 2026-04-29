@@ -12,7 +12,7 @@ class SeizureImporter implements ImporterInterface
 
     public function __construct()
     {
-        $this->pdo = Database::getConnection();
+        $this->pdo = Database::getInstance();
     }
 
     public function import(string $filePath, int $year): void
