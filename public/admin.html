@@ -4,20 +4,86 @@
     <meta charset="UTF-8">
     <title>Admin page</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 500px; background: #fff; padding: 20px; margin: 0 auto; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        input[type="text"], input[type="password"], input[type="file"] { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; border-radius: 10px; border: 2px solid #ccc; }
-        button { background: #333; color: #fff; padding: 10px 15px; border: none; cursor: pointer; border-radius: 10px; }
-        button:hover { background: #555; }
-        #message { margin-bottom: 15px; font-weight: bold; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #fff0f5; 
+            padding: 20px; 
+        }
+
+        .container { 
+            max-width: 500px; 
+            background: #fff; 
+            padding: 20px; 
+            margin: 0 auto; 
+            border-radius: 10px; 
+            border: 2px solid #ffb6c1;
+            box-shadow: 0 0 15px rgba(255, 182, 193, 0.4); 
+        }
+
+        h2, h3 { color: #db7093; }
+        
+        hr { 
+            border: 0; 
+            height: 1px; 
+            background: #ffb6c1; 
+            margin: 15px 0; 
+        }
+
+        input[type="text"], input[type="password"], input[type="file"] { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 10px 0; 
+            box-sizing: border-box; 
+            border-radius: 10px; 
+            border: 2px solid #ffb6c1; 
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #db7093;
+        }
+
+        button { 
+            background: #ffb6c1; 
+            color: #fff; 
+            padding: 10px 15px; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 10px; 
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover { background: #ff8da1; }
+
+        #loginForm button, #importAllBtn { background: #db7093; }
+        #loginForm button:hover, #importAllBtn:hover { background: #c2406a; }
+
+        #logoutBtn { float: right; background: #ff4d4d; }
+        #logoutBtn:hover { background: #cc0000; }
+
+        #message { 
+            margin-bottom: 15px; 
+            font-weight: bold; 
+            color: #db7093;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #db7093;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .back-link:hover { color: #ff8da1; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h2>Administrator Panel</h2>
         <div id="message"></div>
-
+        
         <form id="loginForm" style="display: none;">
             <label>Username:</label>
             <input type="text" id="username" required>
@@ -25,24 +91,26 @@
             <input type="password" id="password" required>
             <button type="submit">Login</button>
         </form>
-
+        
         <div id="uploadSection" style="display: none;">
-            <button id="logoutBtn" style="float: right; background: red;">Logout</button>
+            <button id="logoutBtn">Logout</button>
             <p>You are logged in.</p>
             <hr>
+            
             <h3>Upload Data File</h3>
             <form id="uploadForm">
                 <label>Select a CSV or Excel file:</label>
                 <input type="file" id="fileToUpload" required accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                 <button type="submit">Upload File</button>
-
                 <hr>
+                
                 <h3>Process all uploaded files</h3>
-                <button id="importAllBtn" style="background: #0056b3;">Process All Files</button>
+                <button id="importAllBtn">Process All Files</button>
             </form>
         </div>
+        <a href="index.html" class="back-link">⬅ Înapoi la Dashboard</a>
     </div>
-    <!-- includ scriptul de fetch pentru pagina de admin (defer incarca scriptul doar dupa ce toata pagina este incarcata)-->
+
     <script src="js/admin.js" defer></script>
 </body>
 </html>

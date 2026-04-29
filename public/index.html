@@ -1,13 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Walter Pink - DEW</title>
+    <title>Drug Explorer on Web</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1 class="text-center">Walter Pink</h1>
-    <img src="assets/walter-pink.webp" alt="Walter Pink" width="100%">
+    <header class="app-header">
+        <div class="brand">
+            <img src="assets/walter-pink.webp" alt="Walter Pink" class="profile-pic">
+            <h1>Walter Pink</h1>
+        </div>
+        <a href="admin.html" class="btn-pink admin-btn">Admin panel</a>
+    </header>
+
+    <div class="container main-content">
+        <section class="filters-section">
+            <h2>Analiză Multicriterială</h2>
+            <div class="filter-controls">
+                <select id="filter-table">
+                    <option value="drug_seizures">Confiscări</option>
+                    <option value="medical_emergencies">Urgențe Medicale</option>
+                    <option value="crimes_article">Infracțiuni (Articole)</option>
+                    <option value="prevention_projects">Proiecte Prevenire</option>
+                </select>
+                <input type="number" id="filter-year" placeholder="An" min="2018" max="2026" value="2022">
+                
+                <select id="filter-drug" style="display: none;">
+                    <option value="">Toate drogurile</option>
+                    <option value="Canabis">Canabis</option>
+                    <option value="Cocain">Cocaină</option>
+                    <option value="Heroin">Heroină</option>
+                    <option value="MDMA">MDMA</option>
+                    <option value="Amfetamin">Amfetamină (și derivate)</option>
+                    <option value="Ketamin">Ketamină</option>
+                    <option value="LSD">LSD</option>
+                </select>
+                
+                <div id="dynamic-filters" style="display:inline-block;"></div>
+                
+                <button id="btn-load" class="btn-pink">Filtrează Date</button>
+            </div>
+
+            <div class="export-actions">
+                <span>Export raport:</span>
+                <button onclick="exportData('csv')">CSV</button>
+                <button onclick="exportData('html')">HTML</button>
+            </div>
+        </section>
+
+        <div id="status-message" style="display: none; text-align: center; padding: 30px; color: #db7093; font-weight: bold; font-size: 1.5rem; background: white; border-radius: 15px; border: 2px dashed #ffb6c1; margin-top: 30px;">
+        </div>
+
+        <section class="visualizations" id="charts-wrapper" style="display: none;">
+            <!-- pie chart -->
+            <div class="chart-container" id="container-pie">
+                <h3 id="pie-title">Pie chart</h3>
+                
+                <div id="single-stat-card" style="display: none; text-align: center; padding: 40px 20px;">
+                    <h4 style="color: #ff69b4; font-size: 1.5rem; margin-bottom: 10px;" id="single-stat-label"></h4>
+                    <span style="font-size: 3rem; font-weight: bold; color: #db7093;" id="single-stat-value"></span>
+                </div>
+                
+                <canvas id="chartPie"></canvas>
+                <div class="download-btns" id="pie-downloads">
+                    <button onclick="downloadChart('chartPie', 'png')">PNG</button>
+                    <button onclick="downloadChart('chartPie', 'webp')">WebP</button>
+                    <button onclick="downloadChart('chartPie', 'svg')">SVG</button>
+                </div>
+            </div>
+
+            <!-- bar chart -->
+            <div class="chart-container" id="container-bar">
+                <h3>Bar chart</h3>
+                <canvas id="chartBar"></canvas>
+                <div class="download-btns">
+                    <button onclick="downloadChart('chartBar', 'png')">PNG</button>
+                    <button onclick="downloadChart('chartBar', 'webp')">WebP</button>
+                    <button onclick="downloadChart('chartBar', 'svg')">SVG</button>
+                </div>
+            </div>
+
+            <!-- line chart -->
+            <div class="chart-container" id="container-line">
+                <h3>Line chart</h3>
+                <canvas id="chartLine"></canvas>
+                <div class="download-btns">
+                    <button onclick="downloadChart('chartLine', 'png')">PNG</button>
+                    <button onclick="downloadChart('chartLine', 'webp')">WebP</button>
+                    <button onclick="downloadChart('chartLine', 'svg')">SVG</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/app.js"></script>
 </body>
 </html>
