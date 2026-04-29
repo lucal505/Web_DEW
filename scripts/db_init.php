@@ -23,11 +23,18 @@ try {
 
     chmod($db_path, 0666); // gives write permissions for the db file
 
-    echo "[info]: Started DB migration.<br>";
+    echo "[INFO]: Started DB migration.<br>";
 
     // SQL commands for creating tables + indices
     $commands = [
         "PRAGMA foreign_keys = ON",
+
+        "CREATE TABLE IF NOT EXISTS admins (
+            id            INTEGER PRIMARY KEY AUTOINCREMENT,
+            username      TEXT    NOT NULL UNIQUE,
+            password_hash TEXT    NOT NULL,
+            created_at    TEXT    DEFAULT CURRENT_TIMESTAMP
+        )",
 
         // DRUGS
         "CREATE TABLE IF NOT EXISTS drugs (
@@ -147,8 +154,8 @@ try {
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_seizures_year ON drug_seizures(year)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_emergencies_year ON medical_emergencies(year)");
 
-    echo "[info]: Migration completed successfully.<br> ";
+    echo "[INFO]: Migration completed successfully.<br> ";
 } catch (PDOException $e) {
     http_response_code(500);
-    echo "[error]: Migration failed -> " . $e->getMessage();
+    echo "[ERROR]: Migration failed -> " . $e->getMessage();
 }
