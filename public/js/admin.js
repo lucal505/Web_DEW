@@ -64,6 +64,25 @@ document.getElementById('uploadForm').addEventListener('submit', (e) => {
         .catch(() => showMessage('A network error occurred.', true));
 });
 
+// import all files in uploads/ directory
+document.getElementById('importAllBtn').addEventListener('click', () => {
+            const formData = new FormData();
+            formData.append('action', 'import_all');
+
+            showMessage('Importing all files, please wait...');
+
+            fetch(apiUrl, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage(data.message);
+                    } else {
+                        showMessage(data.message, true);
+                    }
+                })
+                .catch(() => showMessage('A network error occurred.', true));
+        });
+
 // logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
     fetch(`${apiUrl}?action=logout`)

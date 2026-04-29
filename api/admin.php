@@ -82,7 +82,7 @@ if ($action === 'upload') {
     if (move_uploaded_file($file['tmp_name'], $target_path)) {
         try {
             $importManager = new ImportManager();
-            $importManager->processFiles($upload_dir);
+            $importManager->processFile($target_path);
             echo json_encode(['success' => true, 'message' => 'File uploaded and imported successfully.']);
         } catch (Exception $e) {
             http_response_code(500);
@@ -91,6 +91,26 @@ if ($action === 'upload') {
     } else {
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'Failed to move uploaded file.']);
+    }
+    exit;
+}
+
+// process all files in uploads/ folder
+if ($action === 'import_all') {
+    if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'You must be logged in.']);
+        exit;
+    }
+
+    try {        
+        $importManager = new ImportManager();
+        $importManager->processFolder($upload_dir);
+                
+        echo json_encode(['success' => true, 'message' => 'All files imported successfully.']);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
     }
     exit;
 }
