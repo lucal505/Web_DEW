@@ -19,7 +19,7 @@ class CrimeImporter implements ImporterInterface
     {
         $handle = fopen($filePath, "r");
         if ($handle === false) {
-            error_log("[error]: Could not open $filePath.<br>");
+            error_log("[ERROR]: Could not open $filePath.<br>");
             return;
         } else {
             $insertionsCount = 0;
@@ -188,7 +188,7 @@ class CrimeImporter implements ImporterInterface
                     $insertionsCount++;
                 }
             }
-            error_log("[info]: Imported $insertionsCount records for CRIMES (year $year)<br>");
+            error_log("[INFO]: Imported $insertionsCount records for CRIMES (year $year)<br>");
         }
     }
 }

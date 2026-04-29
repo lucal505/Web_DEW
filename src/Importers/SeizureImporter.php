@@ -19,7 +19,7 @@ class SeizureImporter implements ImporterInterface
     {
         $handle = fopen($filePath, "r");
         if ($handle === false) {
-            error_log("[error]: Could not open $filePath.<br>");
+            error_log("[ERROR]: Could not open $filePath.<br>");
         } else {
             $insertionsCount = 0;
             $rowCount = 0;
@@ -33,7 +33,7 @@ class SeizureImporter implements ImporterInterface
 
                 $drugName = trim($data[0]);
                 if (empty($drugName)) {
-                    error_log("[warn]: Skipping row $rowCount -> drug name is empty<br>");
+                    error_log("[WARN]: Skipping row $rowCount -> drug name is empty<br>");
                     continue;
                 }
 
@@ -73,7 +73,7 @@ class SeizureImporter implements ImporterInterface
                 }
             }
             fclose($handle);
-            error_log("[info]: Imported $insertionsCount records for SEIZURES (year $year)<br>");
+            error_log("[INFO]: Imported $insertionsCount records for SEIZURES (year $year)<br>");
         }
     }
 }
