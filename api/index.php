@@ -53,7 +53,7 @@ $table = $_GET['table'] ?? '';
 $method = $_SERVER['REQUEST_METHOD'];
 
 // iau conexiunea la bd
-$pdo = Database::getConnection();
+$pdo = Database::getInstance();
 
 if ($route === 'filters' && $method === 'GET') {
     
