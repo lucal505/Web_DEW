@@ -1,4 +1,4 @@
-const apiUrl = 'http://localhost:8081/api/admin.php';
+const apiUrl = 'http://localhost:8080/api/admin.php';
 const msgDiv = document.getElementById('message');
 const loginForm = document.getElementById('loginForm');
 const uploadSection = document.getElementById('uploadSection');
