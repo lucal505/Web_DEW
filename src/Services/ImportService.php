@@ -8,7 +8,7 @@ use App\Importers\PreventionImporter;
 use RuntimeException;
 use InvalidArgumentException;
 
-class ImportManager{
+class ImportService{
     public function processFile(string $filePath): void{
         if (!is_file($filePath)){
             throw new InvalidArgumentException("Specified file does not exist: $filePath");
