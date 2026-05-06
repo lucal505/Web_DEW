@@ -16,10 +16,21 @@ abstract class BaseRepository {
             $sql .= " AND $yearCol = :year";
             $params['year'] = $filters['year'];
         }
+
+        if (!empty($filters['min_year'])) {
+            $sql .= " AND $yearCol >= :min_year";
+            $params['min_year'] = $filters['min_year'];
+        }
+        if (!empty($filters['max_year'])) {
+            $sql .= " AND $yearCol <= :max_year";
+            $params['max_year'] = $filters['max_year'];
+        }
+
         if (!empty($filters['count'])) {
             $sql .= " AND $countCol = :cnt";
             $params['cnt'] = $filters['count'];
         }
+        
         if (!empty($filters['min_count'])) {
             $sql .= " AND $countCol >= :min_cnt";
             $params['min_cnt'] = $filters['min_count'];
