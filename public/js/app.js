@@ -6,8 +6,7 @@ const CHART_COLORS = {
     border: '#ffffff'
 };
 
-// referinte elemente html
-const DOM = {
+const PAGE_ELEMENTS = {
     tableSelect: document.getElementById('filter-table'),
     yearInput: document.getElementById('filter-year'),
     drugInput: document.getElementById('filter-drug'),
@@ -28,29 +27,29 @@ const DOM = {
 // starea curenta a graficelor
 const activeCharts = { pie: null, bar: null, line: null };
 
-// afiseaza mesaj in loc de grafic (ex: eroare, zero rezultate)
+// afiseaza mesaj in loc de grafic (ex: eroare sau zero rezultate)
 function displayMessage(message) {
-    DOM.chartsWrapper.style.display = 'none';
-    DOM.statusMessage.style.display = 'block';
-    DOM.statusMessage.innerText = message;
+    PAGE_ELEMENTS.chartsWrapper.style.display = 'none';
+    PAGE_ELEMENTS.statusMessage.style.display = 'block';
+    PAGE_ELEMENTS.statusMessage.innerText = message;
 }
 
 function hideMessage() {
-    DOM.statusMessage.style.display = 'none';
-    DOM.chartsWrapper.style.display = 'grid';
+    PAGE_ELEMENTS.statusMessage.style.display = 'none';
+    PAGE_ELEMENTS.chartsWrapper.style.display = 'grid';
 }
 
 // filtrele secundare
 function updateDynamicFilters() {
-    const table = DOM.tableSelect.value;
+    const table = PAGE_ELEMENTS.tableSelect.value;
     let html = '';
 
     // campul pt drog
     if (table === 'drug_seizures' || table === 'medical_emergencies') {
-        DOM.drugInput.style.display = 'inline-block';
+        PAGE_ELEMENTS.drugInput.style.display = 'inline-block';
     } else {
-        DOM.drugInput.style.display = 'none';
-        DOM.drugInput.value = ''; 
+        PAGE_ELEMENTS.drugInput.style.display = 'none';
+        PAGE_ELEMENTS.drugInput.value = ''; 
     }
 
     // filtre specifice capturilor
@@ -60,32 +59,94 @@ function updateDynamicFilters() {
                 <option value="seizures_count">Număr Capturi</option>
                 <option value="grams">Grame</option>
                 <option value="tablets">Comprimate</option>
-                <option value="doses_units">Doze/Bucăți</option>
+                <option value="doses_units">Doze</option>
                 <option value="milliliters">Mililitri</option>
             </select>
         `;
+        PAGE_ELEMENTS.dynamicFilters.innerHTML = html;
     } 
-    // filtre specifice urgentelor
+
+    // filtre specifice urgentelor medicale
     else if (table === 'medical_emergencies') {
         html = `
-            <select id="filter-secondary">
+            <select id="filter-secondary" onchange="updateTertiaryFilter()">
+                <option value="">Toate categoriile</option>
                 <option value="gender">Sex</option>
                 <option value="age">Vârstă</option>
-                <option value="administration_route">Cale Administrare</option>
-                <option value="consumption_pattern">Model Consum</option>
+                <option value="administration_route">Cale de Administrare</option>
+                <option value="consumption_pattern">Mod de Consumare</option>
                 <option value="diagnosis">Diagnostic</option>
+            </select>
+            <span id="tertiary-container"></span>
+        `;
+        PAGE_ELEMENTS.dynamicFilters.innerHTML = html;
+    } else {
+        PAGE_ELEMENTS.dynamicFilters.innerHTML = '';
+    }
+}
+
+window.updateTertiaryFilter = function() {
+    const category = document.getElementById('filter-secondary').value;
+    const container = document.getElementById('tertiary-container');
+    let html = '';
+
+    if (category === 'gender') {
+        html = `
+            <select id="filter-tertiary">
+                <option value="">Toate</option>
+                <option value="Masculin">Masculin</option>
+                <option value="Feminin">Feminin</option>
+            </select>
+        `;
+    } else if (category === 'age') {
+        html = `
+            <select id="filter-tertiary">
+                <option value="">Toate</option>
+                <option value="<25"> <25 </option>
+                <option value="25-34"> 25-34 </option>
+                <option value=">35"> >35 </option>
+            </select>
+        `;
+    } else if (category === 'administration_route') {
+        html = `
+            <select id="filter-tertiary">
+                <option value="">Toate</option>
+                <option value="Oral/fumat/prizat">Oral/fumat/prizat</option>
+                <option value="Injectabil">Injectabil</option>
+                <option value="Altele">Altele</option>
+            </select>
+        `;
+    } else if (category === 'consumption_pattern') {
+        html = `
+            <select id="filter-tertiary">
+                <option value="">Toate</option>
+                <option value="Consum singular">Consum singular</option>
+                <option value="Consum combinat">Consum combinat</option>
+            </select>
+        `;
+    } else if (category === 'diagnosis') {
+        html = `
+            <select id="filter-tertiary">
+                <option value="">Toate</option>
+                <option value="Intoxicație">Intoxicație</option>
+                <option value="Utilizare nocivă">Utilizare nocivă</option>
+                <option value="Dependență">Dependență</option>
+                <option value="Sevraj">Sevraj</option>
+                <option value="Tulburări de comportament">Tulburări de comportament</option>
+                <option value="Supradoză">Supradoză</option>
+                <option value="Testare toxicologică">Testare toxicologică</option>
             </select>
         `;
     }
 
-    DOM.dynamicFilters.innerHTML = html;
-}
+    container.innerHTML = html;
+};
 
 // extrage si incarca datele
 async function handleLoadData() {
-    const table = DOM.tableSelect.value;
-    const year = DOM.yearInput.value;
-    const drug = DOM.drugInput.value;
+    const table = PAGE_ELEMENTS.tableSelect.value;
+    const year = PAGE_ELEMENTS.yearInput.value;
+    const drug = PAGE_ELEMENTS.drugInput.value;
     const secondaryFilter = document.getElementById('filter-secondary');
 
     // opreste daca lipseste anul
@@ -97,9 +158,19 @@ async function handleLoadData() {
     displayMessage("Se încarcă datele...");
 
     let url = `${API_BASE_URL}?route=filters&table=${table}&year=${year}`;
+    
+    // Filtre dinamice aplicate corect, cu tot cu acolade
     if (table === 'medical_emergencies' && secondaryFilter) {
-        url += `&category=${secondaryFilter.value}`;
+        if (secondaryFilter.value) {
+             url += `&category=${secondaryFilter.value}`;
+        }
+
+        const tertiaryFilter = document.getElementById('filter-tertiary');
+        if (tertiaryFilter && tertiaryFilter.value !== '') {
+             url += `&value=${encodeURIComponent(tertiaryFilter.value)}`;
+        }
     }
+
     if (drug && (table === 'drug_seizures' || table === 'medical_emergencies')) {
         url += `&drug=${encodeURIComponent(drug)}`;
     }
@@ -175,18 +246,18 @@ function destroyCharts() {
 function toggleSingleStat(isSingle, label = "", value = 0) {
     // afiseaza doar text daca avem un singur rezultat (ex: un singur drog sau o singura cale de administrare)
     if (isSingle) {
-        DOM.ctxPie.style.display = 'none';
-        DOM.pieDownloads.style.display = 'none';
-        DOM.containerLine.style.display = 'none';
-        DOM.singleStatCard.style.display = 'block';
-        DOM.singleStatLabel.innerText = label;
-        DOM.singleStatValue.innerText = value.toLocaleString('ro-RO');
+        PAGE_ELEMENTS.ctxPie.style.display = 'none';
+        PAGE_ELEMENTS.pieDownloads.style.display = 'none';
+        PAGE_ELEMENTS.containerLine.style.display = 'none';
+        PAGE_ELEMENTS.singleStatCard.style.display = 'block';
+        PAGE_ELEMENTS.singleStatLabel.innerText = label;
+        PAGE_ELEMENTS.singleStatValue.innerText = value.toLocaleString('ro-RO');
     } 
     else {
-        DOM.ctxPie.style.display = 'block';
-        DOM.pieDownloads.style.display = 'block';
-        DOM.containerLine.style.display = 'flex';
-        DOM.singleStatCard.style.display = 'none';
+        PAGE_ELEMENTS.ctxPie.style.display = 'block';
+        PAGE_ELEMENTS.pieDownloads.style.display = 'block';
+        PAGE_ELEMENTS.containerLine.style.display = 'flex';
+        PAGE_ELEMENTS.singleStatCard.style.display = 'none';
     }
 }
 
@@ -198,7 +269,7 @@ function renderCharts(labels, values) {
     } else {
         toggleSingleStat(false);
 
-        activeCharts.pie = new Chart(DOM.ctxPie, {
+        activeCharts.pie = new Chart(PAGE_ELEMENTS.ctxPie, {
             type: 'pie',
             data: {
                 labels: labels,
@@ -226,7 +297,7 @@ function renderCharts(labels, values) {
         });
     }
 
-    activeCharts.bar = new Chart(DOM.ctxBar, {
+    activeCharts.bar = new Chart(PAGE_ELEMENTS.ctxBar, {
         type: 'bar',
         data: {
             labels: labels,
@@ -240,7 +311,7 @@ function renderCharts(labels, values) {
         options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
 
-    activeCharts.line = new Chart(DOM.ctxLine, {
+    activeCharts.line = new Chart(PAGE_ELEMENTS.ctxLine, {
         type: 'line',
         data: {
             labels: labels,
@@ -263,10 +334,34 @@ function renderCharts(labels, values) {
     });
 }
 
+// Funcția de export modificată pentru a include noile filtre
 window.exportData = function(format) {
-    const table = DOM.tableSelect.value;
-    const year = DOM.yearInput.value;
-    window.location.href = `${API_BASE_URL}?route=export&table=${table}&year=${year}&format=${format}`;
+    const table = PAGE_ELEMENTS.tableSelect.value;
+    const year = PAGE_ELEMENTS.yearInput.value;
+    const drug = PAGE_ELEMENTS.drugInput.value;
+    const secondaryFilter = document.getElementById('filter-secondary');
+    const tertiaryFilter = document.getElementById('filter-tertiary');
+
+    if (!year) {
+        alert("Te rugăm să introduci un an pentru a putea exporta (ex: 2022).");
+        return;
+    }
+
+    let url = `${API_BASE_URL}?route=export&table=${table}&year=${year}&format=${format}`;
+
+    if (table === 'medical_emergencies' && secondaryFilter && secondaryFilter.value) {
+        url += `&category=${encodeURIComponent(secondaryFilter.value)}`;
+    }
+    
+    if (tertiaryFilter && tertiaryFilter.value !== '') {
+        url += `&value=${encodeURIComponent(tertiaryFilter.value)}`;
+    }
+
+    if (drug && (table === 'drug_seizures' || table === 'medical_emergencies')) {
+        url += `&drug=${encodeURIComponent(drug)}`;
+    }
+
+    window.location.href = url;
 };
 
 // functie pt descarcarea chart urilor
@@ -279,8 +374,8 @@ window.downloadChart = function(canvasId, format) {
     link.click();
 };
 
-DOM.tableSelect.addEventListener('change', updateDynamicFilters);
-DOM.btnLoad.addEventListener('click', handleLoadData);
+PAGE_ELEMENTS.tableSelect.addEventListener('change', updateDynamicFilters);
+PAGE_ELEMENTS.btnLoad.addEventListener('click', handleLoadData);
 
 updateDynamicFilters();
 displayMessage("Selectează criteriile și apasă 'Filtrează Date' pentru a începe analiza.");
