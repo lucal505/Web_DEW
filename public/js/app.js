@@ -159,7 +159,7 @@ async function handleLoadData() {
 
     let url = `${API_BASE_URL}?route=filters&table=${table}&year=${year}`;
     
-    // Filtre dinamice aplicate corect, cu tot cu acolade
+    // filtre dinamica
     if (table === 'medical_emergencies' && secondaryFilter) {
         if (secondaryFilter.value) {
              url += `&category=${secondaryFilter.value}`;
@@ -334,7 +334,6 @@ function renderCharts(labels, values) {
     });
 }
 
-// Funcția de export modificată pentru a include noile filtre
 window.exportData = function(format) {
     const table = PAGE_ELEMENTS.tableSelect.value;
     const year = PAGE_ELEMENTS.yearInput.value;
