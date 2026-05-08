@@ -32,6 +32,22 @@ class CrimeService extends BaseService
         $this->validateBaseFilters($filters);
         return $this->repository->getArticles($filters);
     }
+
+    // optiunile pentru filtrare
+    public function getDemographicOptions(): array
+    {
+        return $this->repository->getDemographicOptions();
+    }
+
+    public function getSentenceOptions(): array
+    {
+        return $this->repository->getSentenceOptions();
+    }
+
+    public function getArticleOptions(): array
+    {
+        return $this->repository->getArticleOptions();
+    }
     
     // may add more specific validation methods if needed
 }

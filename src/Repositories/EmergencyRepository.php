@@ -23,4 +23,13 @@ class EmergencyRepository extends BaseRepository {
         $this->applyCommonFilters($sql, $params, $filters);
         return $this->fetchAll($sql, $params);
     }
+
+    // optiunile pentru filtrare
+    public function getOptions(): array {
+        return [
+            'years' => $this->getDistinct('medical_emergencies', 'year', 'DESC'),
+            'categories' => $this->getDistinct('medical_emergencies', 'category'),
+            'drugs' => $this->getDistinct('medical_emergencies', 'drug_type')
+        ];
+    }
 }

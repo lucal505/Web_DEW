@@ -47,4 +47,21 @@ abstract class BaseRepository {
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
+
+    // pentru optiunile de filtrare 
+    protected function fetchColumn(string $sql, array $params = []): array {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    protected function getDistinct(string $table, string $column, string $sort = 'ASC'): array {
+        // sanitizare input
+        $table = preg_replace('/[^a-zA-Z0-9_]/', '', $table);
+        $column = preg_replace('/[^a-zA-Z0-9_]/', '', $column);
+        $sort = strtoupper($sort) === 'DESC' ? 'DESC' : 'ASC';
+        
+        $sql = "SELECT DISTINCT $column FROM $table WHERE $column IS NOT NULL AND $column != '' ORDER BY $column $sort";
+        return $this->fetchColumn($sql);
+    }
 }

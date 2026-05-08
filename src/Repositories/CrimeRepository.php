@@ -47,4 +47,24 @@ class CrimeRepository extends BaseRepository {
         $this->applyCommonFilters($sql, $params, $filters);
         return $this->fetchAll($sql, $params);
     }
+
+    // optiunile pentru filtrare
+    public function getDemographicOptions(): array {
+        return [
+            'years' => $this->getDistinct('crimes_demographic', 'year', 'DESC'),
+            'genders' => $this->getDistinct('crimes_demographic', 'gender'),
+            'age_categories' => $this->getDistinct('crimes_demographic', 'age_category')
+        ];
+    }
+
+    public function getSentenceOptions(): array {
+        return [
+            'years' => $this->getDistinct('crimes_sentence', 'year', 'DESC'),
+            'sentence_types' => $this->getDistinct('crimes_sentence', 'sentence_type')
+        ];
+    }
+
+    public function getArticleOptions(): array {
+        return ['years' => $this->getDistinct('crimes_article', 'year', 'DESC')];
+    }
 }

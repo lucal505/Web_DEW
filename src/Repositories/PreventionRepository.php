@@ -50,4 +50,20 @@ class PreventionRepository extends BaseRepository {
         $this->applyCommonFilters($sql, $params, $filters, 'year', 'beneficiaries_count');
         return $this->fetchAll($sql, $params);
     }
+
+    // optiunile pentru filtrare
+    public function getProjectOptions(): array {
+        return ['years' => $this->getDistinct('prevention_projects', 'year', 'DESC')];
+    }
+
+    public function getCampaignOptions(): array {
+        return ['years' => $this->getDistinct('prevention_campaigns', 'year', 'DESC')];
+    }
+    
+    public function getActivityOptions(): array {
+        return [
+            'years' => $this->getDistinct('prevention_activities', 'year', 'DESC'),
+            'beneficiary_types' => $this->getDistinct('prevention_activities', 'beneficiary_type')
+        ];
+    }
 }

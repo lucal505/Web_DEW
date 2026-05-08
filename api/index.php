@@ -171,6 +171,40 @@ if ($route === 'export' && $method === 'GET') {
     $exportController->exportData($data, $format);
     exit;
 }
+
+if ($route === 'options' && $method === 'GET') {
+    switch ($table) {
+        case 'crimes_demographic':
+            (new CrimeController(new CrimeService(new CrimeRepository($pdo))))->getDemographicOptions();
+            break;
+        case 'crimes_sentence':
+            (new CrimeController(new CrimeService(new CrimeRepository($pdo))))->getSentenceOptions();
+            break;
+        case 'crimes_article':
+            (new CrimeController(new CrimeService(new CrimeRepository($pdo))))->getArticleOptions();
+            break;
+        case 'prevention_activities':
+            (new PreventionController(new PreventionService(new PreventionRepository($pdo))))->getActivityOptions();
+            break;
+        case 'prevention_campaigns':
+            (new PreventionController(new PreventionService(new PreventionRepository($pdo))))->getCampaignOptions();
+            break;
+        case 'prevention_projects':
+            (new PreventionController(new PreventionService(new PreventionRepository($pdo))))->getProjectOptions();
+            break;
+        case 'medical_emergencies':
+            (new EmergencyController(new EmergencyService(new EmergencyRepository($pdo))))->getOptions();
+            break;
+        case 'drug_seizures':
+            (new SeizureController(new SeizureService(new SeizureRepository($pdo))))->getOptions();
+            break;
+        default:
+            http_response_code(404);
+            echo json_encode(["error" => "Table not found."]);
+            break;
+    }
+    exit;
+}
 // bad call
 http_response_code(404);
 echo json_encode(["error" => "Route or table not found."]);

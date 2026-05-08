@@ -21,5 +21,10 @@ class SeizureService extends BaseService
         return $this->repository->getSeizures($filters);
     }
 
+    public function getOptions(): array
+    {
+        return $this->repository->getOptions();
+    }
+
     // may add more specific validation methods if needed
 }

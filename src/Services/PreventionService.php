@@ -33,5 +33,20 @@ class PreventionService extends BaseService
         return $this->repository->getActivities($filters);
     }
 
+    public function getProjectOptions(): array
+    {
+        return $this->repository->getProjectOptions();
+    }
+
+    public function getCampaignOptions(): array
+    {
+        return $this->repository->getCampaignOptions();
+    }
+
+    public function getActivityOptions(): array
+    {
+        return $this->repository->getActivityOptions();
+    }
+
     // may add more specific validation methods if needed
 }

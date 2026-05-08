@@ -21,5 +21,10 @@ class EmergencyService extends BaseService
         return $this->repository->getEmergencies($filters);
     }
 
+    public function getOptions(): array
+    {
+        return $this->repository->getOptions();
+    }
+
     // may add more specific validation methods if needed
 }
