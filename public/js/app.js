@@ -171,6 +171,10 @@ async function handleLoadData() {
         }
     }
 
+    if (table === 'drug_seizures' && secondaryFilter && secondaryFilter.value) {
+        url += `&measurement=${encodeURIComponent(secondaryFilter.value)}`;
+    }
+
     if (drug && (table === 'drug_seizures' || table === 'medical_emergencies')) {
         url += `&drug=${encodeURIComponent(drug)}`;
     }
@@ -354,6 +358,10 @@ window.exportData = function(format) {
     
     if (tertiaryFilter && tertiaryFilter.value !== '') {
         url += `&value=${encodeURIComponent(tertiaryFilter.value)}`;
+    }
+
+    if (table === 'drug_seizures' && secondaryFilter && secondaryFilter.value) {
+        url += `&measurement=${encodeURIComponent(secondaryFilter.value)}`;
     }
 
     if (drug && (table === 'drug_seizures' || table === 'medical_emergencies')) {
