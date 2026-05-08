@@ -113,62 +113,8 @@ if ($route === 'export' && $method === 'GET') {
     $format = $_GET['format'] ?? 'csv';
     $filters = array_filter($_GET, fn($value, $key) => $value !== '' && $key !== 'route' && $key !== 'table' && $key !== 'format', ARRAY_FILTER_USE_BOTH);
 
-    $data = [];
-
-    // apelez servicii (controllerul da raspuns HTTP, eu vreau doar datele filtrate)
-    try {
-        switch ($table) {
-            case 'crimes_demographic':
-                $service = new CrimeService(new CrimeRepository($pdo));
-                $data = $service->getDemographics($filters);
-                break;
-            case 'crimes_sentence':
-                $service = new CrimeService(new CrimeRepository($pdo));
-                $data = $service->getSentences($filters);
-                break;
-            case 'crimes_article':
-                $service = new CrimeService(new CrimeRepository($pdo));
-                $data = $service->getArticles($filters);
-                break;
-            case 'prevention_activities':
-                $service = new PreventionService(new PreventionRepository($pdo));
-                $data = $service->getActivities($filters);
-                break;
-            case 'prevention_campaigns':
-                $service = new PreventionService(new PreventionRepository($pdo));
-                $data = $service->getCampaigns($filters);
-                break;
-            case 'prevention_projects':
-                $service = new PreventionService(new PreventionRepository($pdo));
-                $data = $service->getProjects($filters);
-                break;
-            case 'medical_emergencies':
-                $service = new EmergencyService(new EmergencyRepository($pdo));
-                $data = $service->getEmergencies($filters);
-                break;
-            case 'drug_seizures':
-                $service = new SeizureService(new SeizureRepository($pdo));
-                $data = $service->getSeizures($filters);
-                break;
-            default:
-                http_response_code(404);
-                echo json_encode(["error" => "Table not found."]);
-                exit;
-        }
-    } catch (InvalidArgumentException $e) {
-        // erori de validare
-        http_response_code(400);
-        echo json_encode(["error" => $e->getMessage()]);
-        exit;
-    } catch (Exception $e) {
-        // other
-        http_response_code(500);
-        echo json_encode(["error" => "Eroare la generarea exportului: " . $e->getMessage()]);
-        exit;
-    }
-
-    $exportController = new ExportController();
-    $exportController->exportData($data, $format);
+    $exportController = new ExportController($pdo);
+    $exportController->handleExport($table, $filters, $format);
     exit;
 }
 
