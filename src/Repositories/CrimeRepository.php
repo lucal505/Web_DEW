@@ -55,8 +55,12 @@ class CrimeRepository extends BaseRepository {
 
     public function getDemographicsPaginated(array $filters, int $page, int $perPage): array {
         [$sql, $params] = $this->buildDemographicsQuerry($filters);
+        $total = $this->fetchCount($sql, $params);
         $this->applyPagination($sql, $params, $page, $perPage);
-        return $this->fetchAll($sql, $params);
+        return [
+            'data'  => $this->fetchAll($sql, $params),
+            'total' => $total,
+        ];
     }
 
     public function getSentences(array $filters): array {
@@ -66,8 +70,12 @@ class CrimeRepository extends BaseRepository {
 
     public function getSentencesPaginated(array $filters, int $page, int $perPage): array {
         [$sql, $params] = $this->buildSentencesQuerry($filters);
+        $total = $this->fetchCount($sql, $params);
         $this->applyPagination($sql, $params, $page, $perPage);
-        return $this->fetchAll($sql, $params);
+        return [
+            'data'  => $this->fetchAll($sql, $params),
+            'total' => $total,
+        ];
     }
 
     public function getArticles(array $filters): array {
@@ -77,8 +85,12 @@ class CrimeRepository extends BaseRepository {
 
     public function getArticlesPaginated(array $filters, int $page, int $perPage): array {
         [$sql, $params] = $this->buildArticlesQuerry($filters);
+        $total = $this->fetchCount($sql, $params);
         $this->applyPagination($sql, $params, $page, $perPage);
-        return $this->fetchAll($sql, $params);
+        return [
+            'data'  => $this->fetchAll($sql, $params),
+            'total' => $total,
+        ];
     }
 
     // optiunile pentru filtrare

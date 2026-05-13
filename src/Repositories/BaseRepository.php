@@ -63,6 +63,15 @@ abstract class BaseRepository {
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
+    // pentru paginare
+    protected function fetchCount(string $sql, array $params): int
+    {
+        $countSql = preg_replace('/^SELECT .+ FROM /is', 'SELECT COUNT(*) FROM ', $sql);
+        $stmt = $this->pdo->prepare($countSql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
+    }
+
     protected function getDistinct(string $table, string $column, string $sort = 'ASC'): array {
         // sanitizare input
         $table = preg_replace('/[^a-zA-Z0-9_]/', '', $table);

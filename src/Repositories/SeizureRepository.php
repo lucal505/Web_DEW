@@ -44,8 +44,12 @@ class SeizureRepository extends BaseRepository
     public function getSeizuresPaginated(array $filters, int $page, int $perPage): array
     {
         [$sql, $params] = $this->buildSeizuresQuery($filters);
+        $total = $this->fetchCount($sql, $params);
         $this->applyPagination($sql, $params, $page, $perPage);
-        return $this->fetchAll($sql, $params);
+        return [
+            'data'  => $this->fetchAll($sql, $params),
+            'total' => $total,
+        ];
     }
 
     // optiunile pentru filtrare

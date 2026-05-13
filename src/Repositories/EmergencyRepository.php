@@ -31,8 +31,12 @@ class EmergencyRepository extends BaseRepository {
 
     public function getEmergenciesPaginated(array $filters, int $page, int $perPage): array {
         [$sql, $params] = $this->buildEmergenciesQuerry($filters);
+        $total = $this->fetchCount($sql, $params);
         $this->applyPagination($sql, $params, $page, $perPage);
-        return $this->fetchAll($sql, $params);
+        return [
+            'data'  => $this->fetchAll($sql, $params),
+            'total' => $total,
+        ];
     }
 
     // optiunile pentru filtrare

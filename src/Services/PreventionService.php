@@ -18,14 +18,17 @@ class PreventionService extends BaseService
     {
         $this->validateBaseFilters($filters);
 
-        if($this->isPaginated($filters)){
-            $page=$this->getPage($filters);
+        if ($this->isPaginated($filters)) {
+            $page = $this->getPage($filters);
+            $result = $this->repository->getProjectsPaginated($filters, $page, static::PER_PAGE);
 
             return [
-                'data' => $this->repository->getProjectsPaginated($filters, $page, static::PER_PAGE),
+                'data' => $result['data'],
                 'pagination' => [
                     'page' => $page,
                     'per_page' => static::PER_PAGE,
+                    'total' => $result['total'],
+                    'total_pages' => ceil($result['total'] / static::PER_PAGE),
                 ]
             ];
         }
@@ -37,13 +40,17 @@ class PreventionService extends BaseService
     {
         $this->validateBaseFilters($filters);
 
-        if($this->isPaginated($filters)){
-            $page=$this->getPage($filters);
+        if ($this->isPaginated($filters)) {
+            $page = $this->getPage($filters);
+            $result = $this->repository->getCampaignsPaginated($filters, $page, static::PER_PAGE);
+
             return [
-                'data' => $this->repository->getCampaignsPaginated($filters, $page, static::PER_PAGE),
+                'data' => $result['data'],
                 'pagination' => [
                     'page' => $page,
                     'per_page' => static::PER_PAGE,
+                    'total' => $result['total'],
+                    'total_pages' => ceil($result['total'] / static::PER_PAGE),
                 ]
             ];
         }
@@ -55,13 +62,17 @@ class PreventionService extends BaseService
     {
         $this->validateBaseFilters($filters);
 
-        if($this->isPaginated($filters)){
-            $page=$this->getPage($filters);
+        if ($this->isPaginated($filters)) {
+            $page = $this->getPage($filters);
+            $result = $this->repository->getActivitiesPaginated($filters, $page, static::PER_PAGE);
+
             return [
-                'data' => $this->repository->getActivitiesPaginated($filters, $page, static::PER_PAGE),
+                'data' => $result['data'],
                 'pagination' => [
                     'page' => $page,
                     'per_page' => static::PER_PAGE,
+                    'total' => $result['total'],
+                    'total_pages' => ceil($result['total'] / static::PER_PAGE),
                 ]
             ];
         }

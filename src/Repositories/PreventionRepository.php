@@ -57,8 +57,12 @@ class PreventionRepository extends BaseRepository {
 
     public function getProjectsPaginated(array $filters, int $page, int $perPage): array {
         [$sql, $params] = $this->buildProjectsQuerry($filters);
+        $total = $this->fetchCount($sql, $params);
         $this->applyPagination($sql, $params, $page, $perPage);
-        return $this->fetchAll($sql, $params);
+        return [
+            'data'  => $this->fetchAll($sql, $params),
+            'total' => $total,
+        ];;
     }
 
     public function getCampaigns(array $filters): array {
@@ -68,8 +72,12 @@ class PreventionRepository extends BaseRepository {
 
     public function getCampaignsPaginated(array $filters, int $page, int $perPage): array {
         [$sql, $params] = $this->buildCampaigndQuerry($filters);
+        $total = $this->fetchCount($sql, $params);
         $this->applyPagination($sql, $params, $page, $perPage);
-        return $this->fetchAll($sql, $params);
+        return [
+            'data'  => $this->fetchAll($sql, $params),
+            'total' => $total,
+        ];
     }
 
     public function getActivities(array $filters): array {
@@ -79,8 +87,12 @@ class PreventionRepository extends BaseRepository {
 
     public function getActivitiesPaginated(array $filters, int $page, int $perPage): array {
         [$sql, $params] = $this->buildActivitiesQuerry($filters);
+        $total = $this->fetchCount($sql, $params);
         $this->applyPagination($sql, $params, $page, $perPage);
-        return $this->fetchAll($sql, $params);
+        return [
+            'data'  => $this->fetchAll($sql, $params),
+            'total' => $total,
+        ];
     }
 
     // optiunile pentru filtrare

@@ -18,15 +18,19 @@ class CrimeService extends BaseService
     {
         $this->validateBaseFilters($filters);
 
-        if ($this->isPaginated($filters)){
-            $page=$this->getPage($filters);
+        if ($this->isPaginated($filters)) {
+            $page = $this->getPage($filters);
+            $result = $this->repository->getDemographicsPaginated($filters, $page, static::PER_PAGE);
+
             return [
-                'data' => $this->repository->getDemographicsPaginated($filters, $page, static::PER_PAGE),
+                'data' => $result['data'],
                 'pagination' => [
                     'page' => $page,
                     'per_page' => static::PER_PAGE,
+                    'total' => $result['total'],
+                    'total_pages' => ceil($result['total'] / static::PER_PAGE),
                 ]
-            ]; 
+            ];
         }
 
         return $this->repository->getDemographics($filters);
@@ -36,13 +40,17 @@ class CrimeService extends BaseService
     {
         $this->validateBaseFilters($filters);
 
-        if($this->isPaginated($filters)){
-            $page=$this->getPage($filters);
+        if ($this->isPaginated($filters)) {
+            $page = $this->getPage($filters);
+            $result = $this->repository->getSentencesPaginated($filters, $page, static::PER_PAGE);
+
             return [
-                'data' => $this->repository->getSentencesPaginated($filters, $page, static::PER_PAGE),
+                'data' => $result['data'],
                 'pagination' => [
                     'page' => $page,
                     'per_page' => static::PER_PAGE,
+                    'total' => $result['total'],
+                    'total_pages' => ceil($result['total'] / static::PER_PAGE),
                 ]
             ];
         }
@@ -54,13 +62,17 @@ class CrimeService extends BaseService
     {
         $this->validateBaseFilters($filters);
 
-        if($this->isPaginated($filters)){
-            $page=$this->getPage($filters);
+        if ($this->isPaginated($filters)) {
+            $page = $this->getPage($filters);
+            $result = $this->repository->getArticlesPaginated($filters, $page, static::PER_PAGE);
+
             return [
-                'data' => $this->repository->getArticlesPaginated($filters, $page, static::PER_PAGE),
+                'data' => $result['data'],
                 'pagination' => [
                     'page' => $page,
                     'per_page' => static::PER_PAGE,
+                    'total' => $result['total'],
+                    'total_pages' => ceil($result['total'] / static::PER_PAGE),
                 ]
             ];
         }
@@ -83,6 +95,6 @@ class CrimeService extends BaseService
     {
         return $this->repository->getArticleOptions();
     }
-    
+
     // may add more specific validation methods if needed
 }
