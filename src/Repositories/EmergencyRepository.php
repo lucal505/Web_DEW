@@ -3,7 +3,7 @@ namespace App\Repositories;
 
 class EmergencyRepository extends BaseRepository {
     
-    public function getEmergencies(array $filters): array {
+    private function buildEmergenciesQuerry(array $filters): array {
         $sql = "SELECT * FROM medical_emergencies WHERE 1=1";
         $params = [];
 
@@ -21,6 +21,17 @@ class EmergencyRepository extends BaseRepository {
         }
 
         $this->applyCommonFilters($sql, $params, $filters);
+        return [$sql, $params];
+    }
+
+    public function getEmergencies(array $filters): array {
+        [$sql, $params] = $this->buildEmergenciesQuerry($filters);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getEmergenciesPaginated(array $filters, int $page, int $perPage): array {
+        [$sql, $params] = $this->buildEmergenciesQuerry($filters);
+        $this->applyPagination($sql, $params, $page, $perPage);
         return $this->fetchAll($sql, $params);
     }
 

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\CrimeRepository;
-use InvalidArgumentException;
 
 class CrimeService extends BaseService
 {
@@ -18,18 +17,54 @@ class CrimeService extends BaseService
     public function getDemographics(array $filters): array
     {
         $this->validateBaseFilters($filters);
+
+        if ($this->isPaginated($filters)){
+            $page=$this->getPage($filters);
+            return [
+                'data' => $this->repository->getDemographicsPaginated($filters, $page, static::PER_PAGE),
+                'pagination' => [
+                    'page' => $page,
+                    'per_page' => static::PER_PAGE,
+                ]
+            ]; 
+        }
+
         return $this->repository->getDemographics($filters);
     }
 
     public function getSentences(array $filters): array
     {
         $this->validateBaseFilters($filters);
+
+        if($this->isPaginated($filters)){
+            $page=$this->getPage($filters);
+            return [
+                'data' => $this->repository->getSentencesPaginated($filters, $page, static::PER_PAGE),
+                'pagination' => [
+                    'page' => $page,
+                    'per_page' => static::PER_PAGE,
+                ]
+            ];
+        }
+
         return $this->repository->getSentences($filters);
     }
 
     public function getArticles(array $filters): array
     {
         $this->validateBaseFilters($filters);
+
+        if($this->isPaginated($filters)){
+            $page=$this->getPage($filters);
+            return [
+                'data' => $this->repository->getArticlesPaginated($filters, $page, static::PER_PAGE),
+                'pagination' => [
+                    'page' => $page,
+                    'per_page' => static::PER_PAGE,
+                ]
+            ];
+        }
+
         return $this->repository->getArticles($filters);
     }
 

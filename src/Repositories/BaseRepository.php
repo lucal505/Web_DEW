@@ -41,6 +41,14 @@ abstract class BaseRepository {
         }
     }
 
+    protected function applyPagination(string &$sql, array &$params, int $page, int $perPage): void
+    {
+        $offset = ($page - 1) * $perPage;
+        $sql .= " LIMIT :limit OFFSET :offset";
+        $params['limit']  = $perPage;
+        $params['offset'] = $offset;
+    }
+
     // execut query-ul
     protected function fetchAll(string $sql, array $params = []): array {
         $stmt = $this->pdo->prepare($sql);

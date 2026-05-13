@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\PreventionRepository;
-use InvalidArgumentException;
 
 class PreventionService extends BaseService
 {
@@ -18,18 +17,54 @@ class PreventionService extends BaseService
     public function getProjects(array $filters): array
     {
         $this->validateBaseFilters($filters);
+
+        if($this->isPaginated($filters)){
+            $page=$this->getPage($filters);
+
+            return [
+                'data' => $this->repository->getProjectsPaginated($filters, $page, static::PER_PAGE),
+                'pagination' => [
+                    'page' => $page,
+                    'per_page' => static::PER_PAGE,
+                ]
+            ];
+        }
+
         return $this->repository->getProjects($filters);
     }
 
     public function getCampaigns(array $filters): array
     {
         $this->validateBaseFilters($filters);
+
+        if($this->isPaginated($filters)){
+            $page=$this->getPage($filters);
+            return [
+                'data' => $this->repository->getCampaignsPaginated($filters, $page, static::PER_PAGE),
+                'pagination' => [
+                    'page' => $page,
+                    'per_page' => static::PER_PAGE,
+                ]
+            ];
+        }
+
         return $this->repository->getCampaigns($filters);
     }
 
     public function getActivities(array $filters): array
     {
         $this->validateBaseFilters($filters);
+
+        if($this->isPaginated($filters)){
+            $page=$this->getPage($filters);
+            return [
+                'data' => $this->repository->getActivitiesPaginated($filters, $page, static::PER_PAGE),
+                'pagination' => [
+                    'page' => $page,
+                    'per_page' => static::PER_PAGE,
+                ]
+            ];
+        }
         return $this->repository->getActivities($filters);
     }
 

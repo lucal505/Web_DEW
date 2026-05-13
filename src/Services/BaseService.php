@@ -6,11 +6,22 @@ use InvalidArgumentException;
 
 abstract class BaseService
 {
+    protected const PER_PAGE = 5;
     protected int $minYear;
 
     public function __construct(int $minYear)
     {
         $this->minYear = $minYear;
+    }
+
+    protected function isPaginated(array $filters): bool
+    {
+        return isset($filters['page']);
+    }
+
+    protected function getPage(array $filters): int
+    {
+        return (int)$filters['page'];
     }
 
     protected function validateBaseFilters(array $filters): void
@@ -33,20 +44,20 @@ abstract class BaseService
         if (isset($filters['min_year'])) {
             $minYear = (int)$filters['min_year'];
             if ($minYear < $this->minYear || $minYear > $currentYear) {
-                throw new InvalidArgumentException("min_year must be between {$this->minYear} and {$currentYear}.");
+                throw new InvalidArgumentException("'min_year' must be between {$this->minYear} and {$currentYear}.");
             }
         }
 
         if (isset($filters['max_year'])) {
             $maxYear = (int)$filters['max_year'];
             if ($maxYear < $this->minYear || $maxYear > $currentYear) {
-                throw new InvalidArgumentException("max_year must be between {$this->minYear} and {$currentYear}.");
+                throw new InvalidArgumentException("'max_year' must be between {$this->minYear} and {$currentYear}.");
             }
         }
 
         if (isset($filters['min_year']) && isset($filters['max_year'])) {
             if ((int)$filters['min_year'] > (int)$filters['max_year']) {
-                throw new InvalidArgumentException("min_year cannot be greater than max_year.");
+                throw new InvalidArgumentException("'min_year' cannot be greater than max_year.");
             }
         }
 
@@ -57,8 +68,12 @@ abstract class BaseService
         // interval count
         if (isset($filters['min_count']) && isset($filters['max_count'])) {
             if ((int)$filters['min_count'] > (int)$filters['max_count']) {
-                throw new InvalidArgumentException("min_count cannot be greater than max_count.");
+                throw new InvalidArgumentException("'min_count' cannot be greater than max_count.");
             }
+        }
+
+        if (isset($filters['page']) && (int)$filters['page'] < 1) {
+            throw new InvalidArgumentException("'page' must be a positive integer.");
         }
     }
 }

@@ -4,7 +4,7 @@ namespace App\Repositories;
 use PDO;
 
 class PreventionRepository extends BaseRepository {
-    public function getProjects(array $filters): array {
+    private function buildProjectsQuerry(array $filters): array {
         $sql = "SELECT * FROM prevention_projects WHERE 1=1";
         $params = [];
 
@@ -16,11 +16,10 @@ class PreventionRepository extends BaseRepository {
         // metoda din parinte pentru aplicare filtre
         $this->applyCommonFilters($sql, $params, $filters, 'year', 'beneficiaries_count');
 
-        // execut query-ul
-        return $this->fetchAll($sql, $params);
+        return [$sql, $params];
     }
 
-    public function getCampaigns(array $filters): array {
+    private function buildCampaigndQuerry(array $filters): array {
         $sql = "SELECT * FROM prevention_campaigns WHERE 1=1";
         $params = [];
 
@@ -30,10 +29,10 @@ class PreventionRepository extends BaseRepository {
         }
 
         $this->applyCommonFilters($sql, $params, $filters, 'year', 'beneficiaries_count');
-        return $this->fetchAll($sql, $params);
+        return [$sql, $params];
     }
 
-    public function getActivities(array $filters): array {
+    private function buildActivitiesQuerry(array $filters): array {
         $sql = "SELECT * FROM prevention_activities WHERE 1=1";
         $params = [];
 
@@ -48,6 +47,39 @@ class PreventionRepository extends BaseRepository {
         }
 
         $this->applyCommonFilters($sql, $params, $filters, 'year', 'beneficiaries_count');
+        return [$sql, $params];
+    }
+
+    public function getProjects(array $filters): array {
+        [$sql, $params] = $this->buildProjectsQuerry($filters);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getProjectsPaginated(array $filters, int $page, int $perPage): array {
+        [$sql, $params] = $this->buildProjectsQuerry($filters);
+        $this->applyPagination($sql, $params, $page, $perPage);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getCampaigns(array $filters): array {
+        [$sql, $params] = $this->buildCampaigndQuerry($filters);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getCampaignsPaginated(array $filters, int $page, int $perPage): array {
+        [$sql, $params] = $this->buildCampaigndQuerry($filters);
+        $this->applyPagination($sql, $params, $page, $perPage);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getActivities(array $filters): array {
+        [$sql, $params] = $this->buildActivitiesQuerry($filters);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getActivitiesPaginated(array $filters, int $page, int $perPage): array {
+        [$sql, $params] = $this->buildActivitiesQuerry($filters);
+        $this->applyPagination($sql, $params, $page, $perPage);
         return $this->fetchAll($sql, $params);
     }
 

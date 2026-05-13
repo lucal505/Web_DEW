@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\EmergencyRepository;
-use InvalidArgumentException;
 
 class EmergencyService extends BaseService
 {
@@ -18,6 +17,18 @@ class EmergencyService extends BaseService
     public function getEmergencies(array $filters): array
     {
         $this->validateBaseFilters($filters);
+
+        if ($this->isPaginated($filters)) {
+            $page = $this->getPage($filters);
+            return [
+                'data'       => $this->repository->getEmergenciesPaginated($filters, $page, static::PER_PAGE),
+                'pagination' => [
+                    'page'     => $page,
+                    'per_page' => static::PER_PAGE,
+                ]
+            ];
+        }
+
         return $this->repository->getEmergencies($filters);
     }
 

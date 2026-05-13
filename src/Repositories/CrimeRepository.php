@@ -2,7 +2,7 @@
 namespace App\Repositories;
 
 class CrimeRepository extends BaseRepository {
-    public function getDemographics(array $filters): array {
+    private function buildDemographicsQuerry(array $filters): array {
         $sql = "SELECT * FROM crimes_demographic WHERE 1=1";
         $params = [];
 
@@ -18,11 +18,11 @@ class CrimeRepository extends BaseRepository {
         // metoda din parinte pentru aplicare filtre
         $this->applyCommonFilters($sql, $params, $filters);
 
-        // execut query-ul
-        return $this->fetchAll($sql, $params);
+        // returnez sql-ul si parametrii pentru a putea adauga paginarea daca e cazul
+        return [$sql, $params];
     }
 
-    public function getSentences(array $filters): array {
+    private function buildSentencesQuerry(array $filters): array {
         $sql = "SELECT * FROM crimes_sentence WHERE 1=1";
         $params = [];
 
@@ -32,10 +32,10 @@ class CrimeRepository extends BaseRepository {
         }
         
         $this->applyCommonFilters($sql, $params, $filters);
-        return $this->fetchAll($sql, $params);
+        return [$sql, $params];
     }
 
-    public function getArticles(array $filters): array {
+    private function buildArticlesQuerry(array $filters): array {
         $sql = "SELECT * FROM crimes_article WHERE 1=1";
         $params = [];
 
@@ -45,6 +45,39 @@ class CrimeRepository extends BaseRepository {
         }
 
         $this->applyCommonFilters($sql, $params, $filters);
+        return [$sql, $params];
+    }
+
+    public function getDemographics(array $filters): array {
+        [$sql, $params] = $this->buildDemographicsQuerry($filters);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getDemographicsPaginated(array $filters, int $page, int $perPage): array {
+        [$sql, $params] = $this->buildDemographicsQuerry($filters);
+        $this->applyPagination($sql, $params, $page, $perPage);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getSentences(array $filters): array {
+        [$sql, $params] = $this->buildSentencesQuerry($filters);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getSentencesPaginated(array $filters, int $page, int $perPage): array {
+        [$sql, $params] = $this->buildSentencesQuerry($filters);
+        $this->applyPagination($sql, $params, $page, $perPage);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getArticles(array $filters): array {
+        [$sql, $params] = $this->buildArticlesQuerry($filters);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getArticlesPaginated(array $filters, int $page, int $perPage): array {
+        [$sql, $params] = $this->buildArticlesQuerry($filters);
+        $this->applyPagination($sql, $params, $page, $perPage);
         return $this->fetchAll($sql, $params);
     }
 

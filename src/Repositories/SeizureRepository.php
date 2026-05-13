@@ -4,7 +4,7 @@ namespace App\Repositories;
 use PDO;
 
 class SeizureRepository extends BaseRepository {
-    public function getSeizures(array $filters): array {
+    private function buildSeizuresQuery(array $filters): array {
         $sql = "SELECT ds.*, d.name as drug_name 
                 FROM drug_seizures ds 
                 JOIN drugs d ON ds.drug_id = d.id WHERE 1=1";        
@@ -27,7 +27,17 @@ class SeizureRepository extends BaseRepository {
         // metoda din parinte pentru aplicare filtre
         $this->applyCommonFilters($sql, $params, $filters, 'ds.year', 'ds.seizures_count');
 
-        // execut query-ul
+        return [$sql, $params];
+    }
+
+    public function getSeizures(array $filters): array {
+        [$sql, $params] = $this->buildSeizuresQuery($filters);
+        return $this->fetchAll($sql, $params);
+    }
+
+    public function getSeizuresPaginated(array $filters, int $page, int $perPage): array {
+        [$sql, $params] = $this->buildSeizuresQuery($filters);
+        $this->applyPagination($sql, $params, $page, $perPage);
         return $this->fetchAll($sql, $params);
     }
 
