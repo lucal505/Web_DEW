@@ -36,7 +36,6 @@ let currentApiUrl = '';
 let startYear = 2020;
 let endYear = 2026;
 
-// Inițializare Slider Ani
 document.addEventListener('DOMContentLoaded', () => {
     const yearSlider = document.getElementById('year-slider');
     const yearDisplay = document.getElementById('year-display');
@@ -66,12 +65,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Funcția inteligentă HIBRIDĂ
 async function loadDynamicOptions(table, elementId, defaultValue = "Toate") {
     const select = document.getElementById(elementId);
     if (!select) return;
 
-    // Resetăm dropdown-ul instant
     select.innerHTML = `<option value="">${defaultValue}</option>`;
 
     try {
@@ -80,19 +77,16 @@ async function loadDynamicOptions(table, elementId, defaultValue = "Toate") {
 
         let optionsArray = [];
 
-        // Detecție automată inteligentă: Luăm direct array-ul care ne interesează 
-        // (ignorând "years" sau "categories")
         if (data && typeof data === 'object' && !Array.isArray(data)) {
             const correctKey = Object.keys(data).find(key => key !== 'years' && key !== 'categories');
             
             if (correctKey && Array.isArray(data[correctKey])) {
-                optionsArray = data[correctKey]; // Aici va extrage automat `data.sentence_types` sau `data.drugs`
+                optionsArray = data[correctKey];
             }
         } else if (Array.isArray(data)) {
             optionsArray = data;
         }
 
-        // Punem datele brute, exact cum le-a trimis backend-ul, direct în dropdown
         if (optionsArray.length > 0) {
             optionsArray.forEach(opt => {
                 let value = typeof opt === 'object' && opt !== null 
@@ -188,7 +182,6 @@ function updateSecondaryFilters() {
             </select>
         `;
     } 
-    // --- FILTRELE TEXT NOI ---
     else if (table === 'crimes_sentence' || table === 'crimes_article') {
         PAGE_ELEMENTS.dynamicFilters.innerHTML = `
             <input type="text" id="filter-text-law" class="elegant-input" placeholder="Caută lege / articol..." style="width: 180px;">
@@ -227,21 +220,18 @@ function buildBaseUrl() {
 
     let url = `${API_BASE_URL}?route=filters&table=${table}`;
     
-    // Filtre Universale
+    // filtre comune
     url += `&start_year=${startYear}&end_year=${endYear}`;
     if (startYear === endYear) url += `&year=${startYear}`;
     if (minCount !== '') url += `&min_count=${minCount}`;
     if (maxCount !== '') url += `&max_count=${maxCount}`;
 
-    // Sentințe - Filtru fix
+    // filtru sentinte
     const sentenceFilter = document.getElementById('filter-sentence');
     if (table === 'crimes_sentence' && sentenceFilter?.value) {
         url += `&sentence_type=${encodeURIComponent(sentenceFilter.value)}`;
     }
 
-    // ==========================================
-    // CAPTURAREA FILTRELOR TEXT (NOU)
-    // ==========================================
     const textLaw = document.getElementById('filter-text-law')?.value;
     const textName = document.getElementById('filter-text-name')?.value;
     const textSetting = document.getElementById('filter-text-setting')?.value;
@@ -257,9 +247,8 @@ function buildBaseUrl() {
         if (textSetting) url += `&setting=${encodeURIComponent(textSetting)}`;
         if (textBeneficiary) url += `&beneficiary_type=${encodeURIComponent(textBeneficiary)}`;
     }
-    // ==========================================
 
-    // Filtre Demografice
+    // filtre crimes demographic
     if (table === 'crimes_demographic') {
         const genderVal = document.getElementById('filter-gender')?.value;
         const ageVal = document.getElementById('filter-age')?.value;
@@ -267,14 +256,14 @@ function buildBaseUrl() {
         if (ageVal) url += `&age_category=${encodeURIComponent(ageVal)}`;
     }
 
-    // Filtre Urgențe
+    // filtre urgente
     if (table === 'medical_emergencies' && secondaryFilter?.value) {
         url += `&category=${secondaryFilter.value}`;
         const tertiaryFilter = document.getElementById('filter-tertiary');
         if (tertiaryFilter?.value) url += `&value=${encodeURIComponent(tertiaryFilter.value)}`;
     }
 
-    // Filtre Capturi Droguri
+    // filtre capturi
     if (table === 'drug_seizures' && secondaryFilter?.value) {
         url += `&measurement=${encodeURIComponent(secondaryFilter.value)}`;
     }
@@ -377,7 +366,6 @@ function renderTable(dataArray) {
     const secondaryEl = document.getElementById('filter-secondary');
     const secondaryValue = secondaryEl ? secondaryEl.value : '';
 
-    // Afișează anul singur sau intervalul (ex: 2022 sau 2020-2026)
     const yearDisplay = (startYear === endYear) ? startYear : `${startYear} - ${endYear}`;
 
     const measureLabels = {
@@ -398,8 +386,6 @@ function renderTable(dataArray) {
 
     let columns = [];
 
-    // Restaurăm mapările tale originale pentru fiecare tabel!
-    // ACUM FOLOSIM row.year PENTRU A AFIȘA ANUL EXACT DIN BAZA DE DATE!
     switch (table) {
         case 'drug_seizures':
             columns = [
@@ -479,7 +465,6 @@ function renderTable(dataArray) {
             }));
     }
 
-    // Punem headerele corecte
     columns.forEach(col => {
         const th = document.createElement('th');
         th.innerText = col.header;
@@ -488,7 +473,6 @@ function renderTable(dataArray) {
         PAGE_ELEMENTS.tableHeader.appendChild(th);
     });
 
-    // Punem datele rând cu rând pe coloanele specifice
     dataArray.forEach(row => {
         const tr = document.createElement('tr');
         columns.forEach(col => {
@@ -685,6 +669,5 @@ function downloadBase64File(base64Data, filename) {
 PAGE_ELEMENTS.tableSelect.addEventListener('change', updateSecondaryFilters);
 PAGE_ELEMENTS.btnLoad.addEventListener('click', handleLoadData);
 
-// Inițializare garantată la final
 updateSecondaryFilters();
 displayMessage("Selectează criteriile dorite și apasă 'Filtrează Date' pentru a vedea datele.");
