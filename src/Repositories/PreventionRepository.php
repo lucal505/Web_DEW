@@ -19,7 +19,7 @@ class PreventionRepository extends BaseRepository {
         return [$sql, $params];
     }
 
-    private function buildCampaigndQuerry(array $filters): array {
+    private function buildCampaignsQuerry(array $filters): array {
         $sql = "SELECT * FROM prevention_campaigns WHERE 1=1";
         $params = [];
 
@@ -66,12 +66,12 @@ class PreventionRepository extends BaseRepository {
     }
 
     public function getCampaigns(array $filters): array {
-        [$sql, $params] = $this->buildCampaigndQuerry($filters);
+        [$sql, $params] = $this->buildCampaignsQuerry($filters);
         return $this->fetchAll($sql, $params);
     }
 
     public function getCampaignsPaginated(array $filters, int $page, int $perPage): array {
-        [$sql, $params] = $this->buildCampaigndQuerry($filters);
+        [$sql, $params] = $this->buildCampaignsQuerry($filters);
         $total = $this->fetchCount($sql, $params);
         $this->applyPagination($sql, $params, $page, $perPage);
         return [
