@@ -16,6 +16,7 @@ body {
     padding-bottom: 20px;
 }
 
+/* --- HEADER & BRANDING --- */
 .app-header {
     display: flex;
     align-items: center;
@@ -54,19 +55,19 @@ body {
 }
 
 .admin-btn {
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.9rem;
+    height: auto !important;
+    padding: 8px 18px !important;
+    font-size: 0.9rem !important;
+    border-radius: 20px !important;
 }
 
 .container {
-    max-width: 1100px;
+    max-width: 1250px;
     margin: 0 auto;
     padding: 0 15px;
 }
 
+/* --- SECȚIUNEA DE FILTRARE --- */
 .filters-section {
     background: white;
     padding: 15px;
@@ -86,71 +87,132 @@ body {
 .filter-controls {
     display: flex;
     gap: 10px;
-    margin-bottom: 10px;
     flex-wrap: wrap;
     align-items: center;
 }
 
-input, select {
-    padding: 8px;
-    border: 2px solid var(--border-pink);
-    border-radius: 8px;
-    outline: none;
-    background-color: white;
-    color: var(--text-color);
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
+/* --- STILIZARE UNIVERSALĂ FORMULARE (INPUT & SELECT PASTILĂ) --- */
+.filters-section input, 
+.filters-section select,
+.view-controls select,
+.elegant-select,
+#dynamic-filters select {
+    padding: 6px 14px !important;
+    border: 2px solid var(--border-pink) !important;
+    border-radius: 20px !important;
+    outline: none !important;
+    background-color: white !important;
+    color: var(--text-color) !important;
+    font-size: 0.9rem !important;
+    font-family: inherit !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    height: 36px !important;
 }
 
-input:focus, select:focus {
-    border-color: var(--dark-pink);
+.filters-section input:focus, 
+.filters-section select:focus,
+.view-controls select:focus,
+.elegant-select:focus,
+#dynamic-filters select:focus {
+    border-color: var(--dark-pink) !important;
+    box-shadow: 0 0 10px rgba(248, 165, 194, 0.4) !important;
 }
 
+/* --- BUTOANE PRINCIPALE ROZ --- */
 .btn-pink {
-    background-color: var(--border-pink);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    background-color: var(--border-pink) !important;
+    color: white !important;
+    border: none !important;
+    padding: 6px 20px !important;
+    border-radius: 20px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+    height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
 }
 
 .btn-pink:hover {
-    background-color: var(--hover-pink);
-    transform: translateY(-2px);
+    background-color: var(--hover-pink) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-hover) !important;
 }
 
 .btn-pink:active {
-    transform: translateY(1px) scale(0.95);
+    transform: translateY(1px) scale(0.95) !important;
 }
 
-.export-actions {
-    margin-top: 5px;
-    font-size: 0.9rem;
+/* --- ZONA DE REZULTATE ȘI EXPORT (COMPACTĂ) --- */
+.bottom-actions {
+    margin-top: 15px !important; /* Spațiu mic deasupra liniei */
+    padding-top: 15px !important; /* Spațiu mic sub linie până la primul rând */
+    border-top: 2px dashed var(--border-pink) !important;
+    display: flex;
+    flex-direction: column;
+    gap: 8px !important; /* Spațiu FOARTE MIC între rândul Export și Afișează */
 }
 
-.export-actions button, .download-btns button {
-    background: white;
+.export-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 32px; /* Forțăm înălțimea rândului */
+}
+
+.export-row span {
+    font-weight: bold;
     color: var(--dark-pink);
-    border: 1px solid var(--border-pink);
-    padding: 4px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    margin-left: 5px;
-    font-size: 0.8rem;
+    margin-right: 10px;
 }
 
-.export-actions button:hover, .download-btns button:hover {
-    background: var(--bg-pink);
-    border-color: var(--hover-pink);
+/* Butoane tip pastilă, finuțe și aliniate */
+.export-btn, 
+.download-btns button,
+.pagination-wrapper button {
+    background-color: white !important;
+    color: var(--dark-pink) !important;
+    border: 2px solid var(--border-pink) !important;
+    padding: 2px 12px !important; /* Padding mai mic pentru a fi mai finuțe */
+    border-radius: 20px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    font-size: 0.85rem !important;
+    margin-right: 5px !important;
+    height: 28px !important; /* Înălțime mai mică pentru butoanele de export */
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
 }
 
+.export-btn:hover {
+    background-color: var(--bg-pink) !important;
+    border-color: var(--hover-pink) !important;
+}
+
+#view-selector-container {
+    margin-top: 0 !important; 
+    padding-left: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 32px; /* Să aibă aceeași înălțime cu rândul de export pentru consistență */
+}
+
+/* Micșorăm și selectorul 'Afișează' ca să nu pară gigant pe lângă butoane */
+#view-selector-container .elegant-select {
+    height: 28px !important;
+    padding: 2px 10px !important;
+    font-size: 0.85rem !important;
+}
+
+/* --- CONTAINERE GRAFICE ȘI VIZUALIZARE --- */
 .visualizations {
     display: grid;
     grid-template-columns: 1fr 1fr; 
@@ -170,16 +232,26 @@ input:focus, select:focus {
     justify-content: space-between;
 }
 
+/* Spațiere între tabel și grafice */
+#charts-wrapper .view-section {
+    margin-bottom: 30px !important; 
+    padding-bottom: 20px !important;
+}
+
+#charts-wrapper .view-section:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
 @media (max-width: 768px) {
     .visualizations {
         grid-template-columns: 1fr;
     }
 }
 
-canvas {
+/* Adaptare pentru ApexCharts */
+.apexcharts-canvas {
     margin: 0 auto;
-    width: 100%;
-    max-height: 350px;
 }
 
 .chart-container h3 {
@@ -194,6 +266,7 @@ canvas {
     text-align: center;
     margin-top: 10px;
     padding-top: 10px;
+    padding-bottom: 7px;
     border-top: 1px dashed var(--border-pink);
 }
 
@@ -208,6 +281,7 @@ canvas {
     grid-column: 1 / -1;
 }
 
+/* --- ANIMAȚII --- */
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -216,4 +290,59 @@ canvas {
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+th .col-label {
+    display: block;
+    font-weight: bold;
+}
+
+th .filter-badge {
+    display: inline-block;
+    margin-top: 4px;
+    margin-right: 3px;
+    padding: 2px 7px;
+    background: rgba(255, 141, 161, 0.2);
+    border: 1px solid #ff8da1;
+    border-radius: 10px;
+    font-size: 0.7em;
+    font-weight: normal;
+    color: #c0507a;
+    white-space: nowrap;
+}
+
+#container-table table {
+    table-layout: fixed;
+    width: 100%;
+}
+#container-table th,
+#container-table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.noUi-connect {
+    background: var(--dark-pink) !important;
+}
+.noUi-handle {
+    border: 2px solid var(--dark-pink) !important;
+    background: #fff !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    width: 18px !important;
+    height: 18px !important;
+    right: -9px !important;
+    top: -6px !important;
+}
+.noUi-handle::before, .noUi-handle::after {
+    display: none !important; /* Ascunde liniuțele inestetice implicite */
+}
+.noUi-target {
+    border: none !important;
+    background: #ffe4e1 !important;
+    height: 6px !important;
+    border-radius: 10px !important;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1) !important;
 }
