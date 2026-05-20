@@ -24,6 +24,7 @@ class ExportService {
         header('Content-Type: text/html; charset=UTF-8');
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
 
+        $data = array_map(fn($row) => $row->jsonSerialize(), $data);
         echo "<!DOCTYPE html><html><head><title>Export</title><style>table {border-collapse: collapse;} th, td {border: 1px solid black; padding: 5px;}</style></head><body><table><thead><tr>";
         if (!empty($data)) {
             foreach (array_keys($data[0]) as $column) echo "<th>$column</th>";
