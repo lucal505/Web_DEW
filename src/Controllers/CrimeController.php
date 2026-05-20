@@ -3,6 +3,10 @@
 namespace App\Controllers;
 
 use App\Services\CrimeService;
+use App\DTOs\Crime\CrimeDemographicFilterDTO;
+use App\DTOs\Crime\CrimeSentenceFilterDTO;
+use App\DTOs\Crime\CrimeGeneralFilterDTO;
+use App\DTOs\Crime\CrimeArticleFilterDTO;
 
 class CrimeController extends BaseController
 {
@@ -15,20 +19,42 @@ class CrimeController extends BaseController
 
     public function getDemographics(): void
     {
-        $filters = array_filter($_GET, fn($value) => $value !== '');
-        $this->execute(fn() => $this->service->getDemographics($filters));
+        $filterDTO = CrimeDemographicFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getDemographics($filterDTO));
     }
 
     public function getSentences(): void
     {
-        $filters = array_filter($_GET, fn($value) => $value !== '');
-        $this->execute(fn() => $this->service->getSentences($filters));
+        $filterDTO = CrimeSentenceFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getSentences($filterDTO));
     }
 
     public function getArticles(): void
     {
-        $filters = array_filter($_GET, fn($value) => $value !== '');
-        $this->execute(fn() => $this->service->getArticles($filters));
+        $filterDTO = CrimeArticleFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getArticles($filterDTO));
+    }
+
+    public function getGeneral(): void
+    {
+        $filterDTO = CrimeGeneralFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getGeneral($filterDTO));
+    }
+
+    public function getGroups(): void
+    {
+        $filterDTO = CrimeGeneralFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getGroups($filterDTO));
+    }
+
+    public function getGeneralOptions(): void
+    {
+        $this->execute(fn() => $this->service->getGeneralOptions());
+    }
+
+    public function getGroupOptions(): void
+    {
+        $this->execute(fn() => $this->service->getGroupOptions());
     }
 
     public function getDemographicOptions(): void
