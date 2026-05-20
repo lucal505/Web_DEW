@@ -8,7 +8,7 @@ class PreventionCampaignDTO implements \JsonSerializable
         public readonly int    $id,
         public readonly int    $year,
         public readonly string $campaignName,
-        public readonly int    $beneficiariesCount,
+        public readonly ?int   $beneficiariesCount,
     ) {}
 
     public static function fromArray(array $row): self
@@ -17,7 +17,7 @@ class PreventionCampaignDTO implements \JsonSerializable
             id:                 (int)$row['id'],
             year:               (int)$row['year'],
             campaignName:       $row['campaign_name'],
-            beneficiariesCount: (int)$row['beneficiaries_count'],
+            beneficiariesCount: isset($row['beneficiaries_count']) ? (int)$row['beneficiaries_count'] : null,
         );
     }
 
