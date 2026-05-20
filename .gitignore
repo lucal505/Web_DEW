@@ -32,6 +32,7 @@ vendor/
 *.njsproj
 *.sln
 *.sw?
+.VSCodeCounter
 
 # Fișiere sistem de operare
 .DS_Store
