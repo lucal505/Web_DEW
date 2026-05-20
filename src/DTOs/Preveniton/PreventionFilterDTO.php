@@ -19,6 +19,20 @@ class PreventionFilterDTO extends BaseFilterDTO
         private readonly ?int    $page              = null,
     ) {}
 
+    // getteri pentru campurile comune
+    public function getYear():      ?int { return $this->year; }
+    public function getMinYear():   ?int { return $this->minYear; }
+    public function getMaxYear():   ?int { return $this->maxYear; }
+    public function getCount():     ?int { return $this->count; }
+    public function getMinCount():  ?int { return $this->minCount; }
+    public function getMaxCount():  ?int { return $this->maxCount; }
+    public function getPage():      ?int { return $this->page; }
+
+    // getteri pentru campurile specifice
+    public function getName(): ?string { return $this->name; }
+    public function getSetting(): ?string { return $this->setting; }
+    public function getBeneficiaryType(): ?string { return $this->beneficiaryType; }
+
     public static function fromRequest(array $params): self
     {
         return new self(
