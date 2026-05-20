@@ -113,9 +113,8 @@ class PreventionImporter implements ImporterInterface
                             $count = (int)$matches[1];
                             $type = trim($matches[2]);
 
-                            // setez mediul cu specificarea beneficiarului in paranteza
-                            // am constraint UNIQUE(year, setting) 
-                            $specificSetting = $firstCell . ' (' . $type . ')';
+                            // setez mediul
+                            $specificSetting = $firstCell;
 
                             $stmt = $this->pdo->prepare("INSERT OR IGNORE INTO prevention_activities 
                                 (year, setting, activities_count, beneficiaries_count, beneficiary_type) 
