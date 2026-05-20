@@ -58,13 +58,14 @@ class PreventionRepository extends BaseRepository {
 
     public function getProjects(PreventionFilterDTO $filterDTO): array {
         [$sql, $params] = $this->buildProjectsQuerry($filterDTO);
-        return $this->fetchAll($sql, $params);
+        $rows = $this->fetchAll($sql, $params);
+        return array_map(fn($fow) => PreventionProjectDTO::fromArray($fow), $rows);
     }
 
     public function getProjectsPaginated(PreventionFilterDTO $filterDTO, int $perPage): array {
         [$sql, $params] = $this->buildProjectsQuerry($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $filterDTO->page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         $rows = $this->fetchAll($sql, $params);
         return [
             'data'  => array_map(fn($row) => PreventionProjectDTO::fromArray($row), $rows),
@@ -80,7 +81,7 @@ class PreventionRepository extends BaseRepository {
     public function getCampaignsPaginated(PreventionFilterDTO $filterDTO, int $perPage): array {
         [$sql, $params] = $this->buildCampaignsQuerry($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $filterDTO->page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         $rows = $this->fetchAll($sql, $params);
         return [
             'data'  => array_map(fn($row) => PreventionCampaignDTO::fromArray($row), $rows),
@@ -97,7 +98,7 @@ class PreventionRepository extends BaseRepository {
     public function getActivitiesPaginated(PreventionFilterDTO $filterDTO, int $perPage): array {
         [$sql, $params] = $this->buildActivitiesQuerry($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $filterDTO->page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         $rows = $this->fetchAll($sql, $params);
         return [
             'data'  => array_map(fn($row) => PreventionActivityDTO::fromArray($row), $rows),
@@ -116,8 +117,8 @@ class PreventionRepository extends BaseRepository {
     
     public function getActivityOptions(): array {
         return [
-            'years' => $this->getDistinct('prevention_activities', 'year', 'DESC'),
-            'beneficiary_types' => $this->getDistinct('prevention_activities', 'beneficiary_type')
+            'years'     => $this->getDistinct('prevention_activities', 'year', 'DESC'),
+            'ben_types' => $this->getDistinct('prevention_activities', 'beneficiary_type')
         ];
     }
 }

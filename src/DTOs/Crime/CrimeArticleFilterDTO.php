@@ -2,18 +2,32 @@
 
 namespace App\DTOs\Crime;
 
-class CrimeArticleFilterDTO
+use App\DTOs\BaseFilterDTO;
+
+class CrimeArticleFilterDTO extends BaseFilterDTO
 {
     public function __construct(
-        public readonly ?string $law      = null,
-        public readonly ?int    $year     = null,
-        public readonly ?int    $minYear  = null,
-        public readonly ?int    $maxYear  = null,
-        public readonly ?int    $count    = null,
-        public readonly ?int    $minCount = null,
-        public readonly ?int    $maxCount = null,
-        public readonly ?int    $page     = null,
+        private readonly ?string $law        = null,
+        private readonly ?int    $year       = null,
+        private readonly ?int    $minYear    = null,
+        private readonly ?int    $maxYear    = null,
+        private readonly ?int    $count      = null,
+        private readonly ?int    $minCount   = null,
+        private readonly ?int    $maxCount   = null,
+        private readonly ?int    $page       = null,
     ) {}
+
+    // getteri pentru campurile comune
+    public function getYear():      ?int { return $this->year; }
+    public function getMinYear():   ?int { return $this->minYear; }
+    public function getMaxYear():   ?int { return $this->maxYear; }
+    public function getCount():     ?int { return $this->count; }
+    public function getMinCount():  ?int { return $this->minCount; }
+    public function getMaxCount():  ?int { return $this->maxCount; }
+    public function getPage():      ?int { return $this->page; }
+
+    // getteri pentru campurile specifice
+    public function getLaw(): ?string { return $this->law; }
 
     public static function fromRequest(array $params): self
     {

@@ -18,15 +18,15 @@ class EmergencyService extends BaseService
 
     public function getEmergencies(EmergencyFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filterDTO->toArray());
+        $this->validateBaseFilters($filterDTO);
 
-        if ($filterDTO->page !== null) {
+        if ($filterDTO->getPage() !== null) {
             $result = $this->repository->getEmergenciesPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data'       => $result['data'],
                 'pagination' => [
-                    'page'     => $filterDTO->page,
+                    'page'     => $filterDTO->getPage(),
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),

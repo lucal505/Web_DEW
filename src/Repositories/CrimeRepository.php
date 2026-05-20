@@ -85,10 +85,10 @@ class CrimeRepository extends BaseRepository {
         return array_map(fn($row) => CrimeDemographicDTO::fromArray($row), $rows);
     }
 
-    public function getDemographicsPaginated(CrimeDemographicFilterDTO $filterDTO, int $page, int $perPage): array {
+    public function getDemographicsPaginated(CrimeDemographicFilterDTO $filterDTO, int $perPage): array {
         [$sql, $params] = $this->buildDemographicsQuerry($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         $rows = $this->fetchAll($sql, $params);
         return [
             'data'  => array_map(fn($row) => CrimeDemographicDTO::fromArray($row), $rows),
@@ -102,10 +102,10 @@ class CrimeRepository extends BaseRepository {
         return array_map(fn($row) => CrimeSentenceDTO::fromArray($row), $rows);
     }
 
-    public function getSentencesPaginated(CrimeSentenceFilterDTO $filterDTO, int $page, int $perPage): array {
+    public function getSentencesPaginated(CrimeSentenceFilterDTO $filterDTO, int $perPage): array {
         [$sql, $params] = $this->buildSentencesQuerry($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         $rows = $this->fetchAll($sql, $params);
         return [
             'data'  => array_map(fn($row) => CrimeSentenceDTO::fromArray($row), $rows),
@@ -119,10 +119,10 @@ class CrimeRepository extends BaseRepository {
         return array_map(fn($row) => CrimeArticleDTO::fromArray($row), $rows);
     }
 
-    public function getArticlesPaginated(CrimeArticleFilterDTO $filterDTO, int $page, int $perPage): array {
+    public function getArticlesPaginated(CrimeArticleFilterDTO $filterDTO, int $perPage): array {
         [$sql, $params] = $this->buildArticlesQuerry($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         $rows = $this->fetchAll($sql, $params);
         return [
             'data'  => array_map(fn($row) => CrimeArticleDTO::fromArray($row), $rows),
@@ -137,11 +137,11 @@ class CrimeRepository extends BaseRepository {
         return array_map(fn($row) => CrimeGeneralDTO::fromArray($row), $rows);
     }
 
-    public function getGeneralPaginated(CrimeGeneralFilterDTO $filterDTO, int $perPage, int $page): array
+    public function getGeneralPaginated(CrimeGeneralFilterDTO $filterDTO, int $perPage): array
     {
         [$sql, $params] = $this->buildGeneralQuery($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         $rows = $this->fetchAll($sql, $params);
         return [
             'data'  => array_map(fn($row) => CrimeGeneralDTO::fromArray($row), $rows),
@@ -156,11 +156,11 @@ class CrimeRepository extends BaseRepository {
         return array_map(fn($row) => CrimeGroupDTO::fromArray($row), $rows);
     }
 
-    public function getGroupsPaginated(CrimeGeneralFilterDTO $filterDTO, int $perPage, int $page): array
+    public function getGroupsPaginated(CrimeGeneralFilterDTO $filterDTO, int $perPage): array
     {
         [$sql, $params] = $this->buildGroupQuery($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         $rows = $this->fetchAll($sql, $params);
         return [
             'data'  => array_map(fn($row) => CrimeGroupDTO::fromArray($row), $rows),
@@ -171,16 +171,16 @@ class CrimeRepository extends BaseRepository {
     // optiunile pentru filtrare
     public function getDemographicOptions(): array {
         return [
-            'years' => $this->getDistinct('crimes_demographic', 'year', 'DESC'),
-            'genders' => $this->getDistinct('crimes_demographic', 'gender'),
-            'age_categories' => $this->getDistinct('crimes_demographic', 'age_category')
+            'years'     => $this->getDistinct('crimes_demographic', 'year', 'DESC'),
+            'genders'   => $this->getDistinct('crimes_demographic', 'gender'),
+            'ages'      => $this->getDistinct('crimes_demographic', 'age_category')
         ];
     }
 
     public function getSentenceOptions(): array {
         return [
-            'years' => $this->getDistinct('crimes_sentence', 'year', 'DESC'),
-            'sentence_types' => $this->getDistinct('crimes_sentence', 'sentence_type')
+            'years'             => $this->getDistinct('crimes_sentence', 'year', 'DESC'),
+            'sentences'         => $this->getDistinct('crimes_sentence', 'sentence_type')
         ];
     }
 

@@ -2,34 +2,36 @@
 
 namespace App\DTOs\Prevention;
 
-class PreventionFilterDTO
+use App\DTOs\BaseFilterDTO;
+
+class PreventionFilterDTO extends BaseFilterDTO
 {
     public function __construct(
-        public readonly ?string $name            = null,
-        public readonly ?string $setting         = null,
-        public readonly ?string $beneficiaryType = null,
-        public readonly ?int    $year            = null,
-        public readonly ?int    $minYear         = null,
-        public readonly ?int    $maxYear         = null,
-        public readonly ?int    $count           = null,
-        public readonly ?int    $minCount        = null,
-        public readonly ?int    $maxCount        = null,
-        public readonly ?int    $page            = null,
+        private readonly ?string $name              = null,
+        private readonly ?string $setting           = null,
+        private readonly ?string $beneficiaryType   = null,
+        private readonly ?int    $year              = null,
+        private readonly ?int    $minYear           = null,
+        private readonly ?int    $maxYear           = null,
+        private readonly ?int    $count             = null,
+        private readonly ?int    $minCount          = null,
+        private readonly ?int    $maxCount          = null,
+        private readonly ?int    $page              = null,
     ) {}
 
     public static function fromRequest(array $params): self
     {
         return new self(
-            name:            $params['name']    ?? null,
-            setting:         $params['set'] ?? null,
+            name: $params['name']    ?? null,
+            setting: $params['set'] ?? null,
             beneficiaryType: $params['ben_type'] ?? null,
-            year:            isset($params['year'])  ? (int)$params['year']  : null,
-            minYear:         isset($params['from'])  ? (int)$params['from']  : null,
-            maxYear:         isset($params['to'])    ? (int)$params['to']    : null,
-            count:           isset($params['total']) ? (int)$params['total'] : null,
-            minCount:        isset($params['min'])   ? (int)$params['min']   : null,
-            maxCount:        isset($params['max'])   ? (int)$params['max']   : null,
-            page:            isset($params['page'])  ? (int)$params['page']  : null,
+            year: isset($params['year'])  ? (int)$params['year']  : null,
+            minYear: isset($params['from'])  ? (int)$params['from']  : null,
+            maxYear: isset($params['to'])    ? (int)$params['to']    : null,
+            count: isset($params['total']) ? (int)$params['total'] : null,
+            minCount: isset($params['min'])   ? (int)$params['min']   : null,
+            maxCount: isset($params['max'])   ? (int)$params['max']   : null,
+            page: isset($params['page'])  ? (int)$params['page']  : null,
         );
     }
 

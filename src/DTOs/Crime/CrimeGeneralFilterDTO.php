@@ -2,14 +2,22 @@
 
 namespace App\DTOs\Crime;
 
-class CrimeGeneralFilterDTO
+use App\DTOs\BaseFilterDTO;
+
+class CrimeGeneralFilterDTO extends BaseFilterDTO
 {
     public function __construct(
-        public readonly ?int $year    = null,
-        public readonly ?int $minYear = null,
-        public readonly ?int $maxYear = null,
-        public readonly ?int $page    = null,
+        private readonly ?int $year    = null,
+        private readonly ?int $minYear = null,
+        private readonly ?int $maxYear = null,
+        private readonly ?int $page    = null,
     ) {}
+
+    // getteri pentru campurile comune
+    public function getYear():      ?int { return $this->year; }
+    public function getMinYear():   ?int { return $this->minYear; }
+    public function getMaxYear():   ?int { return $this->maxYear; }
+    public function getPage():      ?int { return $this->page; }
 
     public static function fromRequest(array $params): self
     {

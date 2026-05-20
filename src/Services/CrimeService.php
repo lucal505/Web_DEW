@@ -20,15 +20,15 @@ class CrimeService extends BaseService
 
     public function getDemographics(CrimeDemographicFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filterDTO->toArray());
+        $this->validateBaseFilters($filterDTO);
 
-        if ($filterDTO->page !== null) {
-            $result = $this->repository->getDemographicsPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
+        if ($filterDTO->getPage() !== null) {
+            $result = $this->repository->getDemographicsPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $filterDTO->page,
+                    'page' => $filterDTO->getPage(),
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -41,15 +41,15 @@ class CrimeService extends BaseService
 
     public function getSentences(CrimeSentenceFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filterDTO->toArray());
+        $this->validateBaseFilters($filterDTO);
 
-        if ($filterDTO->page !== null) {
-            $result = $this->repository->getSentencesPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
+        if ($filterDTO->getPage() !== null) {
+            $result = $this->repository->getSentencesPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $filterDTO->page,
+                    'page' => $filterDTO->getPage(),
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -62,15 +62,15 @@ class CrimeService extends BaseService
 
     public function getArticles(CrimeArticleFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filterDTO->toArray());
+        $this->validateBaseFilters($filterDTO);
 
-        if ($filterDTO->page !== null) {
-            $result = $this->repository->getArticlesPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
+        if ($filterDTO->getPage() !== null) {
+            $result = $this->repository->getArticlesPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $filterDTO->page,
+                    'page' => $filterDTO->getPage(),
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -83,14 +83,13 @@ class CrimeService extends BaseService
 
     public function getGeneral(CrimeGeneralFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filterDTO->toArray());
-
-        if ($filterDTO->page !== null) {
-            $result = $this->repository->getGeneralPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
+        $this->validateBaseFilters($filterDTO);
+        if ($filterDTO->getPage() !== null) {
+            $result = $this->repository->getGeneralPaginated($filterDTO, static::PER_PAGE);
             return [
                 'data'       => $result['data'],
                 'pagination' => [
-                    'page'        => $filterDTO->page,
+                    'page'        => $filterDTO->getPage(),
                     'per_page'    => static::PER_PAGE,
                     'total'       => $result['total'],
                     'total_pages' => (int)ceil($result['total'] / static::PER_PAGE),
@@ -103,14 +102,14 @@ class CrimeService extends BaseService
 
     public function getGroups(CrimeGeneralFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filterDTO->toArray());
+        $this->validateBaseFilters($filterDTO);
 
-        if ($filterDTO->page !== null) {
-            $result = $this->repository->getGroupsPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
+        if ($filterDTO->getPage() !== null) {
+            $result = $this->repository->getGroupsPaginated($filterDTO, static::PER_PAGE);
             return [
                 'data'       => $result['data'],
                 'pagination' => [
-                    'page'        => $filterDTO->page,
+                    'page'        => $filterDTO->getPage(),
                     'per_page'    => static::PER_PAGE,
                     'total'       => $result['total'],
                     'total_pages' => (int)ceil($result['total'] / static::PER_PAGE),

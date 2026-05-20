@@ -37,7 +37,7 @@ class EmergencyRepository extends BaseRepository {
     public function getEmergenciesPaginated(EmergencyFilterDTO $filterDTO, int $perPage): array {
         [$sql, $params] = $this->buildEmergenciesQuery($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $filterDTO->page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         $rows = $this->fetchAll($sql, $params);
         return [
             'data'  => array_map(fn($row) => EmergencyDTO::fromArray($row), $rows),

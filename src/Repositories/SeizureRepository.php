@@ -47,7 +47,7 @@ class SeizureRepository extends BaseRepository
     {
         [$sql, $params] = $this->buildSeizuresQuery($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $filterDTO->page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->getPage(), $perPage);
         return [
             'data'  => array_map(fn($row) => SeizureDTO::fromArray($row), $this->fetchAll($sql, $params)),
             'total' => $total,

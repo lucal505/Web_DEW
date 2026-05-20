@@ -1,19 +1,21 @@
 <?php
 namespace App\DTOs\Emergency;
 
-class EmergencyFilterDTO
+use App\DTOs\BaseFilterDTO;
+
+class EmergencyFilterDTO extends BaseFilterDTO
 {
     public function __construct(
-        public readonly ?string $drugType = null,
-        public readonly ?string $category = null,
-        public readonly ?string $value    = null,
-        public readonly ?int    $year     = null,
-        public readonly ?int    $minYear  = null,
-        public readonly ?int    $maxYear  = null,
-        public readonly ?int    $count    = null,
-        public readonly ?int    $minCount = null,
-        public readonly ?int    $maxCount = null,
-        public readonly ?int    $page     = null,
+        private readonly ?string $drugType   = null,
+        private readonly ?string $category   = null,
+        private readonly ?string $value      = null,
+        private readonly ?int    $year       = null,
+        private readonly ?int    $minYear    = null,
+        private readonly ?int    $maxYear    = null,
+        private readonly ?int    $count      = null,
+        private readonly ?int    $minCount   = null,
+        private readonly ?int    $maxCount   = null,
+        private readonly ?int    $page       = null,
     ) {}
 
     // URL -> DTO (mascare nume parametri)

@@ -17,15 +17,15 @@ class SeizureService extends BaseService
 
     public function getSeizures(SeizureFilterDTO $filtersDTO): array
     {
-        $this->validateBaseFilters($filtersDTO->toArray());
+        $this->validateBaseFilters($filtersDTO);
 
-        if ($filtersDTO->page !== null) {
+        if ($filtersDTO->getPage() !== null) {
             $result = $this->repository->getSeizuresPaginated($filtersDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $filtersDTO->page,
+                    'page' => $filtersDTO->getPage(),
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\BaseFilterDTO;
 use InvalidArgumentException;
 
 abstract class BaseService
@@ -14,65 +15,55 @@ abstract class BaseService
         $this->minYear = $minYear;
     }
 
-    protected function isPaginated(array $filters): bool
-    {
-        return isset($filters['page']);
-    }
-
-    protected function getPage(array $filters): int
-    {
-        return (int)$filters['page'];
-    }
-
-    protected function validateBaseFilters(array $filters): void
+    protected function validateBaseFilters(BaseFilterDTO $filterDTO): void
     {
         $currentYear = (int)date('Y');
 
         // an exact
-        if (isset($filters['year'])) {
-            $year = (int)$filters['year'];
+        if (isset($filterDTO->getYear())) {
+            $year = $filterDTO->getYear();
             if ($year < $this->minYear || $year > $currentYear) {
                 throw new InvalidArgumentException("Year must be between {$this->minYear} and {$currentYear}.");
             }
         }
 
-        if (isset($filters['year']) && (isset($filters['min_year']) || isset($filters['max_year']))) {
+        if (isset($filterDTO->getYear()) && (isset($filterDTO->getMinYear()) || isset($filterDTO->getMaxYear()))) {
             throw new InvalidArgumentException("Use either 'year' or 'min_year'/'max_year', not both.");
         }
 
         // interval de ani
-        if (isset($filters['min_year'])) {
-            $minYear = (int)$filters['min_year'];
+        if (isset($filterDTO->getMinYear())) {
+            $minYear = $filterDTO->getMinYear();
             if ($minYear < $this->minYear || $minYear > $currentYear) {
                 throw new InvalidArgumentException("'min_year' must be between {$this->minYear} and {$currentYear}.");
             }
         }
 
-        if (isset($filters['max_year'])) {
-            $maxYear = (int)$filters['max_year'];
+        if (isset($filterDTO->getMaxYear())) {
+            $maxYear = $filterDTO->getMaxYear();
             if ($maxYear < $this->minYear || $maxYear > $currentYear) {
                 throw new InvalidArgumentException("'max_year' must be between {$this->minYear} and {$currentYear}.");
             }
         }
 
-        if (isset($filters['min_year']) && isset($filters['max_year'])) {
-            if ((int)$filters['min_year'] > (int)$filters['max_year']) {
+        if (isset($filterDTO->getMinYear()) && isset($filterDTO->getMaxYear())) {
+            if ($filterDTO->getMinYear() > $filterDTO->getMaxYear()) {
                 throw new InvalidArgumentException("'min_year' cannot be greater than max_year.");
             }
         }
 
-        if (isset($filters['count']) && (isset($filters['min_count']) || isset($filters['max_count']))) {
+        if (isset($filterDTO->getCount()) && (isset($filterDTO->getMinCount()) || isset($filterDTO->getMaxCount()))) {
             throw new InvalidArgumentException("Use either 'count' or 'min_count'/'max_count', not both.");
         }
 
         // interval count
-        if (isset($filters['min_count']) && isset($filters['max_count'])) {
-            if ((int)$filters['min_count'] > (int)$filters['max_count']) {
+        if (isset($filterDTO->getMinCount()) && isset($filterDTO->getMaxCount())) {
+            if ($filterDTO->getMinCount() > $filterDTO->getMaxCount()) {
                 throw new InvalidArgumentException("'min_count' cannot be greater than max_count.");
             }
         }
 
-        if (isset($filters['page']) && (int)$filters['page'] < 1) {
+        if (isset($filterDTO->getPage()) && $filterDTO->getPage() < 1) {
             throw new InvalidArgumentException("'page' must be a positive integer.");
         }
     }

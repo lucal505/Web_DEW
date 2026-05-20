@@ -17,15 +17,15 @@ class PreventionService extends BaseService
 
     public function getProjects(PreventionFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filterDTO->toArray());
+        $this->validateBaseFilters($filterDTO);
 
-        if ($filterDTO->page !== null) {
+        if ($filterDTO->getPage() !== null) {
             $result = $this->repository->getProjectsPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $filterDTO->page,
+                    'page' => $filterDTO->getPage(),
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -38,15 +38,15 @@ class PreventionService extends BaseService
 
     public function getCampaigns(PreventionFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filterDTO->toArray());
+        $this->validateBaseFilters($filterDTO);
 
-        if ($filterDTO->page !== null) {
+        if ($filterDTO->getPage() !== null) {
             $result = $this->repository->getCampaignsPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $filterDTO->page,
+                    'page' => $filterDTO->getPage(),
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -59,15 +59,15 @@ class PreventionService extends BaseService
 
     public function getActivities(PreventionFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filterDTO->toArray());
+        $this->validateBaseFilters($filterDTO);
 
-        if ($filterDTO->page !== null) {
+        if ($filterDTO->getPage() !== null) {
             $result = $this->repository->getActivitiesPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $filterDTO->page,
+                    'page' => $filterDTO->getPage(),
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
