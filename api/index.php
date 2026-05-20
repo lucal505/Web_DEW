@@ -60,42 +60,52 @@ $pdo = Database::getInstance();
 if ($route === 'filters' && $method === 'GET') {
 
     switch ($table) {
-        case 'crimes_demographic':
+        case 'demographics':
             $controller = new CrimeController(new CrimeService(new CrimeRepository($pdo)));
             $controller->getDemographics();
             break;
 
-        case 'crimes_sentence':
+        case 'sentences':
             $controller = new CrimeController(new CrimeService(new CrimeRepository($pdo)));
             $controller->getSentences();
             break;
 
-        case 'crimes_article':
+        case 'articles':
             $controller = new CrimeController(new CrimeService(new CrimeRepository($pdo)));
             $controller->getArticles();
             break;
 
-        case 'prevention_activities':
+        case 'general':
+            $controller = new CrimeController(new CrimeService(new CrimeRepository($pdo)));
+            $controller->getGeneral();
+            break;
+
+        case 'groups':
+            $controller = new CrimeController(new CrimeService(new CrimeRepository($pdo)));
+            $controller->getGroups();
+            break;
+
+        case 'activities':
             $controller = new PreventionController(new PreventionService(new PreventionRepository($pdo)));
             $controller->getActivities();
             break;
 
-        case 'prevention_campaigns':
+        case 'campaigns':
             $controller = new PreventionController(new PreventionService(new PreventionRepository($pdo)));
             $controller->getCampaigns();
             break;
 
-        case 'prevention_projects':
+        case 'projects':
             $controller = new PreventionController(new PreventionService(new PreventionRepository($pdo)));
             $controller->getProjects();
             break;
 
-        case 'medical_emergencies':
+        case 'emergencies':
             $controller = new EmergencyController(new EmergencyService(new EmergencyRepository($pdo)));
             $controller->getEmergencies();
             break;
 
-        case 'drug_seizures':
+        case 'seizures':
             $controller = new SeizureController(new SeizureService(new SeizureRepository($pdo)));
             $controller->getSeizures();
             break;
@@ -111,37 +121,42 @@ if ($route === 'filters' && $method === 'GET') {
 
 if ($route === 'export' && $method === 'GET') {
     $format = $_GET['format'] ?? 'csv';
-    $filters = array_filter($_GET, fn($value, $key) => $value !== '' && $key !== 'route' && $key !== 'table' && $key !== 'format', ARRAY_FILTER_USE_BOTH);
 
     $exportController = new ExportController($pdo);
-    $exportController->handleExport($table, $filters, $format);
+    $exportController->handleExport($table, $_GET, $format);
     exit;
 }
 
 if ($route === 'options' && $method === 'GET') {
     switch ($table) {
-        case 'crimes_demographic':
+        case 'demographics':
             (new CrimeController(new CrimeService(new CrimeRepository($pdo))))->getDemographicOptions();
             break;
-        case 'crimes_sentence':
+        case 'sentences':
             (new CrimeController(new CrimeService(new CrimeRepository($pdo))))->getSentenceOptions();
             break;
-        case 'crimes_article':
+        case 'articles':
             (new CrimeController(new CrimeService(new CrimeRepository($pdo))))->getArticleOptions();
             break;
-        case 'prevention_activities':
+        case 'general':
+            (new CrimeController(new CrimeService(new CrimeRepository($pdo))))->getGeneralOptions();
+            break;
+        case 'groups':
+            (new CrimeController(new CrimeService(new CrimeRepository($pdo))))->getGroupOptions();
+            break;
+        case 'activities':
             (new PreventionController(new PreventionService(new PreventionRepository($pdo))))->getActivityOptions();
             break;
-        case 'prevention_campaigns':
+        case 'campaigns':
             (new PreventionController(new PreventionService(new PreventionRepository($pdo))))->getCampaignOptions();
             break;
-        case 'prevention_projects':
+        case 'projects':
             (new PreventionController(new PreventionService(new PreventionRepository($pdo))))->getProjectOptions();
             break;
-        case 'medical_emergencies':
+        case 'emergencies':
             (new EmergencyController(new EmergencyService(new EmergencyRepository($pdo))))->getOptions();
             break;
-        case 'drug_seizures':
+        case 'seizures':
             (new SeizureController(new SeizureService(new SeizureRepository($pdo))))->getOptions();
             break;
         default:
