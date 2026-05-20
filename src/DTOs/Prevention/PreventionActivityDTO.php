@@ -8,7 +8,7 @@ class PreventionActivityDTO implements \JsonSerializable
         public readonly int     $id,
         public readonly int     $year,
         public readonly string  $setting,
-        public readonly int     $activitiesCount,
+        public readonly ?int    $activitiesCount,
         public readonly ?int    $beneficiariesCount,
         public readonly ?string $beneficiaryType,
     ) {}
@@ -19,7 +19,7 @@ class PreventionActivityDTO implements \JsonSerializable
             id:                 (int)$row['id'],
             year:               (int)$row['year'],
             setting:            $row['setting'],
-            activitiesCount:    (int)$row['activities_count'],
+            activitiesCount:    isset($row['activities_count']) ? (int)$row['activities_count'] : null,
             beneficiariesCount: isset($row['beneficiaries_count']) ? (int)$row['beneficiaries_count'] : null,
             beneficiaryType:    isset($row['beneficiary_type']) ? $row['beneficiary_type'] : null,
         );
