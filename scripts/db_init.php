@@ -130,7 +130,7 @@ try {
             activities_count INTEGER,
             beneficiaries_count INTEGER,
             beneficiary_type TEXT, -- 'students', 'parents' etc.
-            UNIQUE (year, setting)
+            UNIQUE (year, setting, beneficiary_type)
         )",
 
         // (urgente medicale)
@@ -154,7 +154,7 @@ try {
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_seizures_year ON drug_seizures(year)");
     $pdo->exec("CREATE INDEX IF NOT EXISTS idx_emergencies_year ON medical_emergencies(year)");
 
-    echo "[INFO]: Migration completed successfully.<br> ";
+    echo "[INFO]: Migration completed successfully.\n";
 } catch (PDOException $e) {
     http_response_code(500);
     echo "[ERROR]: Migration failed -> " . $e->getMessage();
