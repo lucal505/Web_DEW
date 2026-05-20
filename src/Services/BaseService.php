@@ -20,50 +20,50 @@ abstract class BaseService
         $currentYear = (int)date('Y');
 
         // an exact
-        if (isset($filterDTO->getYear())) {
+        if ($filterDTO->getYear() !== null) {
             $year = $filterDTO->getYear();
             if ($year < $this->minYear || $year > $currentYear) {
                 throw new InvalidArgumentException("Year must be between {$this->minYear} and {$currentYear}.");
             }
         }
 
-        if (isset($filterDTO->getYear()) && (isset($filterDTO->getMinYear()) || isset($filterDTO->getMaxYear()))) {
+        if ($filterDTO->getYear() !== null && ($filterDTO->getMinYear() !== null || $filterDTO->getMaxYear() !== null)) {
             throw new InvalidArgumentException("Use either 'year' or 'min_year'/'max_year', not both.");
         }
 
         // interval de ani
-        if (isset($filterDTO->getMinYear())) {
+        if ($filterDTO->getMinYear() !== null) {
             $minYear = $filterDTO->getMinYear();
             if ($minYear < $this->minYear || $minYear > $currentYear) {
                 throw new InvalidArgumentException("'min_year' must be between {$this->minYear} and {$currentYear}.");
             }
         }
 
-        if (isset($filterDTO->getMaxYear())) {
+        if ($filterDTO->getMaxYear() !== null) {
             $maxYear = $filterDTO->getMaxYear();
             if ($maxYear < $this->minYear || $maxYear > $currentYear) {
                 throw new InvalidArgumentException("'max_year' must be between {$this->minYear} and {$currentYear}.");
             }
         }
 
-        if (isset($filterDTO->getMinYear()) && isset($filterDTO->getMaxYear())) {
+        if ($filterDTO->getMinYear() !== null && $filterDTO->getMaxYear() !== null) {
             if ($filterDTO->getMinYear() > $filterDTO->getMaxYear()) {
                 throw new InvalidArgumentException("'min_year' cannot be greater than max_year.");
             }
         }
 
-        if (isset($filterDTO->getCount()) && (isset($filterDTO->getMinCount()) || isset($filterDTO->getMaxCount()))) {
+        if ($filterDTO->getCount() !== null && ($filterDTO->getMinCount() !== null || $filterDTO->getMaxCount() !== null)) {
             throw new InvalidArgumentException("Use either 'count' or 'min_count'/'max_count', not both.");
         }
 
         // interval count
-        if (isset($filterDTO->getMinCount()) && isset($filterDTO->getMaxCount())) {
+        if ($filterDTO->getMinCount() !== null && $filterDTO->getMaxCount() !== null) {
             if ($filterDTO->getMinCount() > $filterDTO->getMaxCount()) {
                 throw new InvalidArgumentException("'min_count' cannot be greater than max_count.");
             }
         }
 
-        if (isset($filterDTO->getPage()) && $filterDTO->getPage() < 1) {
+        if ($filterDTO->getPage() !== null && $filterDTO->getPage() < 1) {
             throw new InvalidArgumentException("'page' must be a positive integer.");
         }
     }
