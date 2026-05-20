@@ -1,6 +1,9 @@
 <?php
-session_start();
 header('Content-Type: application/json');
+
+// incarc autoloaderul composer pentru JWT
+require_once __DIR__ . '/../vendor/autoload.php';
+
 
 // autoload for classes in src/
 spl_autoload_register(function ($class) {
@@ -32,6 +35,12 @@ $adminRepo      = new AdminRepository($pdo);
 $authService    = new AuthService($adminRepo);
 $authController = new AuthController($authService);
 
+// load .env secrets
+$env = parse_ini_file(__DIR__ . '/../.env');
+foreach ($env as $key => $value) {
+    $_ENV[$key] = $value;
+}
+
 $upload_dir = __DIR__ . '/../uploads/';
 if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0755, true);
@@ -49,11 +58,8 @@ switch ($action) {
         break;
 
     case 'logout':
-        $authController->logout();
-        break;
-
-    case 'check_session':
-        $authController->checkSession();
+        // cu jwt nu avem nevoie de logout pe server
+        echo json_encode(['success' => true]);
         break;
 
     case 'upload':

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controllers;
 
 use App\Services\AuthService;
@@ -19,35 +18,33 @@ class AuthController
             return;
         }
 
-        if ($this->authService->login($username, $password)) {
-            echo json_encode(['success' => true]);
+        $token = $this->authService->login($username, $password);
+
+        if ($token) {
+            echo json_encode(['success' => true, 'token' => $token]);
         } else {
             http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Invalid username or password.']);
+            echo json_encode(['success' => false, 'message' => 'Invalid credentials.']);
         }
-    }
-
-    public function logout(): void
-    {
-        $this->authService->logout();
-        echo json_encode(['success' => true]);
-    }
-
-    public function checkSession(): void
-    {
-        echo json_encode([
-            'logged_in' => $this->authService->isLoggedIn(),
-            'username'  => $_SESSION['username'] ?? null,
-        ]);
     }
 
     public function requireAuth(): bool
     {
-        if (!$this->authService->isLoggedIn()) {
-            http_response_code(403);
-            echo json_encode(['success' => false, 'message' => 'You must be logged in.']);
+        $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        $token  = str_replace('Bearer ', '', $header);
+
+        if (!$token) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Missing token.']);
             return false;
         }
+
+        if (!$this->authService->validateToken($token)) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Invalid or expired token.']);
+            return false;
+        }
+
         return true;
     }
 }
