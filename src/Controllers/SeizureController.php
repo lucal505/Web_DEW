@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Services\SeizureService;
+use App\DTOs\Seizures\SeizureFilterDTO;
 
 class SeizureController extends BaseController {
     private SeizureService $service;
@@ -11,8 +12,8 @@ class SeizureController extends BaseController {
     }
 
     public function getSeizures(): void{
-        $filters = array_filter($_GET, fn($value) => $value !== '');
-        $this->execute(fn() => $this->service->getSeizures($filters));
+        $filterDTO = SeizureFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getSeizures($filterDTO));
     }
 
     public function getOptions(): void {

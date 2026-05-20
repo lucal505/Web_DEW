@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Repositories\EmergencyRepository;
+use App\DTOs\Emergency\EmergencyFilterDTO;
+
 
 class EmergencyService extends BaseService
 {
@@ -14,18 +16,17 @@ class EmergencyService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getEmergencies(array $filters): array
+    public function getEmergencies(EmergencyFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filters);
+        $this->validateBaseFilters($filterDTO->toArray());
 
-        if ($this->isPaginated($filters)) {
-            $page = $this->getPage($filters);
-            $result = $this->repository->getEmergenciesPaginated($filters, $page, static::PER_PAGE);
+        if ($filterDTO->page !== null) {
+            $result = $this->repository->getEmergenciesPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data'       => $result['data'],
                 'pagination' => [
-                    'page'     => $page,
+                    'page'     => $filterDTO->page,
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -33,7 +34,7 @@ class EmergencyService extends BaseService
             ];
         }
 
-        return $this->repository->getEmergencies($filters);
+        return $this->repository->getEmergencies($filterDTO);
     }
 
     public function getOptions(): array

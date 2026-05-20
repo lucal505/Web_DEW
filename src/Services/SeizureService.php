@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\SeizureRepository;
+use App\DTOs\Seizures\SeizureFilterDTO;
 
 class SeizureService extends BaseService
 {
@@ -14,18 +15,17 @@ class SeizureService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getSeizures(array $filters): array
+    public function getSeizures(SeizureFilterDTO $filtersDTO): array
     {
-        $this->validateBaseFilters($filters);
+        $this->validateBaseFilters($filtersDTO->toArray());
 
-        if ($this->isPaginated($filters)) {
-            $page = $this->getPage($filters);
-            $result = $this->repository->getSeizuresPaginated($filters, $page, static::PER_PAGE);
+        if ($filtersDTO->page !== null) {
+            $result = $this->repository->getSeizuresPaginated($filtersDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $page,
+                    'page' => $filtersDTO->page,
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -33,7 +33,7 @@ class SeizureService extends BaseService
             ];
         }
 
-        return $this->repository->getSeizures($filters);
+        return $this->repository->getSeizures($filtersDTO);
     }
 
     public function getOptions(): array

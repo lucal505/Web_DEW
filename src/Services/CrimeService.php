@@ -3,6 +3,10 @@
 namespace App\Services;
 
 use App\Repositories\CrimeRepository;
+use App\DTOs\Crime\CrimeArticleFilterDTO;
+use App\DTOs\Crime\CrimeGeneralFilterDTO;
+use App\DTOs\Crime\CrimeDemographicFilterDTO;
+use App\DTOs\Crime\CrimeSentenceFilterDTO;
 
 class CrimeService extends BaseService
 {
@@ -14,18 +18,17 @@ class CrimeService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getDemographics(array $filters): array
+    public function getDemographics(CrimeDemographicFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filters);
+        $this->validateBaseFilters($filterDTO->toArray());
 
-        if ($this->isPaginated($filters)) {
-            $page = $this->getPage($filters);
-            $result = $this->repository->getDemographicsPaginated($filters, $page, static::PER_PAGE);
+        if ($filterDTO->page !== null) {
+            $result = $this->repository->getDemographicsPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $page,
+                    'page' => $filterDTO->page,
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -33,21 +36,20 @@ class CrimeService extends BaseService
             ];
         }
 
-        return $this->repository->getDemographics($filters);
+        return $this->repository->getDemographics($filterDTO);
     }
 
-    public function getSentences(array $filters): array
+    public function getSentences(CrimeSentenceFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filters);
+        $this->validateBaseFilters($filterDTO->toArray());
 
-        if ($this->isPaginated($filters)) {
-            $page = $this->getPage($filters);
-            $result = $this->repository->getSentencesPaginated($filters, $page, static::PER_PAGE);
+        if ($filterDTO->page !== null) {
+            $result = $this->repository->getSentencesPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $page,
+                    'page' => $filterDTO->page,
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -55,21 +57,20 @@ class CrimeService extends BaseService
             ];
         }
 
-        return $this->repository->getSentences($filters);
+        return $this->repository->getSentences($filterDTO);
     }
 
-    public function getArticles(array $filters): array
+    public function getArticles(CrimeArticleFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filters);
+        $this->validateBaseFilters($filterDTO->toArray());
 
-        if ($this->isPaginated($filters)) {
-            $page = $this->getPage($filters);
-            $result = $this->repository->getArticlesPaginated($filters, $page, static::PER_PAGE);
+        if ($filterDTO->page !== null) {
+            $result = $this->repository->getArticlesPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $page,
+                    'page' => $filterDTO->page,
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -77,7 +78,57 @@ class CrimeService extends BaseService
             ];
         }
 
-        return $this->repository->getArticles($filters);
+        return $this->repository->getArticles($filterDTO);
+    }
+
+    public function getGeneral(CrimeGeneralFilterDTO $filterDTO): array
+    {
+        $this->validateBaseFilters($filterDTO->toArray());
+
+        if ($filterDTO->page !== null) {
+            $result = $this->repository->getGeneralPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
+            return [
+                'data'       => $result['data'],
+                'pagination' => [
+                    'page'        => $filterDTO->page,
+                    'per_page'    => static::PER_PAGE,
+                    'total'       => $result['total'],
+                    'total_pages' => (int)ceil($result['total'] / static::PER_PAGE),
+                ]
+            ];
+        }
+
+        return $this->repository->getGeneral($filterDTO);
+    }
+
+    public function getGroups(CrimeGeneralFilterDTO $filterDTO): array
+    {
+        $this->validateBaseFilters($filterDTO->toArray());
+
+        if ($filterDTO->page !== null) {
+            $result = $this->repository->getGroupsPaginated($filterDTO, $filterDTO->page, static::PER_PAGE);
+            return [
+                'data'       => $result['data'],
+                'pagination' => [
+                    'page'        => $filterDTO->page,
+                    'per_page'    => static::PER_PAGE,
+                    'total'       => $result['total'],
+                    'total_pages' => (int)ceil($result['total'] / static::PER_PAGE),
+                ]
+            ];
+        }
+
+        return $this->repository->getGroups($filterDTO);
+    }
+
+    public function getGeneralOptions(): array
+    {
+        return $this->repository->getGeneralOptions();
+    }
+
+    public function getGroupOptions(): array
+    {
+        return $this->repository->getGroupOptions();
     }
 
     // optiunile pentru filtrare

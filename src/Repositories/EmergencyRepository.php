@@ -1,40 +1,46 @@
 <?php
 namespace App\Repositories;
 
+use App\DTOs\Emergency\EmergencyDTO;
+use App\DTOs\Emergency\EmergencyFilterDTO;
+
 class EmergencyRepository extends BaseRepository {
     
-    private function buildEmergenciesQuerry(array $filters): array {
+    private function buildEmergenciesQuery(EmergencyFilterDTO $filters): array {
+        $data = $filters->toArray(); 
         $sql = "SELECT * FROM medical_emergencies WHERE 1=1";
         $params = [];
 
-        if (!empty($filters['drug'])) {
-            $sql .= " AND drug_type LIKE :drug";
-            $params['drug'] = "%" . $filters['drug'] . "%";
+        if (!empty($data['drug_type'])) {
+            $sql .= " AND drug_type LIKE :drug_type";
+            $params['drug_type'] = "%" . $data['drug_type'] . "%";
         }
-        if (!empty($filters['category'])) {
+        if (!empty($data['category'])) {
             $sql .= " AND category = :cat";
-            $params['cat'] = $filters['category'];
+            $params['cat'] = $data['category'];
         }
-        if (!empty($filters['value'])) {
+        if (!empty($data['value'])) {
             $sql .= " AND value = :val";
-            $params['val'] = $filters['value'];
+            $params['val'] = $data['value'];
         }
 
-        $this->applyCommonFilters($sql, $params, $filters);
+        $this->applyCommonFilters($sql, $params, $data);
         return [$sql, $params];
     }
 
-    public function getEmergencies(array $filters): array {
-        [$sql, $params] = $this->buildEmergenciesQuerry($filters);
-        return $this->fetchAll($sql, $params);
+    public function getEmergencies(EmergencyFilterDTO $filterDTO): array {
+        [$sql, $params] = $this->buildEmergenciesQuery($filterDTO);
+        $rows = $this->fetchAll($sql, $params);
+        return array_map(fn($row) => EmergencyDTO::fromArray($row), $rows);
     }
 
-    public function getEmergenciesPaginated(array $filters, int $page, int $perPage): array {
-        [$sql, $params] = $this->buildEmergenciesQuerry($filters);
+    public function getEmergenciesPaginated(EmergencyFilterDTO $filterDTO, int $perPage): array {
+        [$sql, $params] = $this->buildEmergenciesQuery($filterDTO);
         $total = $this->fetchCount($sql, $params);
-        $this->applyPagination($sql, $params, $page, $perPage);
+        $this->applyPagination($sql, $params, $filterDTO->page, $perPage);
+        $rows = $this->fetchAll($sql, $params);
         return [
-            'data'  => $this->fetchAll($sql, $params),
+            'data'  => array_map(fn($row) => EmergencyDTO::fromArray($row), $rows),
             'total' => $total,
         ];
     }
@@ -43,7 +49,7 @@ class EmergencyRepository extends BaseRepository {
     public function getOptions(): array {
         return [
             'years' => $this->getDistinct('medical_emergencies', 'year', 'DESC'),
-            'categories' => $this->getDistinct('medical_emergencies', 'category'),
+            'types' => $this->getDistinct('medical_emergencies', 'category'),
             'drugs' => $this->getDistinct('medical_emergencies', 'drug_type')
         ];
     }

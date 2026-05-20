@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Services\EmergencyService;
+use App\DTOs\EmergencyFilterDTO;
 
 class EmergencyController extends BaseController {
     private EmergencyService $service;
@@ -11,8 +12,8 @@ class EmergencyController extends BaseController {
     }
 
     public function getEmergencies(): void{
-        $filters = array_filter($_GET, fn($value) => $value !== '');
-        $this->execute(fn() => $this->service->getEmergencies($filters));
+        $filterDTO = EmergencyFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getEmergencies($filterDTO));
     }
 
     public function getOptions(): void {

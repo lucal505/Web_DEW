@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\Prevention\PreventionFilterDTO;
 use App\Repositories\PreventionRepository;
 
 class PreventionService extends BaseService
@@ -14,18 +15,17 @@ class PreventionService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getProjects(array $filters): array
+    public function getProjects(PreventionFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filters);
+        $this->validateBaseFilters($filterDTO->toArray());
 
-        if ($this->isPaginated($filters)) {
-            $page = $this->getPage($filters);
-            $result = $this->repository->getProjectsPaginated($filters, $page, static::PER_PAGE);
+        if ($filterDTO->page !== null) {
+            $result = $this->repository->getProjectsPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $page,
+                    'page' => $filterDTO->page,
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -33,21 +33,20 @@ class PreventionService extends BaseService
             ];
         }
 
-        return $this->repository->getProjects($filters);
+        return $this->repository->getProjects($filterDTO);
     }
 
-    public function getCampaigns(array $filters): array
+    public function getCampaigns(PreventionFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filters);
+        $this->validateBaseFilters($filterDTO->toArray());
 
-        if ($this->isPaginated($filters)) {
-            $page = $this->getPage($filters);
-            $result = $this->repository->getCampaignsPaginated($filters, $page, static::PER_PAGE);
+        if ($filterDTO->page !== null) {
+            $result = $this->repository->getCampaignsPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $page,
+                    'page' => $filterDTO->page,
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
@@ -55,28 +54,27 @@ class PreventionService extends BaseService
             ];
         }
 
-        return $this->repository->getCampaigns($filters);
+        return $this->repository->getCampaigns($filterDTO);
     }
 
-    public function getActivities(array $filters): array
+    public function getActivities(PreventionFilterDTO $filterDTO): array
     {
-        $this->validateBaseFilters($filters);
+        $this->validateBaseFilters($filterDTO->toArray());
 
-        if ($this->isPaginated($filters)) {
-            $page = $this->getPage($filters);
-            $result = $this->repository->getActivitiesPaginated($filters, $page, static::PER_PAGE);
+        if ($filterDTO->page !== null) {
+            $result = $this->repository->getActivitiesPaginated($filterDTO, static::PER_PAGE);
 
             return [
                 'data' => $result['data'],
                 'pagination' => [
-                    'page' => $page,
+                    'page' => $filterDTO->page,
                     'per_page' => static::PER_PAGE,
                     'total' => $result['total'],
                     'total_pages' => ceil($result['total'] / static::PER_PAGE),
                 ]
             ];
         }
-        return $this->repository->getActivities($filters);
+        return $this->repository->getActivities($filterDTO);
     }
 
     public function getProjectOptions(): array

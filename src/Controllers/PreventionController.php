@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Services\PreventionService;
+use App\DTOs\Prevention\PreventionFilterDTO;
 
 
 class PreventionController extends BaseController
@@ -16,20 +17,20 @@ class PreventionController extends BaseController
 
     public function getProjects(): void
     {
-        $filters = array_filter($_GET, fn($value) => $value !== '');
-        $this->execute(fn() => $this->service->getProjects($filters));
+        $filterDTO = PreventionFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getProjects($filterDTO));
     }
 
     public function getCampaigns(): void
     {
-        $filters = array_filter($_GET, fn($value) => $value !== '');
-        $this->execute(fn() => $this->service->getCampaigns($filters));
+        $filterDTO = PreventionFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getCampaigns($filterDTO));
     }
 
     public function getActivities(): void
     {
-        $filters = array_filter($_GET, fn($value) => $value !== '');
-        $this->execute(fn() => $this->service->getActivities($filters));
+        $filterDTO = PreventionFilterDTO::fromRequest($_GET);
+        $this->execute(fn() => $this->service->getActivities($filterDTO));
     }
 
     public function getProjectOptions(): void

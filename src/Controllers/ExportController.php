@@ -10,6 +10,13 @@ use App\Services\EmergencyService;
 use App\Repositories\EmergencyRepository;
 use App\Services\SeizureService;
 use App\Repositories\SeizureRepository;
+use App\DTOs\Emergency\EmergencyFilterDTO;
+use App\DTOs\Seizures\SeizureFilterDTO;
+use App\DTOs\Prevention\PreventionFilterDTO;
+use App\DTOs\Crime\CrimeDemographicFilterDTO;
+use App\DTOs\Crime\CrimeSentenceFilterDTO;
+use App\DTOs\Crime\CrimeGeneralFilterDTO;
+use App\DTOs\Crime\CrimeArticleFilterDTO;
 use PDO;
 use InvalidArgumentException;
 use Exception;
@@ -38,22 +45,36 @@ class ExportController {
 
     private function getDataForTable(string $table, array $filters): array {
         switch ($table) {
-            case 'crimes_demographic':
-                return (new CrimeService(new CrimeRepository($this->pdo)))->getDemographics($filters);
-            case 'crimes_sentence':
-                return (new CrimeService(new CrimeRepository($this->pdo)))->getSentences($filters);
-            case 'crimes_article':
-                return (new CrimeService(new CrimeRepository($this->pdo)))->getArticles($filters);
-            case 'prevention_activities':
-                return (new PreventionService(new PreventionRepository($this->pdo)))->getActivities($filters);
-            case 'prevention_campaigns':
-                return (new PreventionService(new PreventionRepository($this->pdo)))->getCampaigns($filters);
-            case 'prevention_projects':
-                return (new PreventionService(new PreventionRepository($this->pdo)))->getProjects($filters);
-            case 'medical_emergencies':
-                return (new EmergencyService(new EmergencyRepository($this->pdo)))->getEmergencies($filters);
-            case 'drug_seizures':
-                return (new SeizureService(new SeizureRepository($this->pdo)))->getSeizures($filters);
+            case 'demographics':
+                $filterDTO = CrimeDemographicFilterDTO::fromRequest($filters);
+                return (new CrimeService(new CrimeRepository($this->pdo)))->getDemographics($filterDTO);
+            case 'sentences':
+                $filterDTO = CrimeSentenceFilterDTO::fromRequest($filters);
+                return (new CrimeService(new CrimeRepository($this->pdo)))->getSentences($filterDTO);
+            case 'articles':
+                $filterDTO = CrimeArticleFilterDTO::fromRequest($filters);
+                return (new CrimeService(new CrimeRepository($this->pdo)))->getArticles($filterDTO);
+            case 'general':
+                $filterDTO = CrimeGeneralFilterDTO::fromRequest($filters);
+                return (new CrimeService(new CrimeRepository($this->pdo)))->getGeneral($filterDTO);
+            case 'groups':
+                $filterDTO = CrimeGeneralFilterDTO::fromRequest($filters);
+                return (new CrimeService(new CrimeRepository($this->pdo)))->getGroups($filterDTO);
+            case 'activities':
+                $filterDTO = PreventionFilterDTO::fromRequest($filters);
+                return (new PreventionService(new PreventionRepository($this->pdo)))->getActivities($filterDTO);
+            case 'campaigns':
+                $filterDTO = PreventionFilterDTO::fromRequest($filters);
+                return (new PreventionService(new PreventionRepository($this->pdo)))->getCampaigns($filterDTO);
+            case 'projects':
+                $filterDTO = PreventionFilterDTO::fromRequest($filters);
+                return (new PreventionService(new PreventionRepository($this->pdo)))->getProjects($filterDTO);
+            case 'emergencies':
+                $filterDTO = EmergencyFilterDTO::fromRequest($filters);
+                return (new EmergencyService(new EmergencyRepository($this->pdo)))->getEmergencies($filterDTO);
+            case 'seizures':
+                $filterDTO = SeizureFilterDTO::fromRequest($filters);
+                return (new SeizureService(new SeizureRepository($this->pdo)))->getSeizures($filterDTO);
             default:
                 throw new InvalidArgumentException("Table not found.");
         }
