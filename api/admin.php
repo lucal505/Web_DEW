@@ -4,6 +4,11 @@ header('Content-Type: application/json');
 // incarc autoloaderul composer pentru JWT
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// load .env secrets
+$env = parse_ini_file(__DIR__ . '/../.env');
+foreach ($env as $key => $value) {
+    $_ENV[$key] = $value;
+}
 
 // autoload for classes in src/
 spl_autoload_register(function ($class) {
@@ -34,12 +39,6 @@ $pdo            = Database::getInstance();
 $adminRepo      = new AdminRepository($pdo);
 $authService    = new AuthService($adminRepo);
 $authController = new AuthController($authService);
-
-// load .env secrets
-$env = parse_ini_file(__DIR__ . '/../.env');
-foreach ($env as $key => $value) {
-    $_ENV[$key] = $value;
-}
 
 $upload_dir = __DIR__ . '/../uploads/';
 if (!is_dir($upload_dir)) {
