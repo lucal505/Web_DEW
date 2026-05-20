@@ -7,6 +7,7 @@ class ExportService {
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $fileName . '"');
         
+        $data = array_map(fn($row) => $row->jsonSerialize(), $data);
         $output = fopen('php://output', 'w');
         if (!empty($data)) {
             fputcsv($output, array_keys($data[0])); // headers
