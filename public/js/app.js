@@ -1,5 +1,18 @@
 const API_BASE_URL = '../api/index.php';
 
+const TABLE_MAP = {
+    'drug_seizures': 'seizures',
+    'medical_emergencies': 'emergencies',
+    'crimes_demographic': 'demographics',
+    'crimes_sentence': 'sentences',
+    'crimes_article': 'articles',
+    'prevention_projects': 'projects',
+    'prevention_campaigns': 'campaigns',
+    'prevention_activities': 'activities',
+    'general': 'general',
+    'groups': 'groups'
+};
+
 const CHART_COLORS = {
     bar: '#ff8da1',
     line: '#db7093',
@@ -47,14 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
             step: 1,
             range: { 'min': 2020, 'max': 2026 },
             format: {
-                to: value => Math.round(value),
-                from: value => Math.round(value)
+                to: sliderValue => Math.round(sliderValue),
+                from: sliderValue => Math.round(sliderValue)
             }
         });
 
-        yearSlider.noUiSlider.on('update', function (values) {
-            startYear = parseInt(values[0]);
-            endYear = parseInt(values[1]);
+        yearSlider.noUiSlider.on('update', function (sliderValues) {
+            startYear = parseInt(sliderValues[0]);
+            endYear = parseInt(sliderValues[1]);
             
             if (startYear === endYear) {
                 yearDisplay.innerText = startYear;
@@ -66,43 +79,64 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadDynamicOptions(table, elementId, defaultValue = "Toate") {
-    const select = document.getElementById(elementId);
-    if (!select) return;
+    const selectElement = document.getElementById(elementId);
+    if (!selectElement) return;
 
-    select.innerHTML = `<option value="">${defaultValue}</option>`;
+    selectElement.innerHTML = `<option value="">${defaultValue}</option>`;
+    
+    const mappedTableName = TABLE_MAP[table] || table;
 
     try {
-        const response = await fetch(`${API_BASE_URL}?route=options&table=${table}`);
-        const data = await response.json();
+        const response = await fetch(`${API_BASE_URL}?route=options&table=${mappedTableName}`);
+        const rawApiResponse = await response.json();
+        
+        // Extragem datele în caz că vin învelite într-un sub-obiect "data"
+        const parsedData = rawApiResponse.data ? rawApiResponse.data : rawApiResponse;
 
-        let optionsArray = [];
+        let dynamicOptionsArray = [];
 
-        if (data && typeof data === 'object' && !Array.isArray(data)) {
-            const correctKey = Object.keys(data).find(key => key !== 'years' && key !== 'categories');
-            
-            if (correctKey && Array.isArray(data[correctKey])) {
-                optionsArray = data[correctKey];
+        if (parsedData && typeof parsedData === 'object') {
+            if (elementId === 'filter-drug' && parsedData.drugs) {
+                dynamicOptionsArray = parsedData.drugs;
+            } else if (elementId === 'filter-text-beneficiary' && parsedData.ben_types) {
+                dynamicOptionsArray = parsedData.ben_types;
+            } else if (elementId === 'filter-sentence' && parsedData.sentences) {
+                dynamicOptionsArray = parsedData.sentences;
+            } else {
+                const targetKey = Object.keys(parsedData).find(keyName => keyName !== 'years' && keyName !== 'categories' && keyName !== 'id');
+                if (targetKey && parsedData[targetKey]) {
+                    dynamicOptionsArray = parsedData[targetKey];
+                }
             }
-        } else if (Array.isArray(data)) {
-            optionsArray = data;
+        } else if (Array.isArray(parsedData)) {
+            dynamicOptionsArray = parsedData;
         }
 
-        if (optionsArray.length > 0) {
-            optionsArray.forEach(opt => {
-                let value = typeof opt === 'object' && opt !== null 
-                    ? (opt.name || opt.drug_name || opt.drug_type || opt.sentence_type || Object.values(opt)[0]) 
-                    : opt;
+        // Conversie de siguranță în caz că primim un JSON Object în loc de Array
+        if (typeof dynamicOptionsArray === 'object' && !Array.isArray(dynamicOptionsArray)) {
+            dynamicOptionsArray = Object.values(dynamicOptionsArray);
+        }
 
-                if (value) {
-                    const option = document.createElement('option');
-                    option.value = value;
-                    option.textContent = value;
-                    select.appendChild(option);
+        if (Array.isArray(dynamicOptionsArray) && dynamicOptionsArray.length > 0) {
+            dynamicOptionsArray.forEach(optionItem => {
+                let extractedValue = "";
+                
+                if (typeof optionItem === 'object' && optionItem !== null) {
+                    extractedValue = optionItem.name || optionItem.drug_name || optionItem.drug_type || optionItem.sentence_type || Object.values(optionItem)[0];
+                } else {
+                    extractedValue = optionItem;
+                }
+
+                if (extractedValue) {
+                    const newOption = document.createElement('option');
+                    newOption.value = extractedValue;
+                    newOption.textContent = extractedValue;
+                    selectElement.appendChild(newOption);
                 }
             });
         }
     } catch (error) {
-        console.error(`Eroare la preluarea opțiunilor:`, error);
+        console.error(`Eroare la preluarea opțiunilor pentru ${elementId}:`, error);
     }
 }
 
@@ -120,10 +154,10 @@ function hideMessage() {
 }
 
 if (PAGE_ELEMENTS.chartSelector) {
-    PAGE_ELEMENTS.chartSelector.addEventListener('change', function(e) {
-        const selectedValue = e.target.value;
-        document.querySelectorAll('.view-section').forEach(section => {
-            section.style.display = (selectedValue === 'all' || section.id === selectedValue) ? 'block' : 'none';
+    PAGE_ELEMENTS.chartSelector.addEventListener('change', function(eventObject) {
+        const selectedValue = eventObject.target.value;
+        document.querySelectorAll('.view-section').forEach(sectionElement => {
+            sectionElement.style.display = (selectedValue === 'all' || sectionElement.id === selectedValue) ? 'block' : 'none';
         });
     });
 }
@@ -193,44 +227,49 @@ function updateSecondaryFilters() {
     } else if (table === 'prevention_activities') {
         PAGE_ELEMENTS.dynamicFilters.innerHTML = `
             <input type="text" id="filter-text-setting" class="elegant-input" placeholder="Mediu (ex: școală)" style="width: 150px;">
-            <input type="text" id="filter-text-beneficiary" class="elegant-input" placeholder="Beneficiari (ex: elevi)" style="width: 160px;">
+            <select id="filter-text-beneficiary" class="elegant-select" style="width: 160px;">
+                <option value="">Alege beneficiar...</option>
+            </select>
         `;
+        loadDynamicOptions(table, 'filter-text-beneficiary', 'Toți beneficiarii');
     }
 }
 
 window.updateTertiaryFilter = function() {
-    const category = document.getElementById('filter-secondary').value;
-    const container = document.getElementById('tertiary-container');
-    const options = {
+    const categoryName = document.getElementById('filter-secondary').value;
+    const containerElement = document.getElementById('tertiary-container');
+    const filterOptions = {
         gender: `<option value="">Toate</option><option value="Masculin">Masculin</option><option value="Feminin">Feminin</option>`,
         age: `<option value="">Toate</option><option value="<25">&lt;25</option><option value="25-34">25-34</option><option value=">35">&gt;35</option>`,
         administration_route: `<option value="">Toate</option><option value="Oral/fumat/prizat">Oral/fumat/prizat</option><option value="Injectabil">Injectabil</option><option value="Altele">Altele</option>`,
         consumption_pattern: `<option value="">Toate</option><option value="Consum singular">Consum singular</option><option value="Consum combinat">Consum combinat</option>`,
         diagnosis: `<option value="">Toate</option><option value="Intoxicație">Intoxicație</option><option value="Utilizare nocivă">Utilizare nocivă</option><option value="Dependență">Dependență</option><option value="Sevraj">Sevraj</option><option value="Tulburări de comportament">Tulburări de comportament</option><option value="Supradoză">Supradoză</option><option value="Testare toxicologică">Testare toxicologică</option>`
     };
-    container.innerHTML = category ? `<select id="filter-tertiary" class="elegant-select">${options[category] || ''}</select>` : '';
+    containerElement.innerHTML = categoryName ? `<select id="filter-tertiary" class="elegant-select">${filterOptions[categoryName] || ''}</select>` : '';
 };
 
 function buildBaseUrl() {
     const table = PAGE_ELEMENTS.tableSelect.value;
-    const drug = document.getElementById('filter-drug')?.value || '';
+    const mappedTableName = TABLE_MAP[table] || table;
+
+    const selectedDrug = document.getElementById('filter-drug')?.value || '';
     const secondaryFilter = document.getElementById('filter-secondary');
-    const minCount = document.getElementById('filter-min-count').value;
-    const maxCount = document.getElementById('filter-max-count').value;
-
-    let url = `${API_BASE_URL}?route=filters&table=${table}`;
     
-    // filtre comune
-    url += `&start_year=${startYear}&end_year=${endYear}`;
-    if (startYear === endYear) url += `&year=${startYear}`;
-    if (minCount !== '') url += `&min_count=${minCount}`;
-    if (maxCount !== '') url += `&max_count=${maxCount}`;
+    const exactCount = document.getElementById('filter-exact-count')?.value || '';
+    const minCount = document.getElementById('filter-min-count')?.value || '';
+    const maxCount = document.getElementById('filter-max-count')?.value || '';
 
-    // filtru sentinte
-    const sentenceFilter = document.getElementById('filter-sentence');
-    if (table === 'crimes_sentence' && sentenceFilter?.value) {
-        url += `&sentence_type=${encodeURIComponent(sentenceFilter.value)}`;
+    let generatedUrl = `${API_BASE_URL}?route=filters&table=${mappedTableName}`;
+    
+    if (startYear === endYear) {
+        generatedUrl += `&year=${startYear}`;
+    } else {
+        generatedUrl += `&from=${startYear}&to=${endYear}`;
     }
+
+    if (exactCount !== '') generatedUrl += `&total=${exactCount}`;
+    if (minCount !== '') generatedUrl += `&min=${minCount}`;
+    if (maxCount !== '') generatedUrl += `&max=${maxCount}`;
 
     const textLaw = document.getElementById('filter-text-law')?.value;
     const textName = document.getElementById('filter-text-name')?.value;
@@ -238,60 +277,61 @@ function buildBaseUrl() {
     const textBeneficiary = document.getElementById('filter-text-beneficiary')?.value;
 
     if ((table === 'crimes_sentence' || table === 'crimes_article') && textLaw) {
-        url += `&law=${encodeURIComponent(textLaw)}`;
+        generatedUrl += `&law=${encodeURIComponent(textLaw)}`;
     }
+    
     if ((table === 'prevention_projects' || table === 'prevention_campaigns') && textName) {
-        url += `&name=${encodeURIComponent(textName)}`;
+        generatedUrl += `&name=${encodeURIComponent(textName)}`;
     }
+    
     if (table === 'prevention_activities') {
-        if (textSetting) url += `&setting=${encodeURIComponent(textSetting)}`;
-        if (textBeneficiary) url += `&beneficiary_type=${encodeURIComponent(textBeneficiary)}`;
+        if (textSetting) generatedUrl += `&setting=${encodeURIComponent(textSetting)}`;
+        if (textBeneficiary) generatedUrl += `&beneficiary_type=${encodeURIComponent(textBeneficiary)}`;
     }
 
-    // filtre crimes demographic
     if (table === 'crimes_demographic') {
-        const genderVal = document.getElementById('filter-gender')?.value;
-        const ageVal = document.getElementById('filter-age')?.value;
-        if (genderVal) url += `&gender=${encodeURIComponent(genderVal)}`;
-        if (ageVal) url += `&age_category=${encodeURIComponent(ageVal)}`;
+        const genderValue = document.getElementById('filter-gender')?.value;
+        const ageValue = document.getElementById('filter-age')?.value;
+        if (genderValue) generatedUrl += `&gender=${encodeURIComponent(genderValue)}`;
+        if (ageValue) generatedUrl += `&age_category=${encodeURIComponent(ageValue)}`;
     }
 
-    // filtre urgente
     if (table === 'medical_emergencies' && secondaryFilter?.value) {
-        url += `&category=${secondaryFilter.value}`;
+        generatedUrl += `&type=${secondaryFilter.value}`;
         const tertiaryFilter = document.getElementById('filter-tertiary');
-        if (tertiaryFilter?.value) url += `&value=${encodeURIComponent(tertiaryFilter.value)}`;
+        if (tertiaryFilter?.value) generatedUrl += `&val=${encodeURIComponent(tertiaryFilter.value)}`;
     }
 
-    // filtre capturi
     if (table === 'drug_seizures' && secondaryFilter?.value) {
-        url += `&measurement=${encodeURIComponent(secondaryFilter.value)}`;
+        generatedUrl += `&type=${encodeURIComponent(secondaryFilter.value)}`;
     }
-    if (drug && (table === 'drug_seizures' || table === 'medical_emergencies')) {
-        url += `&drug=${encodeURIComponent(drug)}`;
+    
+    if (selectedDrug && (table === 'drug_seizures' || table === 'medical_emergencies')) {
+        generatedUrl += `&drug=${encodeURIComponent(selectedDrug)}`;
     }
 
-    return url;
+    return generatedUrl;
 }
-async function handleLoadData() {
-    const url = buildBaseUrl();
-    if (!url) return;
 
-    currentApiUrl = url;
+async function handleLoadData() {
+    const apiGeneratedUrl = buildBaseUrl();
+    if (!apiGeneratedUrl) return;
+
+    currentApiUrl = apiGeneratedUrl;
     currentPage = 1;
     displayMessage("Se încarcă datele...");
 
     fetchPaginatedData(currentPage);
 
     try {
-        const response = await fetch(currentApiUrl);
-        const data = await response.json();
+        const fetchResponse = await fetch(currentApiUrl);
+        const jsonData = await fetchResponse.json();
 
-        if (!response.ok) throw new Error(data.error || `Status: ${response.status}`);
-        if (data.error) throw new Error(data.error);
+        if (!fetchResponse.ok) throw new Error(jsonData.error || `Status: ${fetchResponse.status}`);
+        if (jsonData.error) throw new Error(jsonData.error);
 
-        if (!Array.isArray(data) || data.length === 0) {
-            if (!data.data) {
+        if (!Array.isArray(jsonData) || jsonData.length === 0) {
+            if (!jsonData.data) {
                 destroyCharts();
                 displayMessage(`0 Rezultate. Nu există date pentru selecția curentă.`);
                 return;
@@ -302,7 +342,7 @@ async function handleLoadData() {
         const secondaryFilter = document.getElementById('filter-secondary');
         const secondaryValue = secondaryFilter ? secondaryFilter.value : null;
 
-        const chartData = extractChartData(data, table, secondaryValue);
+        const chartData = extractChartData(jsonData, table, secondaryValue);
 
         if (chartData.labels.length === 0) {
             destroyCharts();
@@ -319,14 +359,14 @@ async function handleLoadData() {
     }
 }
 
-async function fetchPaginatedData(page) {
+async function fetchPaginatedData(pageNumber) {
     try {
-        const response = await fetch(`${currentApiUrl}&page=${page}`);
-        const result = await response.json();
+        const response = await fetch(`${currentApiUrl}&page=${pageNumber}`);
+        const resultData = await response.json();
 
-        if (result.data && result.pagination) {
-            currentPage = result.pagination.page;
-            currentTotalPages = result.pagination.total_pages;
+        if (resultData.data && resultData.pagination) {
+            currentPage = resultData.pagination.page;
+            currentTotalPages = resultData.pagination.total_pages;
 
             PAGE_ELEMENTS.currentPageSpan.innerText = currentPage;
             PAGE_ELEMENTS.totalPagesSpan.innerText = currentTotalPages;
@@ -334,14 +374,14 @@ async function fetchPaginatedData(page) {
             PAGE_ELEMENTS.btnPrev.disabled = (currentPage <= 1);
             PAGE_ELEMENTS.btnNext.disabled = (currentPage >= currentTotalPages);
 
-            renderTable(result.data);
-        } else if (Array.isArray(result)) {
-            renderTable(result);
+            renderTable(resultData.data);
+        } else if (Array.isArray(resultData)) {
+            renderTable(resultData);
             PAGE_ELEMENTS.btnPrev.style.display = 'none';
             PAGE_ELEMENTS.btnNext.style.display = 'none';
         }
-    } catch (err) {
-        console.error("Eroare la paginare:", err);
+    } catch (error) {
+        console.error("Eroare la paginare:", error);
     }
 }
 
@@ -363,10 +403,8 @@ function renderTable(dataArray) {
     }
 
     const table = PAGE_ELEMENTS.tableSelect.value;
-    const secondaryEl = document.getElementById('filter-secondary');
-    const secondaryValue = secondaryEl ? secondaryEl.value : '';
-
-    const yearDisplay = (startYear === endYear) ? startYear : `${startYear} - ${endYear}`;
+    const secondaryElement = document.getElementById('filter-secondary');
+    const secondaryValue = secondaryElement ? secondaryElement.value : '';
 
     const measureLabels = {
         seizures_count: 'Nr. capturi',
@@ -384,134 +422,136 @@ function renderTable(dataArray) {
         diagnosis: 'Diagnostic'
     };
 
-    let columns = [];
+    let tableColumns = [];
 
     switch (table) {
         case 'drug_seizures':
-            columns = [
-                { header: 'An',      width: '80px',  getValue: (row) => row.year || '-' },
-                { header: 'Drog',    width: '200px', getValue: (row) => row.drug_name || '-' },
-                { header: measureLabels[secondaryValue] || 'Valoare', width: '150px', getValue: (row) => row[secondaryValue] || '-' },
+            tableColumns = [
+                { headerTitle: 'An',      columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
+                { headerTitle: 'Drog',    columnWidth: '200px', getCellValue: (rowItem) => rowItem.drug_name || '-' },
+                { headerTitle: measureLabels[secondaryValue] || 'Valoare', columnWidth: '150px', getCellValue: (rowItem) => rowItem[secondaryValue] || '-' },
             ];
             break;
 
         case 'medical_emergencies':
-            columns = [
-                { header: 'An',           width: '80px',  getValue: (row) => row.year || '-' },
-                { header: 'Drog',         width: '180px', getValue: (row) => row.drug_type || '-' },
-                { header: categoryLabels[secondaryValue] || 'Categorie', width: '200px', getValue: (row) => row.value || '-' },
-                { header: 'Cazuri / Total', width: '120px', getValue: (row) => row.count || '-' },
+            tableColumns = [
+                { headerTitle: 'An',           columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
+                { headerTitle: 'Drog',         columnWidth: '180px', getCellValue: (rowItem) => rowItem.drug_type || '-' },
+                { headerTitle: categoryLabels[secondaryValue] || 'Categorie', columnWidth: '200px', getCellValue: (rowItem) => rowItem.value || '-' },
+                { headerTitle: 'Cazuri / Total', columnWidth: '120px', getCellValue: (rowItem) => rowItem.count || '-' },
             ];
             break;
 
         case 'crimes_demographic':
-            columns = [
-                { header: 'An',               width: '80px',  getValue: (row) => row.year || '-' },
-                { header: 'Sex',              width: '150px', getValue: (row) => row.gender || '-' },
-                { header: 'Categorie vârstă', width: '200px', getValue: (row) => row.age_category || '-' },
-                { header: 'Total',            width: '100px', getValue: (row) => row.count || '-' },
+            tableColumns = [
+                { headerTitle: 'An',               columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
+                { headerTitle: 'Sex',              columnWidth: '150px', getCellValue: (rowItem) => rowItem.gender || '-' },
+                { headerTitle: 'Categorie vârstă', columnWidth: '200px', getCellValue: (rowItem) => rowItem.age_category || '-' },
+                { headerTitle: 'Total',            columnWidth: '100px', getCellValue: (rowItem) => rowItem.count || '-' },
             ];
             break;
 
         case 'crimes_sentence':
-            columns = [
-                { header: 'An',             width: '80px',  getValue: (row) => row.year || '-' },
-                { header: 'Tip sentință',   width: '220px', getValue: (row) => row.sentence_type || '-' },
-                { header: 'Referință lege', width: '180px', getValue: (row) => row.law_reference || '-' },
-                { header: 'Total',          width: '100px', getValue: (row) => row.count || '-' },
+            tableColumns = [
+                { headerTitle: 'An',             columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
+                { headerTitle: 'Tip sentință',   columnWidth: '220px', getCellValue: (rowItem) => rowItem.sentence_type || '-' },
+                { headerTitle: 'Referință lege', columnWidth: '180px', getCellValue: (rowItem) => rowItem.law_reference || '-' },
+                { headerTitle: 'Total',          columnWidth: '100px', getCellValue: (rowItem) => rowItem.count || '-' },
             ];
             break;
 
         case 'crimes_article':
-            columns = [
-                { header: 'An',            width: '80px',  getValue: (row) => row.year || '-' },
-                { header: 'Articol legal', width: '280px', getValue: (row) => row.legal_article || '-' },
-                { header: 'Total',         width: '100px', getValue: (row) => row.count || '-' },
+            tableColumns = [
+                { headerTitle: 'An',            columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
+                { headerTitle: 'Articol legal', columnWidth: '280px', getCellValue: (rowItem) => rowItem.legal_article || '-' },
+                { headerTitle: 'Total',         columnWidth: '100px', getCellValue: (rowItem) => rowItem.count || '-' },
             ];
             break;
 
         case 'prevention_activities':
-            columns = [
-                { header: 'An',              width: '80px',  getValue: (row) => row.year || '-' },
-                { header: 'Mediu',           width: '200px', getValue: (row) => row.setting || '-' },
-                { header: 'Nr. activități',  width: '130px', getValue: (row) => row.activities_count || '-' },
-                { header: 'Nr. beneficiari', width: '140px', getValue: (row) => row.beneficiaries_count || '-' },
-                { header: 'Tip beneficiar',  width: '150px', getValue: (row) => row.beneficiary_type || '-' },
+            tableColumns = [
+                { headerTitle: 'An',              columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
+                { headerTitle: 'Mediu',           columnWidth: '200px', getCellValue: (rowItem) => rowItem.setting || '-' },
+                { headerTitle: 'Nr. activități',  columnWidth: '130px', getCellValue: (rowItem) => rowItem.activities_count || '-' },
+                { headerTitle: 'Nr. beneficiari', columnWidth: '140px', getCellValue: (rowItem) => rowItem.beneficiaries_count || '-' },
+                { headerTitle: 'Tip beneficiar',  columnWidth: '150px', getCellValue: (rowItem) => rowItem.beneficiary_type || '-' },
             ];
             break;
 
         case 'prevention_campaigns':
-            columns = [
-                { header: 'An',              width: '80px',  getValue: (row) => row.year || '-' },
-                { header: 'Nume campanie',   width: '320px', getValue: (row) => row.campaign_name || '-' },
-                { header: 'Nr. beneficiari', width: '140px', getValue: (row) => row.beneficiaries_count || '-' },
+            tableColumns = [
+                { headerTitle: 'An',              columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
+                { headerTitle: 'Nume campanie',   columnWidth: '320px', getCellValue: (rowItem) => rowItem.campaign_name || '-' },
+                { headerTitle: 'Nr. beneficiari', columnWidth: '140px', getCellValue: (rowItem) => rowItem.beneficiaries_count || '-' },
             ];
             break;
 
         case 'prevention_projects':
-            columns = [
-                { header: 'An',              width: '80px',  getValue: (row) => row.year || '-' },
-                { header: 'Nume proiect',    width: '320px', getValue: (row) => row.project_name || '-' },
-                { header: 'Nr. beneficiari', width: '140px', getValue: (row) => row.beneficiaries_count || '-' },
+            tableColumns = [
+                { headerTitle: 'An',              columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
+                { headerTitle: 'Nume proiect',    columnWidth: '320px', getCellValue: (rowItem) => rowItem.project_name || '-' },
+                { headerTitle: 'Nr. beneficiari', columnWidth: '140px', getCellValue: (rowItem) => rowItem.beneficiaries_count || '-' },
             ];
             break;
 
         default:
-            const keys = Object.keys(dataArray[0]).filter(k => k !== 'category' && k !== 'id');
-            columns = keys.map(key => ({
-                header: key.replace(/_/g, ' ').toUpperCase(),
-                width: '150px',
-                getValue: (row) => row[key] !== null ? row[key] : '-'
+            const filteredKeys = Object.keys(dataArray[0]).filter(keyName => keyName !== 'category' && keyName !== 'id');
+            tableColumns = filteredKeys.map(keyName => ({
+                headerTitle: keyName.replace(/_/g, ' ').toUpperCase(),
+                columnWidth: '150px',
+                getCellValue: (rowItem) => rowItem[keyName] !== null ? rowItem[keyName] : '-'
             }));
     }
 
-    columns.forEach(col => {
-        const th = document.createElement('th');
-        th.innerText = col.header;
-        th.style.width = col.width;
-        th.style.minWidth = col.width;
-        PAGE_ELEMENTS.tableHeader.appendChild(th);
+    tableColumns.forEach(columnItem => {
+        const tableHeaderCell = document.createElement('th');
+        tableHeaderCell.innerText = columnItem.headerTitle;
+        tableHeaderCell.style.width = columnItem.columnWidth;
+        tableHeaderCell.style.minWidth = columnItem.columnWidth;
+        PAGE_ELEMENTS.tableHeader.appendChild(tableHeaderCell);
     });
 
-    dataArray.forEach(row => {
-        const tr = document.createElement('tr');
-        columns.forEach(col => {
-            const td = document.createElement('td');
-            td.style.width = col.width;
-            td.style.minWidth = col.width;
-            td.innerText = col.getValue(row);
-            tr.appendChild(td);
+    dataArray.forEach(rowItem => {
+        const tableRow = document.createElement('tr');
+        tableColumns.forEach(columnItem => {
+            const tableDataCell = document.createElement('td');
+            tableDataCell.style.width = columnItem.columnWidth;
+            tableDataCell.style.minWidth = columnItem.columnWidth;
+            tableDataCell.innerText = columnItem.getCellValue(rowItem);
+            tableRow.appendChild(tableDataCell);
         });
-        PAGE_ELEMENTS.tableBody.appendChild(tr);
+        PAGE_ELEMENTS.tableBody.appendChild(tableRow);
     });
 }
+
 function extractChartData(apiData, table, secondaryValue) {
-    let labels = [];
-    let values = [];
+    let extractedLabels = [];
+    let extractedValues = [];
 
     const dataArray = apiData.data ? apiData.data : apiData;
 
-    dataArray.forEach(item => {
+    dataArray.forEach(dataItem => {
         if (table === 'drug_seizures') {
-            const val = Number(item[secondaryValue || 'seizures_count']);
-            if (val > 0) {
-                labels.push(item.drug_name || item.drug_type);
-                values.push(val);
+            const numericValue = Number(dataItem[secondaryValue || 'seizures_count']);
+            if (numericValue > 0) {
+                extractedLabels.push(dataItem.drug_name || dataItem.drug_type);
+                extractedValues.push(numericValue);
             }
         } else if (table === 'medical_emergencies') {
-            labels.push(`${item.drug_type} (${item.value})`);
-            values.push(Number(item.count));
+            extractedLabels.push(`${dataItem.drug_type} (${dataItem.value})`);
+            extractedValues.push(Number(dataItem.count));
         } else {
-            const labelKey = ['legal_article', 'setting', 'project_name', 'campaign_name', 'gender', 'sentence_type'].find(k => item[k] !== undefined);
-            const valueKey = ['count', 'beneficiaries_count'].find(k => item[k] !== undefined);
-            if (labelKey && valueKey) {
-                labels.push(item[labelKey]);
-                values.push(Number(item[valueKey]));
+            const matchedLabelKey = ['legal_article', 'setting', 'project_name', 'campaign_name', 'gender', 'sentence_type'].find(keyName => dataItem[keyName] !== undefined);
+            const matchedValueKey = ['count', 'beneficiaries_count'].find(keyName => dataItem[keyName] !== undefined);
+            
+            if (matchedLabelKey && matchedValueKey) {
+                extractedLabels.push(dataItem[matchedLabelKey]);
+                extractedValues.push(Number(dataItem[matchedValueKey]));
             }
         }
     });
 
-    return { labels, values };
+    return { labels: extractedLabels, values: extractedValues };
 }
 
 function destroyCharts() {
@@ -519,151 +559,151 @@ function destroyCharts() {
     if (activeCharts.line) { activeCharts.line.destroy(); activeCharts.line = null; }
 }
 
-function renderCharts(labels, values) {
+function renderCharts(labelsArray, valuesArray) {
     destroyCharts();
 
-    const barOptions = {
-        series: [{ name: 'Statistici', data: values }],
+    const barChartOptions = {
+        series: [{ name: 'Statistici', data: valuesArray }],
         chart: { type: 'bar', height: 350, fontFamily: 'inherit', toolbar: { show: false } },
         plotOptions: { bar: { borderRadius: 4, horizontal: false } },
         dataLabels: { enabled: false },
         colors: [CHART_COLORS.bar],
-        xaxis: { categories: labels }
+        xaxis: { categories: labelsArray }
     };
-    activeCharts.bar = new ApexCharts(PAGE_ELEMENTS.ctxBar, barOptions);
+    activeCharts.bar = new ApexCharts(PAGE_ELEMENTS.ctxBar, barChartOptions);
     activeCharts.bar.render();
 
-    const lineOptions = {
-        series: [{ name: 'Trend', data: values }],
+    const lineChartOptions = {
+        series: [{ name: 'Trend', data: valuesArray }],
         chart: { type: 'area', height: 350, fontFamily: 'inherit', toolbar: { show: false } },
         dataLabels: { enabled: false },
         stroke: { curve: 'smooth', width: 2 },
         colors: [CHART_COLORS.line],
         fill: { type: 'solid', opacity: 0.2 },
         markers: { size: 4, colors: ['#ff1493'], strokeColors: '#fff', strokeWidth: 2 },
-        xaxis: { categories: labels }
+        xaxis: { categories: labelsArray }
     };
-    activeCharts.line = new ApexCharts(PAGE_ELEMENTS.ctxLine, lineOptions);
+    activeCharts.line = new ApexCharts(PAGE_ELEMENTS.ctxLine, lineChartOptions);
     activeCharts.line.render();
 }
 
-window.exportData = function(format) {
-    const url = buildBaseUrl();
-    if (!url) return;
-    window.location.href = url.replace('route=filters', `route=export&format=${format}`);
+window.exportData = function(exportFormat) {
+    const dataUrl = buildBaseUrl();
+    if (!dataUrl) return;
+    window.location.href = dataUrl.replace('route=filters', `route=export&format=${exportFormat}`);
 };
 
-window.exportTable = async function(format) {
+window.exportTable = async function(exportFormat) {
     const tableContainer = PAGE_ELEMENTS.containerTable;
 
-    if (format === 'png' || format === 'webp') {
-        const canvas = await html2canvas(tableContainer, {
+    if (exportFormat === 'png' || exportFormat === 'webp') {
+        const generatedCanvas = await html2canvas(tableContainer, {
             backgroundColor: '#ffffff',
             scale: 2
         });
-        const mimeType = format === 'webp' ? 'image/webp' : 'image/png';
-        const dataURL = canvas.toDataURL(mimeType, 1.0);
-        downloadBase64File(dataURL, `tabel.${format}`);
+        const targetMimeType = exportFormat === 'webp' ? 'image/webp' : 'image/png';
+        const canvasDataURL = generatedCanvas.toDataURL(targetMimeType, 1.0);
+        downloadBase64File(canvasDataURL, `tabel.${exportFormat}`);
     }
 
-    if (format === 'svg') {
-        const table = tableContainer.querySelector('table');
-        const rows = table.querySelectorAll('tr');
+    if (exportFormat === 'svg') {
+        const targetTable = tableContainer.querySelector('table');
+        const tableRows = targetTable.querySelectorAll('tr');
 
-        const colWidths = [];
-        rows[0].querySelectorAll('th').forEach(th => colWidths.push(th.offsetWidth));
+        const columnWidths = [];
+        tableRows[0].querySelectorAll('th').forEach(headerCell => columnWidths.push(headerCell.offsetWidth));
 
-        const rowHeight = 36;
-        const totalWidth = colWidths.reduce((a, b) => a + b, 0);
-        const totalHeight = rows.length * rowHeight + 12;
+        const rowHeightValue = 36;
+        const totalTableWidth = columnWidths.reduce((sumValue, widthValue) => sumValue + widthValue, 0);
+        const totalTableHeight = tableRows.length * rowHeightValue + 12;
 
-        let svgRows = '';
-        rows.forEach((row, rowIndex) => {
-            const cells = row.querySelectorAll('th, td');
-            let x = 0;
-            const y = rowIndex * rowHeight;
-            const isHeader = rowIndex === 0;
+        let generatedSvgRows = '';
+        tableRows.forEach((rowElement, rowIndex) => {
+            const currentCells = rowElement.querySelectorAll('th, td');
+            let positionX = 0;
+            const positionY = rowIndex * rowHeightValue;
+            const isHeaderRow = rowIndex === 0;
 
-            if (isHeader) {
-                svgRows += `<rect x="0" y="${y}" width="${totalWidth}" height="${rowHeight}" fill="#fce4ec"/>`;
+            if (isHeaderRow) {
+                generatedSvgRows += `<rect x="0" y="${positionY}" width="${totalTableWidth}" height="${rowHeightValue}" fill="#fce4ec"/>`;
             } else if (rowIndex % 2 === 0) {
-                svgRows += `<rect x="0" y="${y}" width="${totalWidth}" height="${rowHeight}" fill="#fff5f7"/>`;
+                generatedSvgRows += `<rect x="0" y="${positionY}" width="${totalTableWidth}" height="${rowHeightValue}" fill="#fff5f7"/>`;
             }
 
-            cells.forEach((cell, colIndex) => {
-                const w = colWidths[colIndex] || 120;
-                svgRows += `<text x="${x + 10}" y="${y + 23}" font-family="Arial" font-size="13" fill="${isHeader ? '#c0507a' : '#333'}" font-weight="${isHeader ? 'bold' : 'normal'}">${cell.innerText}</text>`;
-                x += w;
+            currentCells.forEach((cellElement, colIndex) => {
+                const cellWidthValue = columnWidths[colIndex] || 120;
+                generatedSvgRows += `<text x="${positionX + 10}" y="${positionY + 23}" font-family="Arial" font-size="13" fill="${isHeaderRow ? '#c0507a' : '#333'}" font-weight="${isHeaderRow ? 'bold' : 'normal'}">${cellElement.innerText}</text>`;
+                positionX += cellWidthValue;
             });
         });
 
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${totalHeight}">${svgRows}</svg>`;
-        const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'tabel.svg';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        const finalSvgData = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalTableWidth}" height="${totalTableHeight}">${generatedSvgRows}</svg>`;
+        const fileBlob = new Blob([finalSvgData], { type: 'image/svg+xml;charset=utf-8' });
+        const objectUrl = URL.createObjectURL(fileBlob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = objectUrl;
+        downloadLink.download = 'tabel.svg';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(objectUrl);
     }
 };
 
-window.downloadChart = async function(containerId, format) {
-    let chartInstance;
-    if (containerId === 'chartBar') chartInstance = activeCharts.bar;
-    if (containerId === 'chartLine') chartInstance = activeCharts.line;
-    if (!chartInstance) return;
+window.downloadChart = async function(containerElementId, exportFormat) {
+    let selectedChartInstance;
+    if (containerElementId === 'chartBar') selectedChartInstance = activeCharts.bar;
+    if (containerElementId === 'chartLine') selectedChartInstance = activeCharts.line;
+    if (!selectedChartInstance) return;
 
-    if (format === 'svg') {
-        const svgElement = document.getElementById(containerId).querySelector('svg');
-        if (svgElement) {
-            if (!svgElement.getAttribute('xmlns')) svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-            const svgData = new XMLSerializer().serializeToString(svgElement);
-            const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `grafic-${containerId}.svg`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+    if (exportFormat === 'svg') {
+        const chartSvgElement = document.getElementById(containerElementId).querySelector('svg');
+        if (chartSvgElement) {
+            if (!chartSvgElement.getAttribute('xmlns')) chartSvgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            const serializedSvgData = new XMLSerializer().serializeToString(chartSvgElement);
+            const finalBlob = new Blob([serializedSvgData], { type: 'image/svg+xml;charset=utf-8' });
+            const temporaryObjectUrl = URL.createObjectURL(finalBlob);
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.href = temporaryObjectUrl;
+            downloadAnchor.download = `grafic-${containerElementId}.svg`;
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+            URL.revokeObjectURL(temporaryObjectUrl);
         }
         return;
     }
 
-    const { imgURI } = await chartInstance.dataURI();
+    const { imgURI } = await selectedChartInstance.dataURI();
 
-    if (format === 'png') {
-        downloadBase64File(imgURI, `grafic-${containerId}.png`);
+    if (exportFormat === 'png') {
+        downloadBase64File(imgURI, `grafic-${containerElementId}.png`);
         return;
     }
 
-    if (format === 'webp') {
-        const img = new Image();
-        img.src = imgURI;
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-            downloadBase64File(canvas.toDataURL('image/webp', 1.0), `grafic-${containerId}.webp`);
+    if (exportFormat === 'webp') {
+        const tempImage = new Image();
+        tempImage.src = imgURI;
+        tempImage.onload = function() {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = tempImage.width;
+            tempCanvas.height = tempImage.height;
+            const canvasContext = tempCanvas.getContext('2d');
+            canvasContext.fillStyle = '#ffffff';
+            canvasContext.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            canvasContext.drawImage(tempImage, 0, 0);
+            downloadBase64File(tempCanvas.toDataURL('image/webp', 1.0), `grafic-${containerElementId}.webp`);
         };
     }
 };
 
-function downloadBase64File(base64Data, filename) {
-    const link = document.createElement('a');
-    link.href = base64Data;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+function downloadBase64File(base64DataString, targetFilename) {
+    const downloadLinkElement = document.createElement('a');
+    downloadLinkElement.href = base64DataString;
+    downloadLinkElement.download = targetFilename;
+    document.body.appendChild(downloadLinkElement);
+    downloadLinkElement.click();
+    document.body.removeChild(downloadLinkElement);
 }
 
 PAGE_ELEMENTS.tableSelect.addEventListener('change', updateSecondaryFilters);
