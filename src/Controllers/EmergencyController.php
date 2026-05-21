@@ -2,7 +2,7 @@
 namespace App\Controllers;
 
 use App\Services\EmergencyService;
-use App\DTOs\EmergencyFilterDTO;
+use App\DTOs\Emergency\EmergencyFilterDTO;
 
 class EmergencyController extends BaseController {
     private EmergencyService $service;
