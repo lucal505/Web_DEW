@@ -31,6 +31,6 @@ class CrimeDemographicDTO implements \JsonSerializable
             'gender' => $this->gender,
             'age'    => $this->ageCategory,
             'count'  => $this->count,
-        ], fn($v) => $v !== null);
+        ], fn($value) => $value !== null);
     }
 }

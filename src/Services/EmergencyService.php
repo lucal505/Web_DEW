@@ -4,6 +4,10 @@ namespace App\Services;
 
 use App\Repositories\EmergencyRepository;
 use App\DTOs\Emergency\EmergencyFilterDTO;
+use App\DTOs\Emergency\EmergencyCreateDTO;
+use App\DTOs\Emergency\EmergencyUpdateDTO;
+use App\DTOs\Emergency\EmergencyDTO;
+use InvalidArgumentException;
 
 
 class EmergencyService extends BaseService
@@ -42,5 +46,82 @@ class EmergencyService extends BaseService
         return $this->repository->getOptions();
     }
 
-    // may add more specific validation methods if needed
+    public function createEmergency(EmergencyCreateDTO $dto): EmergencyDTO
+    {
+        $this->validateEmergencyCreate($dto);
+        return $this->repository->createEmergency($dto);
+    }
+
+    public function updateEmergency(int $id, EmergencyUpdateDTO $dto): ?EmergencyDTO
+    {
+        if ($id < 1) {
+            throw new InvalidArgumentException('Emergency id must be a positive integer.');
+        }
+
+        $this->validateEmergencyUpdate($dto);
+        return $this->repository->updateEmergency($id, $dto);
+    }
+
+    public function deleteEmergency(int $id): bool
+    {
+        if ($id < 1) {
+            throw new InvalidArgumentException('Emergency id must be a positive integer.');
+        }
+
+        return $this->repository->deleteEmergency($id);
+    }
+
+    private function validateEmergencyCreate(EmergencyCreateDTO $dto): void
+    {
+        $currentYear = (int)date('Y');
+        $year = $dto->getYear();
+
+        if ($year < $this->minYear || $year > $currentYear) {
+            throw new InvalidArgumentException("Year must be between {$this->minYear} and {$currentYear}.");
+        }
+
+        if ($dto->getDrugType() === '' || $dto->getCategory() === '' || $dto->getValue() === '') {
+            throw new InvalidArgumentException('Drug type, category, and value are required.');
+        }
+
+        if ($dto->getCount() < 0) {
+            throw new InvalidArgumentException('Count must be a non-negative integer.');
+        }
+    }
+
+    private function validateEmergencyUpdate(EmergencyUpdateDTO $dto): void
+    {
+        if (
+            $dto->getYear() === null
+            && $dto->getDrugType() === null
+            && $dto->getCategory() === null
+            && $dto->getValue() === null
+            && $dto->getCount() === null
+        ) {
+            throw new InvalidArgumentException('At least one field must be provided for update.');
+        }
+
+        $currentYear = (int)date('Y');
+        if ($dto->getYear() !== null) {
+            if ($dto->getYear() < $this->minYear || $dto->getYear() > $currentYear) {
+                throw new InvalidArgumentException("Year must be between {$this->minYear} and {$currentYear}.");
+            }
+        }
+
+        if ($dto->getDrugType() !== null && $dto->getDrugType() === '') {
+            throw new InvalidArgumentException('Drug type cannot be empty.');
+        }
+
+        if ($dto->getCategory() !== null && $dto->getCategory() === '') {
+            throw new InvalidArgumentException('Category cannot be empty.');
+        }
+
+        if ($dto->getValue() !== null && $dto->getValue() === '') {
+            throw new InvalidArgumentException('Value cannot be empty.');
+        }
+
+        if ($dto->getCount() !== null && $dto->getCount() < 0) {
+            throw new InvalidArgumentException('Count must be a non-negative integer.');
+        }
+    }
 }

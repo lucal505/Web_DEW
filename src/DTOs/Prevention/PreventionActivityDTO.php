@@ -34,6 +34,6 @@ class PreventionActivityDTO implements \JsonSerializable
             'activities'    => $this->activitiesCount,
             'beneficiaries' => $this->beneficiariesCount,
             'ben_type'      => $this->beneficiaryType,
-        ], fn($v) => $v !== null);
+        ], fn($value) => $value !== null);
     }
 }

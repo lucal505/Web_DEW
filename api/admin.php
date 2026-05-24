@@ -4,13 +4,13 @@ header('Content-Type: application/json');
 // incarc autoloaderul composer pentru JWT
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// load .env secrets
+// load .env secrets (inainte de instantierea claselor)
 $env = parse_ini_file(__DIR__ . '/../.env');
 foreach ($env as $key => $value) {
     $_ENV[$key] = $value;
 }
 
-// autoload for classes in src/
+// autoload pentru clasele din src/
 spl_autoload_register(function ($class) {
     $prefix  = 'App\\';
     $base_dir = __DIR__ . '/../src/';
@@ -27,31 +27,81 @@ spl_autoload_register(function ($class) {
 });
 
 use App\Config\Database;
-use App\Controllers\ImportController;
-use App\Repositories\AdminRepository;
+use App\Repositories\AuthRepository;
+use App\Repositories\CrimeRepository;
+use App\Repositories\EmergencyRepository;
+use App\Repositories\PreventionRepository;
+use App\Repositories\SeizureRepository;
 use App\Services\AuthService;
+use App\Services\AdminService;
+use App\Services\CrimeService;
+use App\Services\EmergencyService;
+use App\Services\PreventionService;
+use App\Services\SeizureService;
 use App\Services\ImportService;
 use App\Controllers\AuthController;
+use App\Controllers\AdminController;
+use App\Controllers\ImportController;
+use App\Controllers\CrimeController;
+use App\Controllers\EmergencyController;
+use App\Controllers\PreventionController;
+use App\Controllers\SeizureController;
 
+// conexiune la baza de date
+$pdo = Database::getInstance();
 
-// dependeny injection
-$pdo            = Database::getInstance();
-$adminRepo      = new AdminRepository($pdo);
-$authService    = new AuthService($adminRepo);
-$authController = new AuthController($authService);
+// autentificare
+$authController = new AuthController(new AuthService(new AuthRepository($pdo)));
 
+// folderul de uploads
 $upload_dir = __DIR__ . '/../uploads/';
 if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0755, true);
 }
 
-$importService  = new ImportService();
-$importController = new ImportController($authController, $importService, $upload_dir);
+// controllere (toate primesc authController pentru operatiile de admin)
+$importController = new ImportController(
+    $authController,
+    new ImportService(),
+    $upload_dir
+);
+
+$adminController = new AdminController(
+    new AdminService(
+        $pdo,
+        new CrimeRepository($pdo),
+        new EmergencyRepository($pdo),
+        new PreventionRepository($pdo),
+        new SeizureRepository($pdo)
+    ),
+    $authController
+);
+
+$emergencyController = new EmergencyController(
+    new EmergencyService(new EmergencyRepository($pdo)),
+    $authController
+);
+
+$crimeController = new CrimeController(
+    new CrimeService(new CrimeRepository($pdo)),
+    $authController
+);
+
+$preventionController = new PreventionController(
+    new PreventionService(new PreventionRepository($pdo)),
+    $authController
+);
+
+$seizureController = new SeizureController(
+    new SeizureService(new SeizureRepository($pdo)),
+    $authController
+);
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
 
 switch ($action) {
 
+    // autentificare
     case 'login':
         $authController->login();
         break;
@@ -61,12 +111,127 @@ switch ($action) {
         echo json_encode(['success' => true]);
         break;
 
+    // import
     case 'upload':
         $importController->uploadFile();
         break;
 
     case 'import_all':
         $importController->importAllFiles();
+        break;
+
+    case 'wipe_database':
+        $adminController->wipeDatabase();
+        break;
+
+    // CRUD: medical_emergencies
+    case 'emergencies_create':
+        $emergencyController->createEmergency();
+        break;
+    case 'emergencies_update':
+        $emergencyController->updateEmergency();
+        break;
+    case 'emergencies_delete':
+        $emergencyController->deleteEmergency();
+        break;
+
+    // CRUD: crimes_demographic
+    case 'demographics_create':
+        $crimeController->createDemographic();
+        break;
+    case 'demographics_update':
+        $crimeController->updateDemographic();
+        break;
+    case 'demographics_delete':
+        $crimeController->deleteDemographic();
+        break;
+
+    // CRUD: crimes_sentence
+    case 'sentences_create':
+        $crimeController->createSentence();
+        break;
+    case 'sentences_update':
+        $crimeController->updateSentence();
+        break;
+    case 'sentences_delete':
+        $crimeController->deleteSentence();
+        break;
+
+    // CRUD: crimes_article
+    case 'articles_create':
+        $crimeController->createArticle();
+        break;
+    case 'articles_update':
+        $crimeController->updateArticle();
+        break;
+    case 'articles_delete':
+        $crimeController->deleteArticle();
+        break;
+
+    // CRUD: crimes_general
+    case 'general_create':
+        $crimeController->createGeneral();
+        break;
+    case 'general_update':
+        $crimeController->updateGeneral();
+        break;
+    case 'general_delete':
+        $crimeController->deleteGeneral();
+        break;
+
+    // CRUD: crimes_group
+    case 'groups_create':
+        $crimeController->createGroup();
+        break;
+    case 'groups_update':
+        $crimeController->updateGroup();
+        break;
+    case 'groups_delete':
+        $crimeController->deleteGroup();
+        break;
+
+    // CRUD: prevention_projects
+    case 'projects_create':
+        $preventionController->createProject();
+        break;
+    case 'projects_update':
+        $preventionController->updateProject();
+        break;
+    case 'projects_delete':
+        $preventionController->deleteProject();
+        break;
+
+    // CRUD: prevention_campaigns
+    case 'campaigns_create':
+        $preventionController->createCampaign();
+        break;
+    case 'campaigns_update':
+        $preventionController->updateCampaign();
+        break;
+    case 'campaigns_delete':
+        $preventionController->deleteCampaign();
+        break;
+
+    // CRUD: prevention_activities
+    case 'activities_create':
+        $preventionController->createActivity();
+        break;
+    case 'activities_update':
+        $preventionController->updateActivity();
+        break;
+    case 'activities_delete':
+        $preventionController->deleteActivity();
+        break;
+
+    // CRUD: drug_seizures
+    case 'seizures_create':
+        $seizureController->createSeizure();
+        break;
+    case 'seizures_update':
+        $seizureController->updateSeizure();
+        break;
+    case 'seizures_delete':
+        $seizureController->deleteSeizure();
         break;
 
     default:

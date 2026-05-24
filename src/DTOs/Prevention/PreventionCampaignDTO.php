@@ -23,11 +23,11 @@ class PreventionCampaignDTO implements \JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return [
+        return array_filter([
             'id'    => $this->id,
             'year'  => $this->year,
             'name'  => $this->campaignName,
             'count' => $this->beneficiariesCount,
-        ];
+        ], fn($value) => $value !== null);
     }
 }

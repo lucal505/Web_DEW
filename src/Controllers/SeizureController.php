@@ -1,22 +1,96 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Services\SeizureService;
 use App\DTOs\Seizures\SeizureFilterDTO;
+use App\DTOs\Seizures\SeizureCreateDTO;
+use App\DTOs\Seizures\SeizureUpdateDTO;
+use InvalidArgumentException;
 
-class SeizureController extends BaseController {
+class SeizureController extends BaseController
+{
     private SeizureService $service;
 
-    public function __construct(SeizureService $service){
-        $this->service=$service;
+    public function __construct(SeizureService $service, ?AuthController $authController = null)
+    {
+        $this->service = $service;
+        $this->authController = $authController;
     }
 
-    public function getSeizures(): void{
+    // READ
+    public function getSeizures(): void
+    {
         $filterDTO = SeizureFilterDTO::fromRequest($_GET);
         $this->execute(fn() => $this->service->getSeizures($filterDTO));
     }
 
-    public function getOptions(): void {
+    // filter options
+    public function getOptions(): void
+    {
         $this->execute(fn() => $this->service->getOptions());
+    }
+
+    // CRUD: drug_seizures
+    public function createSeizure(): void
+    {
+        if (!$this->requireAdmin()) {
+            return;
+        }
+        $this->execute(function () {
+            $dto = SeizureCreateDTO::fromRequest($this->getRequestData());
+            return [
+                'status' => 201, 
+                'body' => $this->service->createSeizure($dto)
+            ];
+        });
+    }
+
+    public function updateSeizure(): void
+    {
+        if (!$this->requireAdmin()) {
+            return;
+        }
+        $this->execute(function () {
+            $id = $this->getIdFromRequest();
+            if ($id === null) {
+                throw new InvalidArgumentException('Missing seizure id.');
+            }
+            $dto = SeizureUpdateDTO::fromRequest($this->getRequestData());
+            $updated = $this->service->updateSeizure($id, $dto);
+            if ($updated === null) {
+                return [
+                    'status' => 404, 
+                    'body' => ['error' => 'Seizure not found.']
+                ];
+            }
+            return [
+                'status' => 200, 
+                'body' => $updated
+            ];
+        });
+    }
+
+    public function deleteSeizure(): void
+    {
+        if (!$this->requireAdmin()) {
+            return;
+        }
+        $this->execute(function () {
+            $id = $this->getIdFromRequest();
+            if ($id === null) {
+                throw new InvalidArgumentException('Missing seizure id.');
+            }
+            if (!$this->service->deleteSeizure($id)) {
+                return [
+                    'status' => 404, 
+                    'body' => ['error' => 'Seizure not found.']
+                ];
+            }
+            return [
+                'status' => 200, 
+                'body' => ['success' => true]
+            ];
+        });
     }
 }

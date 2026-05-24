@@ -28,13 +28,13 @@ class EmergencyDTO implements \JsonSerializable
     // DTO -> JSON (mascare nume coloane BD)
     public function jsonSerialize(): array
     {
-        return [
+        return array_filter([
             'id'       => $this->id,
             'year'     => $this->year,
             'drug'     => $this->drugType,
             'category' => $this->category,
             'value'    => $this->value,
             'count'    => $this->count,
-        ];
+        ], fn($value) => $value !== null);
     }
 }

@@ -36,6 +36,6 @@ class CrimeGeneralFilterDTO extends BaseFilterDTO
             'min_year' => $this->minYear,
             'max_year' => $this->maxYear,
             'page'     => $this->page,
-        ], fn($v) => $v !== null);
+        ], fn($value) => $value !== null);
     }
 }

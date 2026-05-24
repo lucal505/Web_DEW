@@ -1,17 +1,21 @@
 <?php
+
 namespace App\Repositories;
 
 use PDO;
 
-abstract class BaseRepository {
+abstract class BaseRepository
+{
     protected PDO $pdo;
 
-    public function __construct(PDO $pdo) {
+    public function __construct(PDO $pdo)
+    {
         $this->pdo = $pdo;
     }
 
     // adaug filtrele comune
-    protected function applyCommonFilters(string &$sql, array &$params, array $filters, string $yearCol = 'year', string $countCol = 'count'): void {
+    protected function applyCommonFilters(string &$sql, array &$params, array $filters, string $yearCol = 'year', string $countCol = 'count'): void
+    {
         if (!empty($filters['year'])) {
             $sql .= " AND $yearCol = :year";
             $params['year'] = $filters['year'];
@@ -30,7 +34,7 @@ abstract class BaseRepository {
             $sql .= " AND $countCol = :cnt";
             $params['cnt'] = $filters['count'];
         }
-        
+
         if (!empty($filters['min_count'])) {
             $sql .= " AND $countCol >= :min_cnt";
             $params['min_cnt'] = $filters['min_count'];
@@ -50,14 +54,16 @@ abstract class BaseRepository {
     }
 
     // execut query-ul
-    protected function fetchAll(string $sql, array $params = []): array {
+    protected function fetchAll(string $sql, array $params = []): array
+    {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
 
     // pentru optiunile de filtrare 
-    protected function fetchColumn(string $sql, array $params = []): array {
+    protected function fetchColumn(string $sql, array $params = []): array
+    {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -72,13 +78,49 @@ abstract class BaseRepository {
         return (int) $stmt->fetchColumn();
     }
 
-    protected function getDistinct(string $table, string $column, string $sort = 'ASC'): array {
-        // sanitizare input
-        $table = preg_replace('/[^a-zA-Z0-9_]/', '', $table);
-        $column = preg_replace('/[^a-zA-Z0-9_]/', '', $column);
+    protected function getDistinct(string $table, string $column, string $sort = 'ASC'): array
+    {
         $sort = strtoupper($sort) === 'DESC' ? 'DESC' : 'ASC';
-        
+
         $sql = "SELECT DISTINCT $column FROM $table WHERE $column IS NOT NULL AND $column != '' ORDER BY $column $sort";
         return $this->fetchColumn($sql);
+    }
+
+    // helperi generici pentru CRUD
+
+    // intoarce randul cu id-ul dat sau null daca nu exista
+    protected function fetchById(string $table, int $id): ?array
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM $table WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    // aplica un UPDATE doar pe coloanele primite in $data
+    protected function applyUpdate(string $table, int $id, array $data): void
+    {
+        if (empty($data)) {
+            return; // nimic de actualizat
+        }
+
+        $sets = [];
+        $params = ['id' => $id];
+        foreach ($data as $column => $value) {
+            $sets[] = "$column = :$column";
+            $params[$column] = $value;
+        }
+
+        $sql = "UPDATE $table SET " . implode(', ', $sets) . " WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+    }
+
+    // sterge un rand dupa id
+    protected function deleteById(string $table, int $id): bool
+    {
+        $stmt = $this->pdo->prepare("DELETE FROM $table WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->rowCount() > 0;
     }
 }

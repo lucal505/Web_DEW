@@ -67,4 +67,29 @@ abstract class BaseService
             throw new InvalidArgumentException("'page' must be a positive integer.");
         }
     }
+
+    // helperi de validare pentru CRUD
+    protected function validateYear(int $year): void
+    {
+        $currentYear = (int)date('Y');
+        if ($year < $this->minYear || $year > $currentYear) {
+            throw new InvalidArgumentException("Year must be between {$this->minYear} and {$currentYear}.");
+        }
+    }
+
+    // verifica un an optional (la update)
+    protected function validateOptionalYear(?int $year): void
+    {
+        if ($year !== null) {
+            $this->validateYear($year);
+        }
+    }
+
+    // verifica un numar optional sa nu fie negativ
+    protected function validateNonNegative(?int $value, string $fieldName): void
+    {
+        if ($value !== null && $value < 0) {
+            throw new InvalidArgumentException("$fieldName must be a non-negative integer.");
+        }
+    }
 }

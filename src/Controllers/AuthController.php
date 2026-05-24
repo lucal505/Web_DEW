@@ -30,8 +30,9 @@ class AuthController
 
     public function requireAuth(): bool
     {
-        $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-        $token  = str_replace('Bearer ', '', $header);
+        $headers = apache_request_headers();
+        $header  = $headers['Authorization'] ?? '';
+        $token   = str_replace('Bearer ', '', $header);
 
         if (!$token) {
             http_response_code(401);

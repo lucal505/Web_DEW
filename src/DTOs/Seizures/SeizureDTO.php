@@ -34,7 +34,7 @@ class SeizureDTO implements \JsonSerializable
     // DTO -> JSON (mascare nume coloane BD)
     public function jsonSerialize(): array
     {
-        return [
+        return array_filter([
             'id'    => $this->id,
             'year'  => $this->year,
             'drug'  => $this->drugName,
@@ -43,6 +43,6 @@ class SeizureDTO implements \JsonSerializable
             'doses' => $this->doses,
             'mills' => $this->mills,
             'count' => $this->count,
-        ];
+        ], fn($value) => $value !== null);
     }
 }

@@ -4,6 +4,10 @@ namespace App\Services;
 
 use App\Repositories\SeizureRepository;
 use App\DTOs\Seizures\SeizureFilterDTO;
+use App\DTOs\Seizures\SeizureDTO;
+use App\DTOs\Seizures\SeizureCreateDTO;
+use App\DTOs\Seizures\SeizureUpdateDTO;
+use InvalidArgumentException;
 
 class SeizureService extends BaseService
 {
@@ -41,5 +45,57 @@ class SeizureService extends BaseService
         return $this->repository->getOptions();
     }
 
-    // may add more specific validation methods if needed
+    // CRUD: drug_seizures
+    public function createSeizure(SeizureCreateDTO $dto): SeizureDTO
+    {
+        $this->validateYear($dto->getYear());
+        if ($dto->getDrugName() === '') {
+            throw new InvalidArgumentException('Drug name is required.');
+        }
+
+        $this->validateNonNegative($dto->getGrams(), 'Grams');
+        $this->validateNonNegative($dto->getTabs(), 'Tablets');
+        $this->validateNonNegative($dto->getDoses(), 'Doses');
+        $this->validateNonNegative($dto->getMills(), 'Milliliters');
+        $this->validateNonNegative($dto->getCount(), 'Seizures count');
+        
+        return $this->repository->createSeizure($dto);
+    }
+
+    public function updateSeizure(int $id, SeizureUpdateDTO $dto): ?SeizureDTO
+    {
+        if ($id < 1) {
+            throw new InvalidArgumentException('Seizure id must be a positive integer.');
+        }
+
+        if (
+            $dto->getYear() === null && $dto->getDrugName() === null
+            && $dto->getGrams() === null && $dto->getTabs() === null
+            && $dto->getDoses() === null && $dto->getMills() === null
+            && $dto->getCount() === null
+        ) {
+            throw new InvalidArgumentException('At least one field must be provided for update.');
+        }
+
+        $this->validateOptionalYear($dto->getYear());
+        if ($dto->getDrugName() !== null && $dto->getDrugName() === '') {
+            throw new InvalidArgumentException('Drug name cannot be empty.');
+        }
+
+        $this->validateNonNegative($dto->getGrams(), 'Grams');
+        $this->validateNonNegative($dto->getTabs(), 'Tablets');
+        $this->validateNonNegative($dto->getDoses(), 'Doses');
+        $this->validateNonNegative($dto->getMills(), 'Milliliters');
+        $this->validateNonNegative($dto->getCount(), 'Seizures count');
+
+        return $this->repository->updateSeizure($id, $dto);
+    }
+
+    public function deleteSeizure(int $id): bool
+    {
+        if ($id < 1) {
+            throw new InvalidArgumentException('Seizure id must be a positive integer.');
+        }
+        return $this->repository->deleteSeizure($id);
+    }
 }

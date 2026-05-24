@@ -4,9 +4,27 @@ namespace App\Repositories;
 
 use App\DTOs\Seizures\SeizureDTO;
 use App\DTOs\Seizures\SeizureFilterDTO;
+use App\DTOs\Seizures\SeizureCreateDTO;
+use App\DTOs\Seizures\SeizureUpdateDTO;
+use RuntimeException;
 
 class SeizureRepository extends BaseRepository
 {
+    public function wipeData(): int
+    {
+        $tables = [
+            'drug_seizures',
+            'drugs',
+        ];
+
+        $this->pdo->exec("DELETE FROM drug_seizures");
+        $this->pdo->exec("DELETE FROM drugs");
+
+        $tableList = "'" . implode("','", $tables) . "'";
+        $this->pdo->exec("DELETE FROM sqlite_sequence WHERE name IN ($tableList)");
+
+        return count($tables);
+    }
     private function buildSeizuresQuery(SeizureFilterDTO $filterDTO): array
     {
         $data =  $filterDTO->toArray();
@@ -62,5 +80,88 @@ class SeizureRepository extends BaseRepository
             'years' => $this->getDistinct('drug_seizures', 'year', 'DESC'),
             'drugs' => $this->fetchColumn($sqlDrugs)
         ];
+    }
+
+    // gaseste drug_id dupa nume; daca drogul nu exista il creeaza
+    private function resolveDrugId(string $drugName): int
+    {
+        $stmt = $this->pdo->prepare("SELECT id FROM drugs WHERE name = :name");
+        $stmt->execute(['name' => $drugName]);
+        $id = $stmt->fetchColumn();
+
+        if ($id !== false) {
+            return (int)$id;
+        }
+
+        $insert = $this->pdo->prepare("INSERT INTO drugs (name) VALUES (:name)");
+        $insert->execute(['name' => $drugName]);
+        return (int)$this->pdo->lastInsertId();
+    }
+
+    // aduce un seizure dupa id, cu numele drogului din JOIN
+    private function fetchSeizureById(int $id): ?array
+    {
+        $sql = "SELECT ds.*, d.name as drug_name
+                FROM drug_seizures ds
+                JOIN drugs d ON ds.drug_id = d.id
+                WHERE ds.id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    // ---------- CRUD: drug_seizures ----------
+
+    public function createSeizure(SeizureCreateDTO $dto): SeizureDTO
+    {
+        $drugId = $this->resolveDrugId($dto->getDrugName());
+
+        $sql = "INSERT INTO drug_seizures (year, drug_id, grams, tablets, doses_units, milliliters, seizures_count)
+                VALUES (:year, :drug_id, :grams, :tablets, :doses_units, :milliliters, :seizures_count)";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            'year'           => $dto->getYear(),
+            'drug_id'        => $drugId,
+            'grams'          => $dto->getGrams(),
+            'tablets'        => $dto->getTabs(),
+            'doses_units'    => $dto->getDoses(),
+            'milliliters'    => $dto->getMills(),
+            'seizures_count' => $dto->getCount(),
+        ]);
+
+        $row = $this->fetchSeizureById((int)$this->pdo->lastInsertId());
+        if ($row === null) {
+            throw new RuntimeException('Failed to fetch created seizure.');
+        }
+        return SeizureDTO::fromArray($row);
+    }
+
+    public function updateSeizure(int $id, SeizureUpdateDTO $dto): ?SeizureDTO
+    {
+        if ($this->fetchSeizureById($id) === null) {
+            return null;
+        }
+
+        // coloanele directe din drug_seizures
+        $data = $dto->toArray();
+
+        // daca adminul a trimis un nume de drog, rezolv drug_id si il adaug la update
+        if ($dto->getDrugName() !== null) {
+            $data['drug_id'] = $this->resolveDrugId($dto->getDrugName());
+        }
+
+        $this->applyUpdate('drug_seizures', $id, $data);
+
+        $row = $this->fetchSeizureById($id);
+        if ($row === null) {
+            throw new RuntimeException('Failed to fetch updated seizure.');
+        }
+        return SeizureDTO::fromArray($row);
+    }
+
+    public function deleteSeizure(int $id): bool
+    {
+        return $this->deleteById('drug_seizures', $id);
     }
 }

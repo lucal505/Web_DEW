@@ -4,9 +4,12 @@ namespace App\Repositories;
 
 use PDO;
 
-class AdminRepository
+class AuthRepository extends BaseRepository
 {
-    public function __construct(private PDO $pdo) {}
+    public function __construct(PDO $pdo)
+    {
+        parent::__construct($pdo);
+    }
 
     public function findByUsername(string $username): ?array
     {

@@ -28,6 +28,6 @@ class CrimeArticleDTO implements \JsonSerializable
             'year'    => $this->year,
             'article' => $this->legalArticle,
             'count'   => $this->count,
-        ], fn($v) => $v !== null);
+        ], fn($value) => $value !== null);
     }
 }

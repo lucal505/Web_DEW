@@ -62,6 +62,6 @@ class PreventionFilterDTO extends BaseFilterDTO
             'min_count'        => $this->minCount,
             'max_count'        => $this->maxCount,
             'page'             => $this->page,
-        ], fn($v) => $v !== null);
+        ], fn($value) => $value !== null);
     }
 }

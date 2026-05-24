@@ -28,6 +28,6 @@ class CrimeGroupDTO implements \JsonSerializable
             'year'     => $this->year,
             'groups'   => $this->identifiedGroups,
             'persons'  => $this->involvedPersons,
-        ], fn($v) => $v !== null);
+        ], fn($value) => $value !== null);
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Repositories\AdminRepository;
+use App\Repositories\AuthRepository;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 class AuthService
 {
-    public function __construct(private AdminRepository $adminRepository) {}
+    public function __construct(private AuthRepository $adminRepository) {}
 
     public function login(string $username, string $password): ?string
     {
