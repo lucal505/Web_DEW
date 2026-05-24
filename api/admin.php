@@ -50,16 +50,15 @@ use App\Controllers\SeizureController;
 // conexiune la baza de date
 $pdo = Database::getInstance();
 
-// autentificare
-$authController = new AuthController(new AuthService(new AuthRepository($pdo)));
-
 // folderul de uploads
 $upload_dir = __DIR__ . '/../uploads/';
 if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0755, true);
 }
 
-// controllere 
+// initializare controllere cu injectare dependinte
+$authController = new AuthController(new AuthService(new AuthRepository($pdo)));
+
 $importController = new ImportController(
     new ImportService(),
     $upload_dir
