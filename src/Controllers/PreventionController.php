@@ -16,10 +16,9 @@ class PreventionController extends BaseController
 {
     private PreventionService $service;
 
-    public function __construct(PreventionService $service, ?AuthController $authController = null)
+    public function __construct(PreventionService $service)
     {
         $this->service = $service;
-        $this->authController = $authController;
     }
 
     // READ
@@ -61,9 +60,6 @@ class PreventionController extends BaseController
     // CRUD: projects
     public function createProject(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $dto = PreventionProjectCreateDTO::fromRequest($this->getRequestData());
             return [
@@ -75,9 +71,6 @@ class PreventionController extends BaseController
 
     public function updateProject(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -100,9 +93,6 @@ class PreventionController extends BaseController
 
     public function deleteProject(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -124,9 +114,6 @@ class PreventionController extends BaseController
     // CRUD: campaigns
     public function createCampaign(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $dto = PreventionCampaignCreateDTO::fromRequest($this->getRequestData());
             return [
@@ -138,9 +125,6 @@ class PreventionController extends BaseController
 
     public function updateCampaign(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -163,9 +147,6 @@ class PreventionController extends BaseController
 
     public function deleteCampaign(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -187,9 +168,6 @@ class PreventionController extends BaseController
     // CRUD: activities
     public function createActivity(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $dto = PreventionActivityCreateDTO::fromRequest($this->getRequestData());
             return [
@@ -201,9 +179,6 @@ class PreventionController extends BaseController
 
     public function updateActivity(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -226,9 +201,6 @@ class PreventionController extends BaseController
 
     public function deleteActivity(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {

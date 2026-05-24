@@ -7,22 +7,16 @@ use Exception;
 
 class ImportController
 {
-    private AuthController $authController;
     private ImportService $importService;
     private string $uploadDir;
 
-    public function __construct(AuthController $authController, ImportService $importService, string $uploadDir) {
-        $this->authController=$authController;
+    public function __construct(ImportService $importService, string $uploadDir) {
         $this->importService=$importService;
         $this->uploadDir=$uploadDir;
     }
 
     public function uploadFile(): void
     {
-        if (!$this->authController->requireAuth()) {
-            return;
-        }
-
         $file = $_FILES['fileToUpload'] ?? null;
         if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
             http_response_code(400);
@@ -59,10 +53,6 @@ class ImportController
 
     public function importAllFiles(): void
     {
-        if (!$this->authController->requireAuth()) {
-            return;
-        }
-
         try {
             $this->importService->processFolder($this->uploadDir);
             echo json_encode(['success' => true, 'message' => 'All files imported successfully.']);

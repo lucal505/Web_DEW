@@ -7,9 +7,6 @@ use InvalidArgumentException;
 
 abstract class BaseController
 {
-    // controllerele care fac operatii de admin seteaza authController
-    protected ?AuthController $authController = null;
-
     protected function execute(callable $action): void
     {
         try {
@@ -32,18 +29,6 @@ abstract class BaseController
             http_response_code(500);
             echo json_encode(['error' => $e->getMessage()]);
         }
-    }
-
-    // verifica ca exista un token valid de admin
-    protected function requireAdmin(): bool
-    {
-        if ($this->authController === null) {
-            http_response_code(500);
-            echo json_encode(['error' => 'Admin auth not configured.']);
-            return false;
-        }
-
-        return $this->authController->requireAuth();
     }
 
     // citeste body-ul request-ului ca JSON, cu fallback pe $_POST

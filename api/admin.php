@@ -33,14 +33,14 @@ use App\Repositories\EmergencyRepository;
 use App\Repositories\PreventionRepository;
 use App\Repositories\SeizureRepository;
 use App\Services\AuthService;
-use App\Services\AdminService;
+use App\Services\WipeService;
 use App\Services\CrimeService;
 use App\Services\EmergencyService;
 use App\Services\PreventionService;
 use App\Services\SeizureService;
 use App\Services\ImportService;
 use App\Controllers\AuthController;
-use App\Controllers\AdminController;
+use App\Controllers\WipeController;
 use App\Controllers\ImportController;
 use App\Controllers\CrimeController;
 use App\Controllers\EmergencyController;
@@ -59,45 +59,46 @@ if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0755, true);
 }
 
-// controllere (toate primesc authController pentru operatiile de admin)
+// controllere 
 $importController = new ImportController(
-    $authController,
     new ImportService(),
     $upload_dir
 );
 
-$adminController = new AdminController(
-    new AdminService(
+$wipeController = new WipeController(
+    new WipeService(
         $pdo,
         new CrimeRepository($pdo),
         new EmergencyRepository($pdo),
         new PreventionRepository($pdo),
         new SeizureRepository($pdo)
     ),
-    $authController
 );
 
 $emergencyController = new EmergencyController(
     new EmergencyService(new EmergencyRepository($pdo)),
-    $authController
 );
 
 $crimeController = new CrimeController(
     new CrimeService(new CrimeRepository($pdo)),
-    $authController
 );
 
 $preventionController = new PreventionController(
     new PreventionService(new PreventionRepository($pdo)),
-    $authController
 );
 
 $seizureController = new SeizureController(
     new SeizureService(new SeizureRepository($pdo)),
-    $authController
 );
 
 $action = $_POST['action'] ?? $_GET['action'] ?? '';
+
+$publicActions = ['login', 'logout'];
+
+if (!in_array($action, $publicActions)) {
+    if (!$authController->requireAuth()) exit;
+}
+
 
 switch ($action) {
 
@@ -121,7 +122,7 @@ switch ($action) {
         break;
 
     case 'wipe_database':
-        $adminController->wipeDatabase();
+        $wipeController->wipeDatabase();
         break;
 
     // CRUD: medical_emergencies

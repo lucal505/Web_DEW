@@ -12,10 +12,9 @@ class SeizureController extends BaseController
 {
     private SeizureService $service;
 
-    public function __construct(SeizureService $service, ?AuthController $authController = null)
+    public function __construct(SeizureService $service)
     {
         $this->service = $service;
-        $this->authController = $authController;
     }
 
     // READ
@@ -34,9 +33,6 @@ class SeizureController extends BaseController
     // CRUD: drug_seizures
     public function createSeizure(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $dto = SeizureCreateDTO::fromRequest($this->getRequestData());
             return [
@@ -48,9 +44,6 @@ class SeizureController extends BaseController
 
     public function updateSeizure(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -73,9 +66,6 @@ class SeizureController extends BaseController
 
     public function deleteSeizure(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {

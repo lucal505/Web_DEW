@@ -12,10 +12,9 @@ class EmergencyController extends BaseController
 {
     private EmergencyService $service;
 
-    public function __construct(EmergencyService $service, ?AuthController $authController = null)
+    public function __construct(EmergencyService $service)
     {
         $this->service = $service;
-        $this->authController = $authController;
     }
 
     // READ
@@ -34,10 +33,6 @@ class EmergencyController extends BaseController
     // CRUD: drug_emergencies
     public function createEmergency(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
-
         $this->execute(function () {
             $dto = EmergencyCreateDTO::fromRequest($this->getRequestData());
             $created = $this->service->createEmergency($dto);
@@ -51,10 +46,6 @@ class EmergencyController extends BaseController
 
     public function updateEmergency(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
-
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -80,10 +71,6 @@ class EmergencyController extends BaseController
 
     public function deleteEmergency(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
-
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {

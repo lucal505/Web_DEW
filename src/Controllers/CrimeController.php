@@ -23,10 +23,9 @@ class CrimeController extends BaseController
 {
     private CrimeService $service;
 
-    public function __construct(CrimeService $service, ?AuthController $authController = null)
+    public function __construct(CrimeService $service)
     {
         $this->service = $service;
-        $this->authController = $authController;
     }
 
     // READ
@@ -89,9 +88,6 @@ class CrimeController extends BaseController
     // CRUD: demographics
     public function createDemographic(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $dto = CrimeDemographicCreateDTO::fromRequest($this->getRequestData());
             return [
@@ -103,9 +99,6 @@ class CrimeController extends BaseController
 
     public function updateDemographic(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -128,9 +121,6 @@ class CrimeController extends BaseController
 
     public function deleteDemographic(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -152,9 +142,6 @@ class CrimeController extends BaseController
     // CRUD: sentences
     public function createSentence(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $dto = CrimeSentenceCreateDTO::fromRequest($this->getRequestData());
             return [
@@ -166,9 +153,6 @@ class CrimeController extends BaseController
 
     public function updateSentence(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -191,9 +175,6 @@ class CrimeController extends BaseController
 
     public function deleteSentence(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -215,9 +196,6 @@ class CrimeController extends BaseController
     // CRUD: articles
     public function createArticle(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $dto = CrimeArticleCreateDTO::fromRequest($this->getRequestData());
             return [
@@ -229,9 +207,6 @@ class CrimeController extends BaseController
 
     public function updateArticle(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -254,9 +229,6 @@ class CrimeController extends BaseController
 
     public function deleteArticle(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -279,9 +251,6 @@ class CrimeController extends BaseController
 
     public function createGeneral(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $dto = CrimeGeneralCreateDTO::fromRequest($this->getRequestData());
             return [
@@ -293,9 +262,6 @@ class CrimeController extends BaseController
 
     public function updateGeneral(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -318,9 +284,6 @@ class CrimeController extends BaseController
 
     public function deleteGeneral(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -342,9 +305,6 @@ class CrimeController extends BaseController
     // CRUD: groups
     public function createGroup(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $dto = CrimeGroupCreateDTO::fromRequest($this->getRequestData());
             return [
@@ -356,9 +316,6 @@ class CrimeController extends BaseController
 
     public function updateGroup(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
@@ -381,9 +338,6 @@ class CrimeController extends BaseController
 
     public function deleteGroup(): void
     {
-        if (!$this->requireAdmin()) {
-            return;
-        }
         $this->execute(function () {
             $id = $this->getIdFromRequest();
             if ($id === null) {
