@@ -37,7 +37,7 @@ class AuthService
         }
     }
 
-    public function changePassword(int $adminId, string $newPassword): void
+    public function updatePassword(int $adminId, string $newPassword): void
     {
         if (empty($newPassword)) {
             throw new \InvalidArgumentException('New password cannot be empty.');
@@ -56,6 +56,6 @@ class AuthService
         if (empty($username)) {
             throw new \InvalidArgumentException('Username is required.');
         }
-        return $this->adminRepository->deleteByUsername($username);
+        return $this->adminRepository->deleteAdmin($username);
     }
 }

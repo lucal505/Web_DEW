@@ -112,7 +112,7 @@ switch ($action) {
         break;
 
     case 'change_password':
-        $authController->changePassword();
+        $authController->updatePassword();
         break;
 
     case 'delete_admin':

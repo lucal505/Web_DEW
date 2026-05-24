@@ -30,7 +30,7 @@ class AuthRepository extends BaseRepository
         $stmt->execute([':hash' => $newHash, ':id' => $adminId]);
     }
 
-    public function deleteByUsername(string $username): bool
+    public function deleteAdmin(string $username): bool
     {
         $stmt = $this->pdo->prepare(
             'DELETE FROM admins WHERE username = :username'

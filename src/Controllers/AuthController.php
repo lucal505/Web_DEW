@@ -48,7 +48,7 @@ class AuthController
         return true;
     }
 
-    public function changePassword(): void
+    public function updatePassword(): void
     {
         $body = json_decode(file_get_contents('php://input'), true) ?? [];
         $newPassword = $body['password'] ?? '';
@@ -65,7 +65,7 @@ class AuthController
         }
 
         try {
-            $this->authService->changePassword($decoded->admin_id, $newPassword);
+            $this->authService->updatePassword($decoded->admin_id, $newPassword);
             echo json_encode(['success' => true]);
         } catch (\InvalidArgumentException $e) {
             http_response_code(400);
