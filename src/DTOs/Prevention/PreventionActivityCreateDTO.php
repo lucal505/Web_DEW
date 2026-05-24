@@ -23,6 +23,17 @@ class PreventionActivityCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'                => $this->getYear(),
+            'setting'             => $this->getSetting(),
+            'activities_count'    => $this->getActivitiesCount(),
+            'beneficiaries_count' => $this->getBeneficiariesCount(),
+            'beneficiary_type'    => $this->getBeneficiaryType(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;

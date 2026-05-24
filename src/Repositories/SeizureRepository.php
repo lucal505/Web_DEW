@@ -120,15 +120,9 @@ class SeizureRepository extends BaseRepository
         $sql = "INSERT INTO drug_seizures (year, drug_id, grams, tablets, doses_units, milliliters, seizures_count)
                 VALUES (:year, :drug_id, :grams, :tablets, :doses_units, :milliliters, :seizures_count)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year'           => $dto->getYear(),
-            'drug_id'        => $drugId,
-            'grams'          => $dto->getGrams(),
-            'tablets'        => $dto->getTabs(),
-            'doses_units'    => $dto->getDoses(),
-            'milliliters'    => $dto->getMills(),
-            'seizures_count' => $dto->getCount(),
-        ]);
+        $data = $dto->toArray();
+        $data['drug_id'] = $drugId;
+        $stmt->execute($data);
 
         $row = $this->fetchSeizureById((int)$this->pdo->lastInsertId());
         if ($row === null) {

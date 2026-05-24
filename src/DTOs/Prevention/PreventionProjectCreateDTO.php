@@ -19,6 +19,15 @@ class PreventionProjectCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'                => $this->getYear(),
+            'project_name'        => $this->getProjectName(),
+            'beneficiaries_count' => $this->getBeneficiariesCount(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;

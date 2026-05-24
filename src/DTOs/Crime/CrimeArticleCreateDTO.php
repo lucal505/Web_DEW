@@ -19,6 +19,15 @@ class CrimeArticleCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'          => $this->getYear(),
+            'legal_article' => $this->getLegalArticle(),
+            'count'         => $this->getCount(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;

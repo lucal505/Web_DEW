@@ -78,13 +78,7 @@ class EmergencyRepository extends BaseRepository
                 VALUES (:year, :drug_type, :category, :value, :count)";
 
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year' => $dto->getYear(),
-            'drug_type' => $dto->getDrugType(),
-            'category' => $dto->getCategory(),
-            'value' => $dto->getValue(),
-            'count' => $dto->getCount(),
-        ]);
+        $stmt->execute($dto->toArray());
 
         $row = $this->fetchById('medical_emergencies', (int)$this->pdo->lastInsertId());
         if ($row === null) {

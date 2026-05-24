@@ -23,6 +23,17 @@ class EmergencyCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'      => $this->getYear(),
+            'drug_type' => $this->getDrugType(),
+            'category'  => $this->getCategory(),
+            'value'     => $this->getValue(),
+            'count'     => $this->getCount(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;

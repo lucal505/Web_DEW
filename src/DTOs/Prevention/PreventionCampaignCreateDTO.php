@@ -19,6 +19,15 @@ class PreventionCampaignCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'                => $this->getYear(),
+            'campaign_name'       => $this->getCampaignName(),
+            'beneficiaries_count' => $this->getBeneficiariesCount(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;

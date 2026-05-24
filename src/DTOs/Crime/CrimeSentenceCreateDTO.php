@@ -21,6 +21,16 @@ class CrimeSentenceCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'          => $this->getYear(),
+            'sentence_type' => $this->getSentenceType(),
+            'law_reference' => $this->getLawReference(),
+            'count'         => $this->getCount(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;

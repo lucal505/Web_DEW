@@ -21,6 +21,16 @@ class CrimeGeneralCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'                 => $this->getYear(),
+            'investigated_persons' => $this->getInvestigatedPersons(),
+            'indicted_persons'     => $this->getIndictedPersons(),
+            'convicted_persons'    => $this->getConvictedPersons(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;

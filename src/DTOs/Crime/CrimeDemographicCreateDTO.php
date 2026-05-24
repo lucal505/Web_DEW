@@ -21,6 +21,16 @@ class CrimeDemographicCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'         => $this->getYear(),
+            'gender'       => $this->getGender(),
+            'age_category' => $this->getAgeCategory(),
+            'count'        => $this->getCount(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;

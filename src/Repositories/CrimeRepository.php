@@ -249,12 +249,7 @@ class CrimeRepository extends BaseRepository
         $sql = "INSERT INTO crimes_demographic (year, gender, age_category, count)
                 VALUES (:year, :gender, :age_category, :count)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year'         => $dto->getYear(),
-            'gender'       => $dto->getGender(),
-            'age_category' => $dto->getAgeCategory(),
-            'count'        => $dto->getCount(),
-        ]);
+        $stmt->execute($dto->toArray());
 
         $row = $this->fetchById('crimes_demographic', (int)$this->pdo->lastInsertId());
         if ($row === null) {
@@ -288,12 +283,7 @@ class CrimeRepository extends BaseRepository
         $sql = "INSERT INTO crimes_sentence (year, sentence_type, law_reference, count)
                 VALUES (:year, :sentence_type, :law_reference, :count)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year'          => $dto->getYear(),
-            'sentence_type' => $dto->getSentenceType(),
-            'law_reference' => $dto->getLawReference(),
-            'count'         => $dto->getCount(),
-        ]);
+        $stmt->execute($dto->toArray());
 
         $row = $this->fetchById('crimes_sentence', (int)$this->pdo->lastInsertId());
         if ($row === null) {
@@ -327,11 +317,7 @@ class CrimeRepository extends BaseRepository
         $sql = "INSERT INTO crimes_article (year, legal_article, count)
                 VALUES (:year, :legal_article, :count)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year'          => $dto->getYear(),
-            'legal_article' => $dto->getLegalArticle(),
-            'count'         => $dto->getCount(),
-        ]);
+        $stmt->execute($dto->toArray());
 
         $row = $this->fetchById('crimes_article', (int)$this->pdo->lastInsertId());
         if ($row === null) {
@@ -365,12 +351,7 @@ class CrimeRepository extends BaseRepository
         $sql = "INSERT INTO crimes_general (year, investigated_persons, indicted_persons, convicted_persons)
                 VALUES (:year, :investigated_persons, :indicted_persons, :convicted_persons)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year'                 => $dto->getYear(),
-            'investigated_persons' => $dto->getInvestigatedPersons(),
-            'indicted_persons'     => $dto->getIndictedPersons(),
-            'convicted_persons'    => $dto->getConvictedPersons(),
-        ]);
+        $stmt->execute($dto->toArray());
 
         $row = $this->fetchById('crimes_general', (int)$this->pdo->lastInsertId());
         if ($row === null) {
@@ -404,11 +385,7 @@ class CrimeRepository extends BaseRepository
         $sql = "INSERT INTO crimes_group (year, identified_groups, involved_persons)
                 VALUES (:year, :identified_groups, :involved_persons)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year'              => $dto->getYear(),
-            'identified_groups' => $dto->getIdentifiedGroups(),
-            'involved_persons'  => $dto->getInvolvedPersons(),
-        ]);
+        $stmt->execute($dto->toArray());
 
         $row = $this->fetchById('crimes_group', (int)$this->pdo->lastInsertId());
         if ($row === null) {

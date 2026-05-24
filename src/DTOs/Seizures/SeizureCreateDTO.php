@@ -27,6 +27,18 @@ class SeizureCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'           => $this->getYear(),
+            'grams'          => $this->getGrams(),
+            'tablets'        => $this->getTabs(),
+            'doses_units'    => $this->getDoses(),
+            'milliliters'    => $this->getMills(),
+            'seizures_count' => $this->getCount(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;

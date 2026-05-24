@@ -167,11 +167,7 @@ class PreventionRepository extends BaseRepository
         $sql = "INSERT INTO prevention_projects (year, project_name, beneficiaries_count)
                 VALUES (:year, :project_name, :beneficiaries_count)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year'                => $dto->getYear(),
-            'project_name'        => $dto->getProjectName(),
-            'beneficiaries_count' => $dto->getBeneficiariesCount(),
-        ]);
+        $stmt->execute($dto->toArray());
 
         $row = $this->fetchById('prevention_projects', (int)$this->pdo->lastInsertId());
         if ($row === null) {
@@ -205,11 +201,7 @@ class PreventionRepository extends BaseRepository
         $sql = "INSERT INTO prevention_campaigns (year, campaign_name, beneficiaries_count)
                 VALUES (:year, :campaign_name, :beneficiaries_count)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year'                => $dto->getYear(),
-            'campaign_name'       => $dto->getCampaignName(),
-            'beneficiaries_count' => $dto->getBeneficiariesCount(),
-        ]);
+        $stmt->execute($dto->toArray());
 
         $row = $this->fetchById('prevention_campaigns', (int)$this->pdo->lastInsertId());
         if ($row === null) {
@@ -243,13 +235,7 @@ class PreventionRepository extends BaseRepository
         $sql = "INSERT INTO prevention_activities (year, setting, activities_count, beneficiaries_count, beneficiary_type)
                 VALUES (:year, :setting, :activities_count, :beneficiaries_count, :beneficiary_type)";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            'year'                => $dto->getYear(),
-            'setting'             => $dto->getSetting(),
-            'activities_count'    => $dto->getActivitiesCount(),
-            'beneficiaries_count' => $dto->getBeneficiariesCount(),
-            'beneficiary_type'    => $dto->getBeneficiaryType(),
-        ]);
+        $stmt->execute($dto->toArray());
 
         $row = $this->fetchById('prevention_activities', (int)$this->pdo->lastInsertId());
         if ($row === null) {

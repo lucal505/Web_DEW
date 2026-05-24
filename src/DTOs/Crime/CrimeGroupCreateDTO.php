@@ -19,6 +19,15 @@ class CrimeGroupCreateDTO
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'year'              => $this->getYear(),
+            'identified_groups' => $this->getIdentifiedGroups(),
+            'involved_persons'  => $this->getInvolvedPersons(),
+        ];
+    }
+
     public function getYear(): int
     {
         return $this->year;
