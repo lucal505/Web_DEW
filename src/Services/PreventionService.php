@@ -115,7 +115,7 @@ class PreventionService extends BaseService
 
     public function updateProject(int $id, PreventionProjectUpdateDTO $dto): ?PreventionProjectDTO
     {
-        $this->assertId($id);
+        $this->validateId($id);
         if (
             $dto->getYear() === null && $dto->getProjectName() === null
             && $dto->getBeneficiariesCount() === null
@@ -132,7 +132,7 @@ class PreventionService extends BaseService
 
     public function deleteProject(int $id): bool
     {
-        $this->assertId($id);
+        $this->validateId($id);
         return $this->repository->deleteProject($id);
     }
 
@@ -149,7 +149,7 @@ class PreventionService extends BaseService
 
     public function updateCampaign(int $id, PreventionCampaignUpdateDTO $dto): ?PreventionCampaignDTO
     {
-        $this->assertId($id);
+        $this->validateId($id);
         if (
             $dto->getYear() === null && $dto->getCampaignName() === null
             && $dto->getBeneficiariesCount() === null
@@ -166,7 +166,7 @@ class PreventionService extends BaseService
 
     public function deleteCampaign(int $id): bool
     {
-        $this->assertId($id);
+        $this->validateId($id);
         return $this->repository->deleteCampaign($id);
     }
 
@@ -184,7 +184,7 @@ class PreventionService extends BaseService
 
     public function updateActivity(int $id, PreventionActivityUpdateDTO $dto): ?PreventionActivityDTO
     {
-        $this->assertId($id);
+        $this->validateId($id);
         if (
             $dto->getYear() === null && $dto->getSetting() === null
             && $dto->getActivitiesCount() === null && $dto->getBeneficiariesCount() === null
@@ -203,14 +203,8 @@ class PreventionService extends BaseService
 
     public function deleteActivity(int $id): bool
     {
-        $this->assertId($id);
+        $this->validateId($id);
         return $this->repository->deleteActivity($id);
     }
 
-    private function assertId(int $id): void
-    {
-        if ($id < 1) {
-            throw new InvalidArgumentException('Id must be a positive integer.');
-        }
-    }
 }

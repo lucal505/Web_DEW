@@ -69,6 +69,13 @@ abstract class BaseService
     }
 
     // helperi de validare pentru CRUD
+    protected function validateId(int $id): void
+    {
+        if ($id < 1) {
+            throw new InvalidArgumentException('Id must be a positive integer.');
+        }
+    }
+
     protected function validateYear(int $year): void
     {
         $currentYear = (int)date('Y');

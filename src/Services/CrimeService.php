@@ -175,7 +175,7 @@ class CrimeService extends BaseService
 
     public function updateDemographic(int $id, CrimeDemographicUpdateDTO $dto): ?CrimeDemographicDTO
     {
-        $this->assertId($id);
+        $this->validateId($id);
         if (
             $dto->getYear() === null && $dto->getGender() === null
             && $dto->getAgeCategory() === null && $dto->getCount() === null
@@ -195,7 +195,7 @@ class CrimeService extends BaseService
 
     public function deleteDemographic(int $id): bool
     {
-        $this->assertId($id);
+        $this->validateId($id);
         return $this->repository->deleteDemographic($id);
     }
 
@@ -212,7 +212,7 @@ class CrimeService extends BaseService
 
     public function updateSentence(int $id, CrimeSentenceUpdateDTO $dto): ?CrimeSentenceDTO
     {
-        $this->assertId($id);
+        $this->validateId($id);
         if (
             $dto->getYear() === null && $dto->getSentenceType() === null
             && $dto->getLawReference() === null && $dto->getCount() === null
@@ -232,7 +232,7 @@ class CrimeService extends BaseService
 
     public function deleteSentence(int $id): bool
     {
-        $this->assertId($id);
+        $this->validateId($id);
         return $this->repository->deleteSentence($id);
     }
 
@@ -249,7 +249,7 @@ class CrimeService extends BaseService
 
     public function updateArticle(int $id, CrimeArticleUpdateDTO $dto): ?CrimeArticleDTO
     {
-        $this->assertId($id);
+        $this->validateId($id);
         if ($dto->getYear() === null && $dto->getLegalArticle() === null && $dto->getCount() === null) {
             throw new InvalidArgumentException('At least one field must be provided for update.');
         }
@@ -263,7 +263,7 @@ class CrimeService extends BaseService
 
     public function deleteArticle(int $id): bool
     {
-        $this->assertId($id);
+        $this->validateId($id);
         return $this->repository->deleteArticle($id);
     }
 
@@ -279,7 +279,7 @@ class CrimeService extends BaseService
 
     public function updateGeneral(int $id, CrimeGeneralUpdateDTO $dto): ?CrimeGeneralDTO
     {
-        $this->assertId($id);
+        $this->validateId($id);
         if (
             $dto->getYear() === null && $dto->getInvestigatedPersons() === null
             && $dto->getIndictedPersons() === null && $dto->getConvictedPersons() === null
@@ -295,7 +295,7 @@ class CrimeService extends BaseService
 
     public function deleteGeneral(int $id): bool
     {
-        $this->assertId($id);
+        $this->validateId($id);
         return $this->repository->deleteGeneral($id);
     }
 
@@ -310,7 +310,7 @@ class CrimeService extends BaseService
 
     public function updateGroup(int $id, CrimeGroupUpdateDTO $dto): ?CrimeGroupDTO
     {
-        $this->assertId($id);
+        $this->validateId($id);
         if (
             $dto->getYear() === null && $dto->getIdentifiedGroups() === null
             && $dto->getInvolvedPersons() === null
@@ -325,14 +325,7 @@ class CrimeService extends BaseService
 
     public function deleteGroup(int $id): bool
     {
-        $this->assertId($id);
+        $this->validateId($id);
         return $this->repository->deleteGroup($id);
-    }
-
-    private function assertId(int $id): void
-    {
-        if ($id < 1) {
-            throw new InvalidArgumentException('Id must be a positive integer.');
-        }
     }
 }

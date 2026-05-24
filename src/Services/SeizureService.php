@@ -64,9 +64,7 @@ class SeizureService extends BaseService
 
     public function updateSeizure(int $id, SeizureUpdateDTO $dto): ?SeizureDTO
     {
-        if ($id < 1) {
-            throw new InvalidArgumentException('Seizure id must be a positive integer.');
-        }
+        $this->validateId($id);
 
         if (
             $dto->getYear() === null && $dto->getDrugName() === null
@@ -93,9 +91,7 @@ class SeizureService extends BaseService
 
     public function deleteSeizure(int $id): bool
     {
-        if ($id < 1) {
-            throw new InvalidArgumentException('Seizure id must be a positive integer.');
-        }
+        $this->validateId($id);
         return $this->repository->deleteSeizure($id);
     }
 }
