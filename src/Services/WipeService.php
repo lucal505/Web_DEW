@@ -8,7 +8,7 @@ use App\Repositories\PreventionRepository;
 use App\Repositories\SeizureRepository;
 use PDO;
 
-class AdminService
+class WipeService
 {
     public function __construct(
         private PDO $pdo,
