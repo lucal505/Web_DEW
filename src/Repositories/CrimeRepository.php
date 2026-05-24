@@ -246,12 +246,9 @@ class CrimeRepository extends BaseRepository
     // CRUD: crimes_demographic
     public function createDemographic(CrimeDemographicCreateDTO $dto): CrimeDemographicDTO
     {
-        $sql = "INSERT INTO crimes_demographic (year, gender, age_category, count)
-                VALUES (:year, :gender, :age_category, :count)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($dto->toArray());
+        $id = $this->insert('crimes_demographic', $dto->toArray());
+        $row = $this->fetchById('crimes_demographic', $id);
 
-        $row = $this->fetchById('crimes_demographic', (int)$this->pdo->lastInsertId());
         if ($row === null) {
             throw new RuntimeException('Failed to fetch created demographic.');
         }
@@ -263,7 +260,7 @@ class CrimeRepository extends BaseRepository
         if ($this->fetchById('crimes_demographic', $id) === null) {
             return null;
         }
-        $this->applyUpdate('crimes_demographic', $id, $dto->toArray());
+        $this->update('crimes_demographic', $id, $dto->toArray());
 
         $row = $this->fetchById('crimes_demographic', $id);
         if ($row === null) {
@@ -274,18 +271,15 @@ class CrimeRepository extends BaseRepository
 
     public function deleteDemographic(int $id): bool
     {
-        return $this->deleteById('crimes_demographic', $id);
+        return $this->delete('crimes_demographic', $id);
     }
 
     // CRUD: crimes_sentence
     public function createSentence(CrimeSentenceCreateDTO $dto): CrimeSentenceDTO
     {
-        $sql = "INSERT INTO crimes_sentence (year, sentence_type, law_reference, count)
-                VALUES (:year, :sentence_type, :law_reference, :count)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($dto->toArray());
+        $id = $this->insert('crimes_sentence', $dto->toArray());
+        $row = $this->fetchById('crimes_sentence', $id);
 
-        $row = $this->fetchById('crimes_sentence', (int)$this->pdo->lastInsertId());
         if ($row === null) {
             throw new RuntimeException('Failed to fetch created sentence.');
         }
@@ -297,7 +291,7 @@ class CrimeRepository extends BaseRepository
         if ($this->fetchById('crimes_sentence', $id) === null) {
             return null;
         }
-        $this->applyUpdate('crimes_sentence', $id, $dto->toArray());
+        $this->update('crimes_sentence', $id, $dto->toArray());
 
         $row = $this->fetchById('crimes_sentence', $id);
         if ($row === null) {
@@ -308,18 +302,15 @@ class CrimeRepository extends BaseRepository
 
     public function deleteSentence(int $id): bool
     {
-        return $this->deleteById('crimes_sentence', $id);
+        return $this->delete('crimes_sentence', $id);
     }
 
     // CRUD: crimes_article
     public function createArticle(CrimeArticleCreateDTO $dto): CrimeArticleDTO
     {
-        $sql = "INSERT INTO crimes_article (year, legal_article, count)
-                VALUES (:year, :legal_article, :count)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($dto->toArray());
+        $id = $this->insert('crimes_article', $dto->toArray());
+        $row = $this->fetchById('crimes_article', $id);
 
-        $row = $this->fetchById('crimes_article', (int)$this->pdo->lastInsertId());
         if ($row === null) {
             throw new RuntimeException('Failed to fetch created article.');
         }
@@ -331,7 +322,7 @@ class CrimeRepository extends BaseRepository
         if ($this->fetchById('crimes_article', $id) === null) {
             return null;
         }
-        $this->applyUpdate('crimes_article', $id, $dto->toArray());
+        $this->update('crimes_article', $id, $dto->toArray());
 
         $row = $this->fetchById('crimes_article', $id);
         if ($row === null) {
@@ -342,18 +333,15 @@ class CrimeRepository extends BaseRepository
 
     public function deleteArticle(int $id): bool
     {
-        return $this->deleteById('crimes_article', $id);
+        return $this->delete('crimes_article', $id);
     }
 
     // CRUD: crimes_general
     public function createGeneral(CrimeGeneralCreateDTO $dto): CrimeGeneralDTO
     {
-        $sql = "INSERT INTO crimes_general (year, investigated_persons, indicted_persons, convicted_persons)
-                VALUES (:year, :investigated_persons, :indicted_persons, :convicted_persons)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($dto->toArray());
+        $id = $this->insert('crimes_general', $dto->toArray());
+        $row = $this->fetchById('crimes_general', $id);
 
-        $row = $this->fetchById('crimes_general', (int)$this->pdo->lastInsertId());
         if ($row === null) {
             throw new RuntimeException('Failed to fetch created general record.');
         }
@@ -365,7 +353,7 @@ class CrimeRepository extends BaseRepository
         if ($this->fetchById('crimes_general', $id) === null) {
             return null;
         }
-        $this->applyUpdate('crimes_general', $id, $dto->toArray());
+        $this->update('crimes_general', $id, $dto->toArray());
 
         $row = $this->fetchById('crimes_general', $id);
         if ($row === null) {
@@ -376,18 +364,15 @@ class CrimeRepository extends BaseRepository
 
     public function deleteGeneral(int $id): bool
     {
-        return $this->deleteById('crimes_general', $id);
+        return $this->delete('crimes_general', $id);
     }
 
     // CRUD: crimes_group
     public function createGroup(CrimeGroupCreateDTO $dto): CrimeGroupDTO
     {
-        $sql = "INSERT INTO crimes_group (year, identified_groups, involved_persons)
-                VALUES (:year, :identified_groups, :involved_persons)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($dto->toArray());
+        $id = $this->insert('crimes_group', $dto->toArray());
+        $row = $this->fetchById('crimes_group', $id);
 
-        $row = $this->fetchById('crimes_group', (int)$this->pdo->lastInsertId());
         if ($row === null) {
             throw new RuntimeException('Failed to fetch created group.');
         }
@@ -399,7 +384,7 @@ class CrimeRepository extends BaseRepository
         if ($this->fetchById('crimes_group', $id) === null) {
             return null;
         }
-        $this->applyUpdate('crimes_group', $id, $dto->toArray());
+        $this->update('crimes_group', $id, $dto->toArray());
 
         $row = $this->fetchById('crimes_group', $id);
         if ($row === null) {
@@ -410,6 +395,6 @@ class CrimeRepository extends BaseRepository
 
     public function deleteGroup(int $id): bool
     {
-        return $this->deleteById('crimes_group', $id);
+        return $this->delete('crimes_group', $id);
     }
 }

@@ -164,12 +164,8 @@ class PreventionRepository extends BaseRepository
     // CRUD: prevention_projects
     public function createProject(PreventionProjectCreateDTO $dto): PreventionProjectDTO
     {
-        $sql = "INSERT INTO prevention_projects (year, project_name, beneficiaries_count)
-                VALUES (:year, :project_name, :beneficiaries_count)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($dto->toArray());
-
-        $row = $this->fetchById('prevention_projects', (int)$this->pdo->lastInsertId());
+        $id = $this->insert('prevention_projects', $dto->toArray());
+        $row = $this->fetchById('prevention_projects', $id);
         if ($row === null) {
             throw new RuntimeException('Failed to fetch created project.');
         }
@@ -181,7 +177,7 @@ class PreventionRepository extends BaseRepository
         if ($this->fetchById('prevention_projects', $id) === null) {
             return null;
         }
-        $this->applyUpdate('prevention_projects', $id, $dto->toArray());
+        $this->update('prevention_projects', $id, $dto->toArray());
 
         $row = $this->fetchById('prevention_projects', $id);
         if ($row === null) {
@@ -192,18 +188,14 @@ class PreventionRepository extends BaseRepository
 
     public function deleteProject(int $id): bool
     {
-        return $this->deleteById('prevention_projects', $id);
+        return $this->delete('prevention_projects', $id);
     }
 
     // CRUD: prevention_campaigns
     public function createCampaign(PreventionCampaignCreateDTO $dto): PreventionCampaignDTO
     {
-        $sql = "INSERT INTO prevention_campaigns (year, campaign_name, beneficiaries_count)
-                VALUES (:year, :campaign_name, :beneficiaries_count)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($dto->toArray());
-
-        $row = $this->fetchById('prevention_campaigns', (int)$this->pdo->lastInsertId());
+        $id = $this->insert('prevention_campaigns', $dto->toArray());
+        $row = $this->fetchById('prevention_campaigns', $id);
         if ($row === null) {
             throw new RuntimeException('Failed to fetch created campaign.');
         }
@@ -215,7 +207,7 @@ class PreventionRepository extends BaseRepository
         if ($this->fetchById('prevention_campaigns', $id) === null) {
             return null;
         }
-        $this->applyUpdate('prevention_campaigns', $id, $dto->toArray());
+        $this->update('prevention_campaigns', $id, $dto->toArray());
 
         $row = $this->fetchById('prevention_campaigns', $id);
         if ($row === null) {
@@ -226,18 +218,14 @@ class PreventionRepository extends BaseRepository
 
     public function deleteCampaign(int $id): bool
     {
-        return $this->deleteById('prevention_campaigns', $id);
+        return $this->delete('prevention_campaigns', $id);
     }
 
     // CRUD: prevention_activities
     public function createActivity(PreventionActivityCreateDTO $dto): PreventionActivityDTO
     {
-        $sql = "INSERT INTO prevention_activities (year, setting, activities_count, beneficiaries_count, beneficiary_type)
-                VALUES (:year, :setting, :activities_count, :beneficiaries_count, :beneficiary_type)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($dto->toArray());
-
-        $row = $this->fetchById('prevention_activities', (int)$this->pdo->lastInsertId());
+        $id = $this->insert('prevention_activities', $dto->toArray());
+        $row = $this->fetchById('prevention_activities', $id);
         if ($row === null) {
             throw new RuntimeException('Failed to fetch created activity.');
         }
@@ -249,7 +237,7 @@ class PreventionRepository extends BaseRepository
         if ($this->fetchById('prevention_activities', $id) === null) {
             return null;
         }
-        $this->applyUpdate('prevention_activities', $id, $dto->toArray());
+        $this->update('prevention_activities', $id, $dto->toArray());
 
         $row = $this->fetchById('prevention_activities', $id);
         if ($row === null) {
@@ -260,6 +248,6 @@ class PreventionRepository extends BaseRepository
 
     public function deleteActivity(int $id): bool
     {
-        return $this->deleteById('prevention_activities', $id);
+        return $this->delete('prevention_activities', $id);
     }
 }

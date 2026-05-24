@@ -74,13 +74,8 @@ class EmergencyRepository extends BaseRepository
     // CRUD
     public function createEmergency(EmergencyCreateDTO $dto): EmergencyDTO
     {
-        $sql = "INSERT INTO medical_emergencies (year, drug_type, category, value, count)
-                VALUES (:year, :drug_type, :category, :value, :count)";
-
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($dto->toArray());
-
-        $row = $this->fetchById('medical_emergencies', (int)$this->pdo->lastInsertId());
+        $id = $this->insert('medical_emergencies', $dto->toArray());
+        $row = $this->fetchById('medical_emergencies', $id);
         if ($row === null) {
             throw new RuntimeException('Failed to fetch created emergency.');
         }
@@ -93,7 +88,7 @@ class EmergencyRepository extends BaseRepository
         if ($this->fetchById('medical_emergencies', $id) === null) {
             return null;
         }
-        $this->applyUpdate('medical_emergencies', $id, $dto->toArray());
+        $this->update('medical_emergencies', $id, $dto->toArray());
 
         $row = $this->fetchById('medical_emergencies', $id);
         if ($row === null) {
@@ -105,6 +100,6 @@ class EmergencyRepository extends BaseRepository
 
     public function deleteEmergency(int $id): bool
     {        
-        return $this->deleteById('medical_emergencies', $id);
+        return $this->delete('medical_emergencies', $id);
     }       
 }
