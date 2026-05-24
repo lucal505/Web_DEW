@@ -5,11 +5,11 @@ namespace App\DTOs\Emergency;
 class EmergencyCreateDTO
 {
     public function __construct(
-        private readonly int $year,
-        private readonly string $drugType,
-        private readonly string $category,
-        private readonly string $value,
-        private readonly int $count,
+        private readonly ?int $year,
+        private readonly ?string $drugType,
+        private readonly ?string $category,
+        private readonly ?string $value,
+        private readonly ?int $count,
     ) {}
 
     public static function fromRequest(array $params): self
@@ -34,23 +34,23 @@ class EmergencyCreateDTO
         ];
     }
 
-    public function getYear(): int
+    public function getYear(): ?int
     {
         return $this->year;
     }
-    public function getDrugType(): string
+    public function getDrugType(): ?string
     {
         return $this->drugType;
     }
-    public function getCategory(): string
+    public function getCategory(): ?string
     {
         return $this->category;
     }
-    public function getValue(): string
+    public function getValue(): ?string
     {
         return $this->value;
     }
-    public function getCount(): int
+    public function getCount(): ?int
     {
         return $this->count;
     }

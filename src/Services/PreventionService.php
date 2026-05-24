@@ -106,9 +106,10 @@ class PreventionService extends BaseService
     public function createProject(PreventionProjectCreateDTO $dto): PreventionProjectDTO
     {
         $this->validateYear($dto->getYear());
-        if ($dto->getProjectName() === '') {
+        if ($dto->getProjectName() === null || $dto->getProjectName() === '') {
             throw new InvalidArgumentException('Project name is required.');
         }
+
         $this->validateNonNegative($dto->getBeneficiariesCount(), 'Beneficiaries count');
         return $this->repository->createProject($dto);
     }
@@ -140,9 +141,10 @@ class PreventionService extends BaseService
     public function createCampaign(PreventionCampaignCreateDTO $dto): PreventionCampaignDTO
     {
         $this->validateYear($dto->getYear());
-        if ($dto->getCampaignName() === '') {
+        if ($dto->getCampaignName() === null || $dto->getCampaignName() === '') {
             throw new InvalidArgumentException('Campaign name is required.');
         }
+
         $this->validateNonNegative($dto->getBeneficiariesCount(), 'Beneficiaries count');
         return $this->repository->createCampaign($dto);
     }
@@ -174,9 +176,10 @@ class PreventionService extends BaseService
     public function createActivity(PreventionActivityCreateDTO $dto): PreventionActivityDTO
     {
         $this->validateYear($dto->getYear());
-        if ($dto->getSetting() === '') {
+        if ($dto->getSetting() === null || $dto->getSetting() === '') {
             throw new InvalidArgumentException('Setting is required.');
         }
+        
         $this->validateNonNegative($dto->getActivitiesCount(), 'Activities count');
         $this->validateNonNegative($dto->getBeneficiariesCount(), 'Beneficiaries count');
         return $this->repository->createActivity($dto);

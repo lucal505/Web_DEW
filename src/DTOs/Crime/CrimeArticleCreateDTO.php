@@ -5,8 +5,8 @@ namespace App\DTOs\Crime;
 class CrimeArticleCreateDTO
 {
     public function __construct(
-        private readonly int $year,
-        private readonly string $legalArticle,
+        private readonly ?int $year,
+        private readonly ?string $legalArticle,
         private readonly ?int $count,
     ) {}
 
@@ -28,11 +28,11 @@ class CrimeArticleCreateDTO
         ];
     }
 
-    public function getYear(): int
+    public function getYear(): ?int
     {
         return $this->year;
     }
-    public function getLegalArticle(): string
+    public function getLegalArticle(): ?string
     {
         return $this->legalArticle;
     }

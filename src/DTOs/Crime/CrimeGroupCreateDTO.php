@@ -5,7 +5,7 @@ namespace App\DTOs\Crime;
 class CrimeGroupCreateDTO
 {
     public function __construct(
-        private readonly int $year,
+        private readonly ?int $year,
         private readonly ?int $identifiedGroups,
         private readonly ?int $involvedPersons,
     ) {}
@@ -28,7 +28,7 @@ class CrimeGroupCreateDTO
         ];
     }
 
-    public function getYear(): int
+    public function getYear(): ?int
     {
         return $this->year;
     }

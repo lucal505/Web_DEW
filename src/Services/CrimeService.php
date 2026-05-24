@@ -165,9 +165,12 @@ class CrimeService extends BaseService
     // CRUD: crimes_demographic
     public function createDemographic(CrimeDemographicCreateDTO $dto): CrimeDemographicDTO
     {
-        $this->validateYear($dto->getYear());
-        if ($dto->getGender() === '' || $dto->getAgeCategory() === '') {
-            throw new InvalidArgumentException('Gender and age category are required.');
+        $this->validateYear($dto->getYear()); // verifica si null
+        if ($dto->getGender() === null || $dto->getGender() === '') {
+            throw new InvalidArgumentException('Gender is required.');
+        }
+        if ($dto->getAgeCategory() === null || $dto->getAgeCategory() === '') {
+            throw new InvalidArgumentException('Age category is required.');
         }
         $this->validateNonNegative($dto->getCount(), 'Count');
         return $this->repository->createDemographic($dto);
@@ -203,9 +206,13 @@ class CrimeService extends BaseService
     public function createSentence(CrimeSentenceCreateDTO $dto): CrimeSentenceDTO
     {
         $this->validateYear($dto->getYear());
-        if ($dto->getSentenceType() === '' || $dto->getLawReference() === '') {
-            throw new InvalidArgumentException('Sentence type and law reference are required.');
+        if ($dto->getSentenceType() === null || $dto->getSentenceType() === '') {
+            throw new InvalidArgumentException('Sentence type is required.');
         }
+        if ($dto->getLawReference() === null || $dto->getLawReference() === '') {
+            throw new InvalidArgumentException('Law reference is required.');
+        }
+
         $this->validateNonNegative($dto->getCount(), 'Count');
         return $this->repository->createSentence($dto);
     }
@@ -240,9 +247,10 @@ class CrimeService extends BaseService
     public function createArticle(CrimeArticleCreateDTO $dto): CrimeArticleDTO
     {
         $this->validateYear($dto->getYear());
-        if ($dto->getLegalArticle() === '') {
+        if ($dto->getLegalArticle() === null || $dto->getLegalArticle() === '') {
             throw new InvalidArgumentException('Legal article is required.');
         }
+        
         $this->validateNonNegative($dto->getCount(), 'Count');
         return $this->repository->createArticle($dto);
     }

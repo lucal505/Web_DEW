@@ -49,10 +49,10 @@ class SeizureService extends BaseService
     public function createSeizure(SeizureCreateDTO $dto): SeizureDTO
     {
         $this->validateYear($dto->getYear());
-        if ($dto->getDrugName() === '') {
+        if ($dto->getDrugName() === null || $dto->getDrugName() === '') {
             throw new InvalidArgumentException('Drug name is required.');
         }
-
+        
         $this->validateNonNegative($dto->getGrams(), 'Grams');
         $this->validateNonNegative($dto->getTabs(), 'Tablets');
         $this->validateNonNegative($dto->getDoses(), 'Doses');

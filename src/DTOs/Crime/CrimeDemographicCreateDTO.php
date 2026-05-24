@@ -5,9 +5,9 @@ namespace App\DTOs\Crime;
 class CrimeDemographicCreateDTO
 {
     public function __construct(
-        private readonly int $year,
-        private readonly string $gender,
-        private readonly string $ageCategory,
+        private readonly ?int $year,
+        private readonly ?string $gender,
+        private readonly ?string $ageCategory,
         private readonly ?int $count,
     ) {}
 
@@ -31,15 +31,15 @@ class CrimeDemographicCreateDTO
         ];
     }
 
-    public function getYear(): int
+    public function getYear(): ?int
     {
         return $this->year;
     }
-    public function getGender(): string
+    public function getGender(): ?string
     {
         return $this->gender;
     }
-    public function getAgeCategory(): string
+    public function getAgeCategory(): ?string
     {
         return $this->ageCategory;
     }

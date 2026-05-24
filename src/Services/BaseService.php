@@ -76,8 +76,12 @@ abstract class BaseService
         }
     }
 
-    protected function validateYear(int $year): void
+    protected function validateYear(?int $year): void
     {
+        if ($year === null) {
+            throw new InvalidArgumentException('Year is required.');
+        }
+
         $currentYear = (int)date('Y');
         if ($year < $this->minYear || $year > $currentYear) {
             throw new InvalidArgumentException("Year must be between {$this->minYear} and {$currentYear}.");

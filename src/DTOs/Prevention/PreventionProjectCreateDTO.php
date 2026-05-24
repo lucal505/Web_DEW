@@ -5,8 +5,8 @@ namespace App\DTOs\Prevention;
 class PreventionProjectCreateDTO
 {
     public function __construct(
-        private readonly int $year,
-        private readonly string $projectName,
+        private readonly ?int $year,
+        private readonly ?string $projectName,
         private readonly ?int $beneficiariesCount,
     ) {}
 
@@ -28,11 +28,11 @@ class PreventionProjectCreateDTO
         ];
     }
 
-    public function getYear(): int
+    public function getYear(): ?int
     {
         return $this->year;
     }
-    public function getProjectName(): string
+    public function getProjectName(): ?string
     {
         return $this->projectName;
     }

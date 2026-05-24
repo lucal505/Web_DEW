@@ -48,36 +48,26 @@ class EmergencyService extends BaseService
 
     public function createEmergency(EmergencyCreateDTO $dto): EmergencyDTO
     {
-        $this->validateEmergencyCreate($dto);
+        $this->validateYear($dto->getYear());
+
+        if ($dto->getDrugType() === null || $dto->getDrugType() === '') {
+            throw new InvalidArgumentException('Drug type is required.');
+        }
+        if ($dto->getCategory() === null || $dto->getCategory() === '') {
+            throw new InvalidArgumentException('Category is required.');
+        }
+        if ($dto->getValue() === null || $dto->getValue() === '') {
+            throw new InvalidArgumentException('Value is required.');
+        }
+
+        $this->validateNonNegative($dto->getCount(), 'Count');
         return $this->repository->createEmergency($dto);
     }
 
     public function updateEmergency(int $id, EmergencyUpdateDTO $dto): ?EmergencyDTO
     {
         $this->validateId($id);
-        $this->validateEmergencyUpdate($dto);
-        return $this->repository->updateEmergency($id, $dto);
-    }
 
-    public function deleteEmergency(int $id): bool
-    {
-        $this->validateId($id);
-        return $this->repository->deleteEmergency($id);
-    }
-
-    private function validateEmergencyCreate(EmergencyCreateDTO $dto): void
-    {
-        $this->validateYear($dto->getYear());
-
-        if ($dto->getDrugType() === '' || $dto->getCategory() === '' || $dto->getValue() === '') {
-            throw new InvalidArgumentException('Drug type, category, and value are required.');
-        }
-
-        $this->validateNonNegative($dto->getCount(), 'Count');
-    }
-
-    private function validateEmergencyUpdate(EmergencyUpdateDTO $dto): void
-    {
         if (
             $dto->getYear() === null && $dto->getDrugType() === null
             && $dto->getCategory() === null && $dto->getValue() === null
@@ -99,5 +89,12 @@ class EmergencyService extends BaseService
         }
 
         $this->validateNonNegative($dto->getCount(), 'Count');
+        return $this->repository->updateEmergency($id, $dto);
+    }
+
+    public function deleteEmergency(int $id): bool
+    {
+        $this->validateId($id);
+        return $this->repository->deleteEmergency($id);
     }
 }

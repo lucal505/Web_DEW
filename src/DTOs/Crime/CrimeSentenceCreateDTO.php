@@ -5,9 +5,9 @@ namespace App\DTOs\Crime;
 class CrimeSentenceCreateDTO
 {
     public function __construct(
-        private readonly int $year,
-        private readonly string $sentenceType,
-        private readonly string $lawReference,
+        private readonly ?int $year,
+        private readonly ?string $sentenceType,
+        private readonly ?string $lawReference,
         private readonly ?int $count,
     ) {}
 
@@ -31,15 +31,15 @@ class CrimeSentenceCreateDTO
         ];
     }
 
-    public function getYear(): int
+    public function getYear(): ?int
     {
         return $this->year;
     }
-    public function getSentenceType(): string
+    public function getSentenceType(): ?string
     {
         return $this->sentenceType;
     }
-    public function getLawReference(): string
+    public function getLawReference(): ?string
     {
         return $this->lawReference;
     }

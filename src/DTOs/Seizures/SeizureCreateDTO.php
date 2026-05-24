@@ -5,8 +5,8 @@ namespace App\DTOs\Seizures;
 class SeizureCreateDTO
 {
     public function __construct(
-        private readonly int $year,
-        private readonly string $drugName,
+        private readonly ?int $year,
+        private readonly ?string $drugName,
         private readonly ?float $grams,
         private readonly ?int $tabs,
         private readonly ?int $doses,
@@ -39,11 +39,11 @@ class SeizureCreateDTO
         ];
     }
 
-    public function getYear(): int
+    public function getYear(): ?int
     {
         return $this->year;
     }
-    public function getDrugName(): string
+    public function getDrugName(): ?string
     {
         return $this->drugName;
     }
