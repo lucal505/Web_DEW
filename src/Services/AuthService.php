@@ -36,4 +36,26 @@ class AuthService
             return null;
         }
     }
+
+    public function changePassword(int $adminId, string $newPassword): void
+    {
+        if (empty($newPassword)) {
+            throw new \InvalidArgumentException('New password cannot be empty.');
+        }
+
+        if (strlen($newPassword) < 8) {
+            throw new \InvalidArgumentException('Password must be at least 8 characters.');
+        }
+
+        $hash = password_hash($newPassword, PASSWORD_BCRYPT);
+        $this->adminRepository->updatePassword($adminId, $hash);
+    }
+
+    public function deleteAdmin(string $username): bool
+    {
+        if (empty($username)) {
+            throw new \InvalidArgumentException('Username is required.');
+        }
+        return $this->adminRepository->deleteByUsername($username);
+    }
 }

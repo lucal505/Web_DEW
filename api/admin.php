@@ -111,6 +111,14 @@ switch ($action) {
         echo json_encode(['success' => true]);
         break;
 
+    case 'change_password':
+        $authController->changePassword();
+        break;
+
+    case 'delete_admin':
+        $authController->deleteAdmin();
+        break;
+
     // import
     case 'upload':
         $importController->uploadFile();

@@ -21,4 +21,21 @@ class AuthRepository extends BaseRepository
         $row = $stmt->fetch();
         return $row ? $row : null;
     }
+
+    public function updatePassword(int $adminId, string $newHash): void
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE admins SET password_hash = :hash WHERE id = :id'
+        );
+        $stmt->execute([':hash' => $newHash, ':id' => $adminId]);
+    }
+
+    public function deleteByUsername(string $username): bool
+    {
+        $stmt = $this->pdo->prepare(
+            'DELETE FROM admins WHERE username = :username'
+        );
+        $stmt->execute([':username' => $username]);
+        return $stmt->rowCount() > 0;
+    }
 }

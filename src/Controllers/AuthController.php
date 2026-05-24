@@ -31,8 +31,7 @@ class AuthController
     public function requireAuth(): bool
     {
         $headers = apache_request_headers();
-        $header  = $headers['Authorization'] ?? '';
-        $token   = str_replace('Bearer ', '', $header);
+        $token   = str_replace('Bearer ', '', $headers['Authorization'] ?? '');
 
         if (!$token) {
             http_response_code(401);
@@ -47,5 +46,49 @@ class AuthController
         }
 
         return true;
+    }
+
+    public function changePassword(): void
+    {
+        $body = json_decode(file_get_contents('php://input'), true) ?? [];
+        $newPassword = $body['password'] ?? '';
+
+        // extrage admin_id din token
+        $header  = apache_request_headers()['Authorization'] ?? '';
+        $token   = str_replace('Bearer ', '', $header);
+        $decoded = $this->authService->validateToken($token);
+
+        if ($decoded === null) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'Invalid token.']);
+            return;
+        }
+
+        try {
+            $this->authService->changePassword($decoded->admin_id, $newPassword);
+            echo json_encode(['success' => true]);
+        } catch (\InvalidArgumentException $e) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteAdmin(): void
+    {
+        $body     = json_decode(file_get_contents('php://input'), true) ?? [];
+        $username = $body['username'] ?? '';
+
+        try {
+            $deleted = $this->authService->deleteAdmin($username);
+            if (!$deleted) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Admin not found.']);
+                return;
+            }
+            echo json_encode(['success' => true]);
+        } catch (\InvalidArgumentException $e) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 }
