@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Repositories\AuthRepository;
+use App\DTOs\Auth\AdminCreateDTO;
+use App\DTOs\Auth\AdminDTO;
+use App\DTOs\Auth\AdminUpdateDTO;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -37,18 +40,50 @@ class AuthService
         }
     }
 
-    public function updatePassword(int $adminId, string $newPassword): void
+    public function createAdmin(AdminCreateDTO $dto): AdminDTO
     {
-        if (empty($newPassword)) {
-            throw new \InvalidArgumentException('New password cannot be empty.');
+        if ($dto->getUsername() === null || $dto->getUsername() === '') {
+            throw new \InvalidArgumentException('Username is required.');
         }
-
-        if (strlen($newPassword) < 8) {
+        if ($dto->getPassword() === null || empty($dto->getPassword())) {
+            throw new \InvalidArgumentException('Password is required.');
+        }
+        if (strlen($dto->getPassword()) < 8) {
             throw new \InvalidArgumentException('Password must be at least 8 characters.');
         }
 
-        $hash = password_hash($newPassword, PASSWORD_BCRYPT);
-        $this->adminRepository->updatePassword($adminId, $hash);
+        $hash = password_hash($dto->getPassword(), PASSWORD_BCRYPT);
+        try {
+            $this->adminRepository->createAdmin($dto->getUsername(), $hash);
+        } catch (\PDOException $e) {
+            if (str_contains($e->getMessage(), 'UNIQUE constraint failed')) {
+                throw new \InvalidArgumentException('Username already exists.');
+            }
+            throw $e;
+        }
+
+        $row = $this->adminRepository->findByUsername($dto->getUsername());
+        return AdminDTO::fromArray($row);
+    }
+
+    public function updatePassword(AdminUpdateDTO $dto): ?AdminDTO
+    {
+        if ($dto->getUsername() === null || $dto->getUsername() === '') {
+            throw new \InvalidArgumentException('Username is required.');
+        }
+        if ($dto->getPassword() === null || empty($dto->getPassword())) {
+            throw new \InvalidArgumentException('Password is required.');
+        }
+        if (strlen($dto->getPassword()) < 8) {
+            throw new \InvalidArgumentException('Password must be at least 8 characters.');
+        }
+
+        $hash    = password_hash($dto->getPassword(), PASSWORD_BCRYPT);
+        $updated = $this->adminRepository->updatePassword($dto->getUsername(), $hash);
+        if (!$updated) return null;
+
+        $row = $this->adminRepository->findByUsername($dto->getUsername());
+        return AdminDTO::fromArray($row);
     }
 
     public function deleteAdmin(string $username): bool

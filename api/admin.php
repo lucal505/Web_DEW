@@ -111,6 +111,10 @@ switch ($action) {
         echo json_encode(['success' => true]);
         break;
 
+    case 'create_admin':
+        $authController->createAdmin();
+        break;
+
     case 'change_password':
         $authController->updatePassword();
         break;

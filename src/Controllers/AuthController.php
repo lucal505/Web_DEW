@@ -1,9 +1,11 @@
 <?php
 namespace App\Controllers;
 
+use App\DTOs\Auth\AdminCreateDTO;
+use App\DTOs\Auth\AdminUpdateDTO;
 use App\Services\AuthService;
 
-class AuthController
+class AuthController extends BaseController
 {
     public function __construct(private readonly AuthService $authService) {}
 
@@ -48,47 +50,65 @@ class AuthController
         return true;
     }
 
+    public function createAdmin(): void
+    {
+        $this->execute(function () {
+            $dto = AdminCreateDTO::fromRequest($this->getRequestData());
+            $admin = $this->authService->createAdmin($dto);
+            return [
+                'status' => 201, 
+                'body' => [
+                    'success' => true, 
+                    'admin' => $admin
+                ]   
+            ];
+        });
+    }
+
     public function updatePassword(): void
     {
-        $body = json_decode(file_get_contents('php://input'), true) ?? [];
-        $newPassword = $body['password'] ?? '';
-
-        // extrage admin_id din token
-        $header  = apache_request_headers()['Authorization'] ?? '';
-        $token   = str_replace('Bearer ', '', $header);
-        $decoded = $this->authService->validateToken($token);
-
-        if ($decoded === null) {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'Invalid token.']);
-            return;
-        }
-
-        try {
-            $this->authService->updatePassword($decoded->admin_id, $newPassword);
-            echo json_encode(['success' => true]);
-        } catch (\InvalidArgumentException $e) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-        }
+        $this->execute(function () {
+            $dto   = AdminUpdateDTO::fromRequest($this->getRequestData());
+            $admin = $this->authService->updatePassword($dto);
+            if ($admin === null) {
+                return [
+                    'status' => 404, 
+                    'body' => [
+                        'success' => false, 
+                        'message' => 'Admin not found.'
+                    ]
+                ];
+            }
+            return [
+                'status' => 200, 
+                'body' => [
+                    'success' => true, 
+                    'admin' => $admin
+                ]
+            ];
+        });
     }
 
     public function deleteAdmin(): void
     {
-        $body     = json_decode(file_get_contents('php://input'), true) ?? [];
-        $username = $body['username'] ?? '';
-
-        try {
-            $deleted = $this->authService->deleteAdmin($username);
+        $this->execute(function () {
+            $body    = $this->getRequestData();
+            $deleted = $this->authService->deleteAdmin($body['username'] ?? '');
             if (!$deleted) {
-                http_response_code(404);
-                echo json_encode(['success' => false, 'message' => 'Admin not found.']);
-                return;
+                return [
+                    'status' => 404, 
+                    'body' => [
+                        'success' => false, 
+                        'message' => 'Admin not found.'
+                    ]
+                ];
             }
-            echo json_encode(['success' => true]);
-        } catch (\InvalidArgumentException $e) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-        }
+            return [
+                'status' => 200,
+                'body' => [
+                    'success' => true
+                ]
+            ];
+        });
     }
 }
