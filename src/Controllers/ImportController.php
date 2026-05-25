@@ -43,8 +43,12 @@ class ImportController
         }
 
         try {
-            $this->importService->processFile($targetPath);
-            echo json_encode(['success' => true, 'message' => 'File uploaded and imported successfully.']);
+            $inserted = $this->importService->processFile($targetPath);
+            echo json_encode([
+                'success'  => true,
+                'message'  => 'File uploaded and imported successfully.',
+                'inserted' => $inserted,
+            ]);
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Import error: ' . $e->getMessage()]);
@@ -54,8 +58,12 @@ class ImportController
     public function importAllFiles(): void
     {
         try {
-            $this->importService->processFolder($this->uploadDir);
-            echo json_encode(['success' => true, 'message' => 'All files imported successfully.']);
+            $inserted = $this->importService->processFolder($this->uploadDir);
+            echo json_encode([
+                'success'  => true,
+                'message'  => 'All files imported successfully.',
+                'inserted' => $inserted,
+            ]);
         } catch (Exception $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);

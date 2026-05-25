@@ -9,7 +9,7 @@ use RuntimeException;
 use InvalidArgumentException;
 
 class ImportService{
-    public function processFile(string $filePath): void{
+    public function processFile(string $filePath): int{
         if (!is_file($filePath)){
             throw new InvalidArgumentException("Specified file does not exist: $filePath");
         }
@@ -24,14 +24,14 @@ class ImportService{
         $importer = $this->getImporter($fileName);
         
         if ($importer){
-            $importer->import($filePath, $year);
+            return $importer->import($filePath, $year);
         } else {
             throw new RuntimeException("File type not recognized for import.");
         }
     }
 
     // process all files in uploads/ folder
-    public function processFolder(string $dirPath): void {
+    public function processFolder(string $dirPath): int {
         // extrag doar fisierele CSV
         $files = glob($dirPath . '*.csv');
         
@@ -39,13 +39,15 @@ class ImportService{
             throw new RuntimeException("No CSV files found in directory: $dirPath");
         }
 
+        $total = 0;
         foreach ($files as $file) {
             try {
-                $this->processFile($file);
+                $total += $this->processFile($file);
             } catch (\Exception $e) {
                 error_log("[ERROR] Error processing $file: " . $e->getMessage());
             }
         }
+        return $total;
     }
 
     private function getImporter(string $fileName){
