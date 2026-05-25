@@ -120,13 +120,6 @@ function requireAuth(AuthController $auth): void
     }
 }
 
-function setId(?int $id): void
-{
-    if ($id !== null) {
-        $_GET['id'] = $id;
-    }
-}
-
 // rutare
 // POST /api/auth/login (public)
 if ($section === 'auth' && $resource === 'login' && $method === 'POST') {
