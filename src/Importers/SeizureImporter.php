@@ -38,7 +38,7 @@ class SeizureImporter implements ImporterInterface
 
             $drugName = trim($data[0]);
             if (empty($drugName)) {
-                error_log("[WARN]: Skipping row $rowCount -> drug name is empty<br>");
+                error_log("[WARN]: Skipping row $rowCount -> drug name is empty.\n");
                 continue;
             }
 
