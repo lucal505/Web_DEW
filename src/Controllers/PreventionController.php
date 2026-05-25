@@ -69,10 +69,9 @@ class PreventionController extends BaseController
         });
     }
 
-    public function updateProject(): void
+    public function updateProject(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing project id.');
             }
@@ -91,10 +90,9 @@ class PreventionController extends BaseController
         });
     }
 
-    public function deleteProject(): void
+    public function deleteProject(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing project id.');
             }
@@ -123,10 +121,9 @@ class PreventionController extends BaseController
         });
     }
 
-    public function updateCampaign(): void
+    public function updateCampaign(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing campaign id.');
             }
@@ -145,10 +142,9 @@ class PreventionController extends BaseController
         });
     }
 
-    public function deleteCampaign(): void
+    public function deleteCampaign(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing campaign id.');
             }
@@ -177,10 +173,9 @@ class PreventionController extends BaseController
         });
     }
 
-    public function updateActivity(): void
+    public function updateActivity(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing activity id.');
             }
@@ -199,10 +194,9 @@ class PreventionController extends BaseController
         });
     }
 
-    public function deleteActivity(): void
+    public function deleteActivity(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing activity id.');
             }

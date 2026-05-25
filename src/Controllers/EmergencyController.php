@@ -44,10 +44,9 @@ class EmergencyController extends BaseController
         });
     }
 
-    public function updateEmergency(): void
+    public function updateEmergency(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing emergency id.');
             }
@@ -69,10 +68,9 @@ class EmergencyController extends BaseController
         });
     }
 
-    public function deleteEmergency(): void
+    public function deleteEmergency(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing emergency id.');
             }

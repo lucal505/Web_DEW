@@ -42,10 +42,9 @@ class SeizureController extends BaseController
         });
     }
 
-    public function updateSeizure(): void
+    public function updateSeizure(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing seizure id.');
             }
@@ -64,10 +63,9 @@ class SeizureController extends BaseController
         });
     }
 
-    public function deleteSeizure(): void
+    public function deleteSeizure(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing seizure id.');
             }

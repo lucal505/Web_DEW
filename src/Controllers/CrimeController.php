@@ -97,10 +97,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function updateDemographic(): void
+    public function updateDemographic(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing demographic id.');
             }
@@ -119,10 +118,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function deleteDemographic(): void
+    public function deleteDemographic(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing demographic id.');
             }
@@ -151,10 +149,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function updateSentence(): void
+    public function updateSentence(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing sentence id.');
             }
@@ -173,10 +170,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function deleteSentence(): void
+    public function deleteSentence(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing sentence id.');
             }
@@ -205,10 +201,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function updateArticle(): void
+    public function updateArticle(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing article id.');
             }
@@ -227,10 +222,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function deleteArticle(): void
+    public function deleteArticle(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing article id.');
             }
@@ -260,10 +254,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function updateGeneral(): void
+    public function updateGeneral(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing general record id.');
             }
@@ -282,10 +275,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function deleteGeneral(): void
+    public function deleteGeneral(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing general record id.');
             }
@@ -314,10 +306,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function updateGroup(): void
+    public function updateGroup(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing group id.');
             }
@@ -336,10 +327,9 @@ class CrimeController extends BaseController
         });
     }
 
-    public function deleteGroup(): void
+    public function deleteGroup(?int $id): void
     {
-        $this->execute(function () {
-            $id = $this->getIdFromRequest();
+        $this->execute(function () use ($id) {
             if ($id === null) {
                 throw new InvalidArgumentException('Missing group id.');
             }
