@@ -6,15 +6,17 @@ use App\Services\EmergencyService;
 use App\DTOs\Emergency\EmergencyFilterDTO;
 use App\DTOs\Emergency\EmergencyCreateDTO;
 use App\DTOs\Emergency\EmergencyUpdateDTO;
+use App\Services\ExportService;
 use InvalidArgumentException;
 
 class EmergencyController extends BaseController
 {
     private EmergencyService $service;
 
-    public function __construct(EmergencyService $service)
+    public function __construct(EmergencyService $service, ?ExportService $exportService = null) 
     {
         $this->service = $service;
+        $this->exportService = $exportService;
     }
 
     // READ

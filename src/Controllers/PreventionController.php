@@ -10,15 +10,17 @@ use App\DTOs\Prevention\PreventionCampaignCreateDTO;
 use App\DTOs\Prevention\PreventionCampaignUpdateDTO;
 use App\DTOs\Prevention\PreventionActivityCreateDTO;
 use App\DTOs\Prevention\PreventionActivityUpdateDTO;
+use App\Services\ExportService;
 use InvalidArgumentException;
 
 class PreventionController extends BaseController
 {
     private PreventionService $service;
 
-    public function __construct(PreventionService $service)
+    public function __construct(PreventionService $service, ?ExportService $exportService = null)
     {
         $this->service = $service;
+        $this->exportService = $exportService;
     }
 
     // READ

@@ -17,15 +17,17 @@ use App\DTOs\Crime\CrimeGeneralCreateDTO;
 use App\DTOs\Crime\CrimeGeneralUpdateDTO;
 use App\DTOs\Crime\CrimeGroupCreateDTO;
 use App\DTOs\Crime\CrimeGroupUpdateDTO;
+use App\Services\ExportService;
 use InvalidArgumentException;
 
 class CrimeController extends BaseController
 {
     private CrimeService $service;
 
-    public function __construct(CrimeService $service)
+    public function __construct(CrimeService $service, ?ExportService $exportService = null)
     {
         $this->service = $service;
+        $this->exportService = $exportService;
     }
 
     // READ

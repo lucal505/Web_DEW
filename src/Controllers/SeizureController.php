@@ -6,15 +6,17 @@ use App\Services\SeizureService;
 use App\DTOs\Seizures\SeizureFilterDTO;
 use App\DTOs\Seizures\SeizureCreateDTO;
 use App\DTOs\Seizures\SeizureUpdateDTO;
+use App\Services\ExportService;
 use InvalidArgumentException;
 
 class SeizureController extends BaseController
 {
     private SeizureService $service;
 
-    public function __construct(SeizureService $service)
+    public function __construct(SeizureService $service, ?ExportService $exportService = null)
     {
         $this->service = $service;
+        $this->exportService = $exportService;
     }
 
     // READ

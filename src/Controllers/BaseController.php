@@ -9,12 +9,7 @@ abstract class BaseController
 {
 
     protected ?ExportService $exportService = null;
-
-    public function setExportService(ExportService $exportService): void
-    {
-        $this->exportService = $exportService;
-    }
-
+    
     protected function handleExport(array $data): void
     {
         $format = $_GET['format'] ?? 'csv';

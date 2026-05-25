@@ -73,29 +73,27 @@ $resource = $segments[1] ?? '';
 $pdo = Database::getInstance();
 
 // init controllers cu injectare dependinte
-$authController = new AuthController(new AuthService(new AuthRepository($pdo)));
-
-$crimeController = new CrimeController(
-    new CrimeService(new CrimeRepository($pdo))
-);
-
-$emergencyController = new EmergencyController(
-    new EmergencyService(new EmergencyRepository($pdo))
-);
-
-$preventionController = new PreventionController(
-    new PreventionService(new PreventionRepository($pdo))
-);
-
-$seizureController = new SeizureController(
-    new SeizureService(new SeizureRepository($pdo))
+$authController = new AuthController(
+    new AuthService(new AuthRepository($pdo))
 );
 
 $exportService = new ExportService();
-$emergencyController->setExportService($exportService);
-$crimeController->setExportService($exportService);
-$preventionController->setExportService($exportService);
-$seizureController->setExportService($exportService);
+$emergencyController = new EmergencyController(
+    new EmergencyService(new EmergencyRepository($pdo)),
+    $exportService
+);
+$crimeController = new CrimeController(
+    new CrimeService(new CrimeRepository($pdo)),
+    $exportService
+);
+$preventionController = new PreventionController(
+    new PreventionService(new PreventionRepository($pdo)),
+    $exportService
+);
+$seizureController = new SeizureController(
+    new SeizureService(new SeizureRepository($pdo)),
+    $exportService
+);
 
 $upload_dir = __DIR__ . '/../uploads/';
 if (!is_dir($upload_dir)) {
