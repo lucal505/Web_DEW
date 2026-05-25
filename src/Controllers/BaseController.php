@@ -2,10 +2,39 @@
 
 namespace App\Controllers;
 
+use App\Services\ExportService;
 use InvalidArgumentException;
 
 abstract class BaseController
 {
+
+    protected ?ExportService $exportService = null;
+
+    public function setExportService(ExportService $exportService): void
+    {
+        $this->exportService = $exportService;
+    }
+
+    protected function handleExport(array $data): void
+    {
+        $format = $_GET['format'] ?? 'csv';
+
+        if (empty($data)) {
+            http_response_code(404);
+            echo json_encode(['error' => 'No data to export.']);
+            return;
+        }
+
+        if ($format === 'csv') {
+            $this->exportService->generateCsv($data);
+        } elseif ($format === 'html') {
+            $this->exportService->generateHtml($data);
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Unsupported format.']);
+        }
+    }
+
     protected function execute(callable $action): void
     {
         try {

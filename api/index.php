@@ -56,7 +56,7 @@ use App\Controllers\CrimeController;
 use App\Controllers\EmergencyController;
 use App\Controllers\PreventionController;
 use App\Controllers\SeizureController;
-use App\Controllers\ExportController;
+use App\Services\ExportService;
 
 // extrag metoda HTTP
 $method   = $_SERVER['REQUEST_METHOD'];
@@ -91,7 +91,11 @@ $seizureController = new SeizureController(
     new SeizureService(new SeizureRepository($pdo))
 );
 
-$exportController = new ExportController($pdo);
+$exportService = new ExportService();
+$emergencyController->setExportService($exportService);
+$crimeController->setExportService($exportService);
+$preventionController->setExportService($exportService);
+$seizureController->setExportService($exportService);
 
 $upload_dir = __DIR__ . '/../uploads/';
 if (!is_dir($upload_dir)) {
@@ -215,8 +219,41 @@ if ($section === 'options' && $method === 'GET') {
 
 // GET /api/export/{resource} (public, returneaza CSV sau HTML)
 if ($section === 'export' && $method === 'GET') {
-    $format = $_GET['format'] ?? 'csv';
-    $exportController->handleExport($resource, $_GET, $format);
+    switch ($resource) {
+        case 'emergencies':
+            $emergencyController->export();
+            break;
+        case 'demographics':
+            $crimeController->exportDemographics();
+            break;
+        case 'sentences':
+            $crimeController->exportSentences();
+            break;
+        case 'articles':
+            $crimeController->exportArticles();
+            break;
+        case 'general':
+            $crimeController->exportGeneral();
+            break;
+        case 'groups':
+            $crimeController->exportGroups();
+            break;
+        case 'projects':
+            $preventionController->exportProjects();
+            break;
+        case 'campaigns':
+            $preventionController->exportCampaigns();
+            break;
+        case 'activities':
+            $preventionController->exportActivities();
+            break;
+        case 'seizures':
+            $seizureController->export();
+            break;
+        default:
+            http_response_code(404);
+            echo json_encode(['error' => 'Resource not found.']);
+    }
     exit;
 }
 

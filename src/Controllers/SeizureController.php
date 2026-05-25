@@ -30,6 +30,14 @@ class SeizureController extends BaseController
         $this->execute(fn() => $this->service->getOptions());
     }
 
+    // exporters
+    public function export(): void
+    {
+        $filterDTO = SeizureFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getSeizures($filterDTO);
+        $this->handleExport($data);
+    }
+
     // CRUD: drug_seizures
     public function createSeizure(): void
     {

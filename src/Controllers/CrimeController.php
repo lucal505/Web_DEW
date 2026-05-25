@@ -85,6 +85,42 @@ class CrimeController extends BaseController
         $this->execute(fn() => $this->service->getArticleOptions());
     }
 
+    public function exportDemographics(): void
+    {
+        $filterDTO = CrimeDemographicFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getDemographics($filterDTO);
+        $this->handleExport($data);
+    }
+
+    // exporters
+    public function exportSentences(): void
+    {
+        $filterDTO = CrimeSentenceFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getSentences($filterDTO);
+        $this->handleExport($data);
+    }
+
+    public function exportArticles(): void
+    {
+        $filterDTO = CrimeArticleFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getArticles($filterDTO);
+        $this->handleExport($data);
+    }
+
+    public function exportGeneral(): void
+    {
+        $filterDTO = CrimeGeneralFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getGeneral($filterDTO);
+        $this->handleExport($data);
+    }
+
+    public function exportGroups(): void
+    {
+        $filterDTO = CrimeGeneralFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getGroups($filterDTO);
+        $this->handleExport($data);
+    }
+
     // CRUD: demographics
     public function createDemographic(): void
     {

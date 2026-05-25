@@ -57,6 +57,28 @@ class PreventionController extends BaseController
         $this->execute(fn() => $this->service->getActivityOptions());
     }
 
+    // exporters
+    public function exportProjects(): void
+    {
+        $filterDTO = PreventionFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getProjects($filterDTO);
+        $this->handleExport($data);
+    }
+
+    public function exportCampaigns(): void
+    {
+        $filterDTO = PreventionFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getCampaigns($filterDTO);
+        $this->handleExport($data);
+    }
+
+    public function exportActivities(): void
+    {
+        $filterDTO = PreventionFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getActivities($filterDTO);
+        $this->handleExport($data);
+    }
+
     // CRUD: projects
     public function createProject(): void
     {

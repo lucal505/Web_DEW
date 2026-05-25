@@ -30,6 +30,13 @@ class EmergencyController extends BaseController
         $this->execute(fn() => $this->service->getOptions());
     }
 
+    public function export(): void
+    {
+        $filterDTO = EmergencyFilterDTO::fromRequest($_GET);
+        $data      = $this->service->getEmergencies($filterDTO);
+        $this->handleExport($data);
+    }
+
     // CRUD: drug_emergencies
     public function createEmergency(): void
     {
