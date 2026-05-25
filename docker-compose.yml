@@ -9,5 +9,6 @@ services:
     environment:
       - APACHE_DOCUMENT_ROOT=/var/www/html
     command: >
-      sh -c "composer install --no-dev --working-dir=/var/www/html &&
+      sh -c "chown -R www-data:www-data /var/www/html/uploads &&
+             composer install --no-dev --working-dir=/var/www/html &&
              apache2-foreground"
