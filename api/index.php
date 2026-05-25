@@ -115,13 +115,6 @@ $wipeController = new WipeController(
     )
 );
 
-function requireAuth(AuthController $auth): void
-{
-    if (!$auth->requireAuth()) {
-        exit;
-    }
-}
-
 // rutare
 // POST /api/auth/login (public)
 if ($section === 'auth' && $resource === 'login' && $method === 'POST') {
@@ -257,7 +250,8 @@ if ($section === 'export' && $method === 'GET') {
 
 // private routes
 if ($section === 'admin') {
-    requireAuth($authController);
+    if (!$authController->requireAuth()) 
+        exit;
 
     // POST /api/admin/admins
     if ($resource === 'admins' && $method === 'POST') {
