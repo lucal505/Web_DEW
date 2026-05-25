@@ -19,13 +19,15 @@ class PreventionImporter implements ImporterInterface
     {
         $handle = fopen($filePath, "r");
         if ($handle === false) {
-            error_log("[ERROR]: Could not open $filePath.<br>");
+            error_log("[ERROR]: Could not open $filePath.\n");
             return 0;
         }
         $insertionsCount = 0;
         $currentSection = null;
 
         while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+            // convertest fiecare celula la UTF-8
+            $data = array_map(fn($cell) => mb_convert_encoding($cell, 'UTF-8', 'auto'), $data);
 
             // skip empty rows
             if (empty($data) || !isset($data[0]) || (count($data) === 1 && trim($data[0]) === '')) {
@@ -98,7 +100,10 @@ class PreventionImporter implements ImporterInterface
 
             // activitati 
             elseif ($currentSection === 'activities' && !empty($firstCell) && isset($data[1]) && isset($data[2])) {
+                // validez numerele negative
                 $activitiesCount = (int)$data[1];
+                if ($activitiesCount < 0) continue;
+
                 $beneficiariesText = trim($data[2]);
 
                 // despart textul dupa virgula ca sa extrag tipurile de beneficiari si numarul lor
@@ -111,7 +116,10 @@ class PreventionImporter implements ImporterInterface
 
                     // caut un numar la început, urmat de text
                     if (preg_match('/^(\d+)\s+(.+)$/', $part, $matches)) {
+                        // validez numerele negative
                         $count = (int)$matches[1];
+                        if ($count < 0) continue;
+
                         $type = trim($matches[2]);
 
                         // setez mediul
@@ -136,7 +144,7 @@ class PreventionImporter implements ImporterInterface
             }
         }
         fclose($handle);
-        error_log("[INFO]: Imported $insertionsCount records for PREVENTION (year $year).<br>");
+        error_log("[INFO]: Imported $insertionsCount records for PREVENTION (year $year).\n");
         return $insertionsCount;
     }
 }

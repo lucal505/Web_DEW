@@ -19,7 +19,7 @@ class EmergencyImporter implements ImporterInterface
     {
         $handle = fopen($filePath, "r");
         if ($handle === false) {
-            error_log("[ERROR]: Could not open $filePath.<br>");
+            error_log("[ERROR]: Could not open $filePath.\n");
             return 0;
         }
         $insertionsCount = 0;
@@ -27,6 +27,8 @@ class EmergencyImporter implements ImporterInterface
         $drugHeaders = [];
 
         while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+            // convertest fiecare celula la UTF-8
+            $data = array_map(fn($cell) => mb_convert_encoding($cell, 'UTF-8', 'auto'), $data);
 
             // skip empty rows
             if (empty($data) || !isset($data[0])) {
@@ -99,7 +101,7 @@ class EmergencyImporter implements ImporterInterface
             }
         }
         fclose($handle);
-        error_log("[INFO]: Imported $insertionsCount records for EMERGENCIES (year $year).<br>");
+        error_log("[INFO]: Imported $insertionsCount records for EMERGENCIES (year $year).\n");
         return $insertionsCount;
     }
 }

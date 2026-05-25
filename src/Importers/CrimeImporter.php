@@ -19,10 +19,10 @@ class CrimeImporter implements ImporterInterface
     {
         $handle = fopen($filePath, "r");
         if ($handle === false) {
-            error_log("[ERROR]: Could not open $filePath.<br>");
+            error_log("[ERROR]: Could not open $filePath.\n");
             return 0;
         }
-        
+
         $insertionsCount = 0;
         $currentSection = null;
         $sentenceHeaders = [];
@@ -32,6 +32,8 @@ class CrimeImporter implements ImporterInterface
         $crimesGroup = ['identified' => 0, 'involved' => 0];
 
         while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+            // convertest fiecare celula la UTF-8
+            $data = array_map(fn($cell) => mb_convert_encoding($cell, 'UTF-8', 'auto'), $data);
 
             // skipping empty rows
             if (empty($data) || (count($data) === 1 && trim($data[0]) === '')) {
@@ -61,7 +63,10 @@ class CrimeImporter implements ImporterInterface
 
             $firstCell = trim($data[0]);
             if ($currentSection === 'general' && isset($data[1])) {
+                // validez numerele negative
                 $value = (int)$data[1];
+                if ($value < 0) continue;
+
                 if (stripos($firstCell, 'cercetate') !== false) {
                     $crimesGeneral['investigated'] = $value;
                 } elseif (stripos($firstCell, 'trimise') !== false) {
@@ -70,13 +75,17 @@ class CrimeImporter implements ImporterInterface
                     $crimesGeneral['convicted'] = $value;
                 }
             } elseif ($currentSection === 'article' && !empty($firstCell) && isset($data[1]) && $data[1] !== '') {
+                // validez numerele negative
+                $count = (int)$data[1];
+                if ($count < 0) continue;
+
                 $stmt = $this->pdo->prepare("INSERT OR IGNORE INTO crimes_article 
                                             (year, legal_article, count) 
                                             VALUES (:year, :article, :count)");
                 $stmt->execute([
                     'year' => $year,
                     'article' => $firstCell,
-                    'count' => (int)$data[1]
+                    'count' => $count
                 ]);
 
                 if ($stmt->rowCount() > 0) {
@@ -86,42 +95,56 @@ class CrimeImporter implements ImporterInterface
 
                 // Majori (col 1)
                 if (isset($data[1]) && $data[1] !== '') {
-                    $stmt = $this->pdo->prepare("INSERT OR IGNORE INTO crimes_demographic 
-                                                (year, gender, age_category, count) 
-                                                VALUES (:year, :gender, :age_category, :count)");
-                    $stmt->execute([
-                        'year' => $year,
-                        'gender' => $firstCell,
-                        'age_category' => 'Majori',
-                        'count' => (int)$data[1]
-                    ]);
+                    // validez numerele negative
+                    $count = (int)$data[1];
+                    if ($count >= 0) {
 
-                    if ($stmt->rowCount() > 0) {
-                        $insertionsCount++;
+                        $stmt = $this->pdo->prepare("INSERT OR IGNORE INTO crimes_demographic 
+                                                    (year, gender, age_category, count) 
+                                                    VALUES (:year, :gender, :age_category, :count)");
+                        $stmt->execute([
+                            'year' => $year,
+                            'gender' => $firstCell,
+                            'age_category' => 'Majori',
+                            'count' => $count
+                        ]);
+
+                        if ($stmt->rowCount() > 0) {
+                            $insertionsCount++;
+                        }
                     }
                 }
 
                 // Minori (col 2)
                 if (isset($data[2]) && $data[2] !== '') {
-                    $stmt = $this->pdo->prepare("INSERT OR IGNORE INTO crimes_demographic 
-                                                (year, gender, age_category, count)
-                                                VALUES (:year, :gender, :age_category, :count)");
-                    $stmt->execute([
-                        'year' => $year,
-                        'gender' => $firstCell,
-                        'age_category' => 'Minori',
-                        'count' => (int)$data[2]
-                    ]);
+                    // validez numerele negative
+                    $count = (int)$data[2];
+                    if ($count >= 0) {
 
-                    if ($stmt->rowCount() > 0) {
-                        $insertionsCount++;
+                        $stmt = $this->pdo->prepare("INSERT OR IGNORE INTO crimes_demographic 
+                                                    (year, gender, age_category, count)
+                                                    VALUES (:year, :gender, :age_category, :count)");
+                        $stmt->execute([
+                            'year' => $year,
+                            'gender' => $firstCell,
+                            'age_category' => 'Minori',
+                            'count' => $count
+                        ]);
+
+                        if ($stmt->rowCount() > 0) {
+                            $insertionsCount++;
+                        }
                     }
                 }
             } elseif ($currentSection === 'group' && isset($data[1]) && $data[1] !== '') {
+                // validez numerele negative
+                $value = (int)$data[1];
+                if ($value < 0) continue;
+
                 if (stripos($firstCell, 'identificate') !== false) {
-                    $crimesGroup['identified'] = (int)$data[1];
+                    $crimesGroup['identified'] = $value;
                 } elseif (stripos($firstCell, 'implicate') !== false) {
-                    $crimesGroup['involved'] = (int)$data[1];
+                    $crimesGroup['involved'] = $value;
                 }
             } elseif ($currentSection === 'sentence' && isset($data[1]) && $data[1] !== '') {
                 if (empty($firstCell) && isset($data[1]) && !empty($data[1])) {
@@ -189,7 +212,7 @@ class CrimeImporter implements ImporterInterface
                 $insertionsCount++;
             }
         }
-        error_log("[INFO]: Imported $insertionsCount records for CRIMES (year $year)<br>");
+        error_log("[INFO]: Imported $insertionsCount records for CRIMES (year $year).\n");
         return $insertionsCount;
     }
 }
