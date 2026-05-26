@@ -43,9 +43,9 @@ Arhitectura urmează un model stratificat clasic: **Controllers → Services →
 <details>
   <summary>Backend</summary>
   <ul>
-    <li><a href="https://www.php.net/">PHP 8.2</a> — limbaj principal, fără framework</li>
+    <li><a href="https://www.php.net/">PHP 8.2</a> — limbaj principal</li>
     <li><a href="https://www.sqlite.org/">SQLite</a> — bază de date</li>
-    <li><a href="https://github.com/firebase/php-jwt">firebase/php-jwt</a> — generarea și validarea token-urilor JWT</li>
+    <li><a href="https://github.com/firebase/php-jwt">firebase/php-jwt</a> — autentificare pe baza token-urilor JWT</li>
     <li><a href="https://getcomposer.org/">Composer</a> — gestionarea dependențelor</li>
   </ul>
 </details>
@@ -53,9 +53,9 @@ Arhitectura urmează un model stratificat clasic: **Controllers → Services →
 <details>
   <summary>Frontend</summary>
   <ul>
-    <li>HTML — fără template engine</li>
-    <li>CSS — fără framework</li>
-    <li>JavaScript vanilla — fără framework sau bibliotecă</li>
+    <li>HTML</li>
+    <li>CSS</li>
+    <li>JavaScript vanilla</li>
   </ul>
 </details>
 
@@ -72,7 +72,7 @@ Singura dependență externă a backend-ului este biblioteca `firebase/php-jwt`,
 <!-- Features -->
 ### :dart: Funcționalități
 
-- Filtrare avansată a datelor cu paginare opțională
+- Filtrare multicriterială a datelor stocate in baza de date
 - Operații CRUD complete pe toate tabelele de date, protejate prin autentificare
 - Autentificare stateless prin token-uri JWT
 - Gestionarea conturilor de administrator (creare, schimbare parolă, ștergere)
