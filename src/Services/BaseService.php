@@ -7,7 +7,7 @@ use InvalidArgumentException;
 
 abstract class BaseService
 {
-    protected const PER_PAGE = 5;
+    protected const PER_PAGE = 10;
     protected int $minYear;
 
     public function __construct(int $minYear)
