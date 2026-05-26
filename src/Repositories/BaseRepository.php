@@ -13,33 +13,33 @@ abstract class BaseRepository
         $this->pdo = $pdo;
     }
 
-    // adaug filtrele comune
+    // aplic filtrele comune
     protected function applyCommonFilters(string &$sql, array &$params, array $filters, string $yearCol = 'year', string $countCol = 'count'): void
     {
-        if (!empty($filters['year'])) {
+        if (isset($filters['year']) && $filters['year'] !== null) {
             $sql .= " AND $yearCol = :year";
             $params['year'] = $filters['year'];
         }
 
-        if (!empty($filters['min_year'])) {
+        if (isset($filters['min_year']) && $filters['min_year'] !== null) {
             $sql .= " AND $yearCol >= :min_year";
             $params['min_year'] = $filters['min_year'];
         }
-        if (!empty($filters['max_year'])) {
+        if (isset($filters['max_year']) && $filters['max_year'] !== null) {
             $sql .= " AND $yearCol <= :max_year";
             $params['max_year'] = $filters['max_year'];
         }
 
-        if (!empty($filters['count'])) {
+        if (isset($filters['count']) && $filters['count'] !== null) {
             $sql .= " AND $countCol = :cnt";
             $params['cnt'] = $filters['count'];
         }
 
-        if (!empty($filters['min_count'])) {
+        if (isset($filters['min_count']) && $filters['min_count'] !== null) {
             $sql .= " AND $countCol >= :min_cnt";
             $params['min_cnt'] = $filters['min_count'];
         }
-        if (!empty($filters['max_count'])) {
+        if (isset($filters['max_count']) && $filters['max_count'] !== null) {
             $sql .= " AND $countCol <= :max_cnt";
             $params['max_cnt'] = $filters['max_count'];
         }

@@ -61,6 +61,8 @@ class EmergencyService extends BaseService
         }
 
         $this->validateNonNegative($dto->getCount(), 'Count');
+        $this->validateNonNegative($dto->getValue(), 'Value');
+        
         return $this->repository->createEmergency($dto);
     }
 
@@ -89,6 +91,8 @@ class EmergencyService extends BaseService
         }
 
         $this->validateNonNegative($dto->getCount(), 'Count');
+        $this->validateNonNegative($dto->getValue(), 'Value');
+
         return $this->repository->updateEmergency($id, $dto);
     }
 
