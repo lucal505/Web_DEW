@@ -170,7 +170,12 @@ function updateSecondaryFilters() {
     const sentenceSelect = document.getElementById('filter-sentence');
     if(sentenceSelect) sentenceSelect.style.display = 'none';
     PAGE_ELEMENTS.dynamicFilters.innerHTML = '';
-
+    const countFilters = document.getElementById('count-filters');
+    if (table === 'general' || table === 'groups') {
+        countFilters.style.display = 'none';
+    } else {
+        countFilters.style.display = 'flex';
+    }
     if (table === 'drug_seizures' || table === 'medical_emergencies') {
         PAGE_ELEMENTS.drugInput.style.display = 'block';
         loadDynamicOptions(table, 'filter-drug', 'Toate drogurile');
@@ -439,7 +444,7 @@ function renderTable(dataArray) {
         case 'drug_seizures':
             tableColumns = [
                 { headerTitle: 'An',      columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
-                { headerTitle: 'Drog', columnWidth: '200px', getCellValue: (rowItem) => rowItem.drug_name || rowItem.drug || '-' },
+                { headerTitle: 'Drog', columnWidth: '150px', getCellValue: (rowItem) => rowItem.drug_name || rowItem.drug || '-' },
                 { headerTitle: measureLabels[secondaryValue] || 'Valoare', columnWidth: '150px', getCellValue: (rowItem) => rowItem[secondaryValue] ?? rowItem.count ?? '-' },
             ];
             break;
@@ -634,6 +639,16 @@ window.exportData = function(exportFormat) {
 
 window.exportTable = async function(exportFormat) {
     const tableContainer = PAGE_ELEMENTS.containerTable;
+    const titleEl = tableContainer.querySelector('h3');
+    const exportButtons = tableContainer.querySelector('.export-table-buttons');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+
+    // ascunde
+    if (titleEl) titleEl.style.visibility = 'hidden';
+    if (exportButtons) exportButtons.style.visibility = 'hidden';
+    if (btnPrev) btnPrev.style.visibility = 'hidden';
+    if (btnNext) btnNext.style.visibility = 'hidden';
 
     if (exportFormat === 'png' || exportFormat === 'webp') {
         const generatedCanvas = await html2canvas(tableContainer, {
@@ -644,6 +659,12 @@ window.exportTable = async function(exportFormat) {
         const canvasDataURL = generatedCanvas.toDataURL(targetMimeType, 1.0);
         downloadBase64File(canvasDataURL, `tabel.${exportFormat}`);
     }
+
+    if (titleEl) titleEl.style.visibility = '';
+    if (exportButtons) exportButtons.style.visibility = '';
+    if (btnPrev) btnPrev.style.visibility = '';
+    if (btnNext) btnNext.style.visibility = '';
+
 
     if (exportFormat === 'svg') {
         const targetTable = tableContainer.querySelector('table');

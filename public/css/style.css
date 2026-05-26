@@ -258,6 +258,29 @@ body {
   .visualizations {
     grid-template-columns: 1fr;
   }
+
+  .pagination-wrapper {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .export-table-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .filter-controls {
+    justify-content: center;
+  }
+
+  #btn-load {
+    margin-left: 0 !important;
+    width: 100%;
+  }
 }
 
 .apexcharts-canvas {

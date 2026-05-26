@@ -22,6 +22,22 @@ body {
   color: var(--text-dark);
 }
 
+@media (max-width: 900px) {
+    .dashboard-layout {
+        flex-direction: column;
+    }
+
+    .dashboard-column {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .container.large-mode {
+        max-width: 100%;
+        padding: 15px;
+    }
+}
+
 .container {
   max-width: 500px;
   background: var(--panel-white);
