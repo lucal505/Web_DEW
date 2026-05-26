@@ -18,7 +18,7 @@ if ($adminUsername && $adminPassword) {
     );
     $stmt->execute([':username' => $adminUsername, ':hash' => $hash]);
     
-    echo "[INFO]: Admin user seeded.<br>";
+    echo "[INFO]: Admin user seeded.\n";
 } else {
-    echo "[WARNING]: No admin credentials in .env, skipping seed.<br>";
+    echo "[WARNING]: No admin credentials in .env, skipping seed.\n";
 }

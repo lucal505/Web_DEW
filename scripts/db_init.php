@@ -1,10 +1,5 @@
 <?php
 
-/** 
- * Database Migration Script
- */
-
-
 // paths
 $db_directory = __DIR__ . '/../data';
 $db_path = $db_directory . '/drugs_data.db';
@@ -23,7 +18,7 @@ try {
 
     chmod($db_path, 0666); // gives write permissions for the db file
 
-    echo "[INFO]: Started DB migration.<br>";
+    echo "[INFO]: Started DB migration.\n";
 
     // SQL commands for creating tables + indices
     $commands = [
