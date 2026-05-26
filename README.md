@@ -37,6 +37,8 @@ Aceasta este o aplicație de tip API REST construită fără framework-uri, folo
 
 Arhitectura urmează un model stratificat clasic: **Controllers → Services → Repositories**, cu separarea clară a responsabilităților. Datele transferate între straturi sunt încapsulate în obiecte DTO (Data Transfer Objects), iar accesul la baza de date se face exclusiv prin PDO cu prepared statements.
 
+Frontend-ul se află în directorul `public/` și este construit în totalitate fără framework-uri — HTML, CSS și JavaScript vanilla. Acesta conține o pagină publică pentru vizualizarea și filtrarea datelor și o interfață separată de administrare care apelează rutele protejate ale API-ului.
+
 <!-- TechStack -->
 ### :space_invader: Tech Stack
 
@@ -87,13 +89,19 @@ Singura dependență externă a backend-ului este biblioteca `firebase/php-jwt`,
 ├── api/
 │   ├── index.php          # punct unic de intrare, rutare
 │   └── .htaccess          # direcționarea tuturor request-urilor către index.php
+├── public/                # frontend — HTML, CSS, JavaScript vanilla
+│   ├── index.html         # pagina publică de vizualizare a datelor
+│   ├── admin.html         # interfața de administrare
+│   ├── css/               # stiluri
+│   ├── js/                # scripturi JavaScript 
+│   └── assets/            # imagini și alte resurse statice
 ├── src/
 │   ├── Config/            # conexiunea la baza de date
 │   ├── Controllers/       # primesc request-uri, apelează service-uri
 │   ├── Services/          # logica de business și validarea datelor
 │   ├── Repositories/      # accesul la baza de date
 │   ├── DTOs/              # obiecte de transfer al datelor
-│   ├── Importers/         # importatoare CSV pentru categorie de tabel
+│   ├── Importers/         # importatoare CSV pentru fiecare categorie de tabel
 │   └── Interfaces/        # interfețe (ex. ImporterInterface)
 ├── scripts/
 │   ├── db_init.php        # creează tabelele
