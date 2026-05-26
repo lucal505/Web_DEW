@@ -31,16 +31,7 @@
       <section class="filters-section">
         <h2>Analiză Multicriterială</h2>
 
-        <div
-          class="filter-controls"
-          style="
-            display: flex;
-            gap: 12px;
-            margin-bottom: 5px;
-            flex-wrap: wrap;
-            align-items: flex-end;
-          "
-        >
+        <div class="filter-controls">
           <select id="filter-table" class="elegant-select">
             <option value="drug_seizures">Confiscări</option>
             <option value="medical_emergencies">Urgențe Medicale</option>
@@ -49,95 +40,35 @@
             <option value="crimes_sentence">Infracțiuni (Sentințe)</option>
             <option value="general">Infracțiuni (General)</option>
             <option value="groups">Infracțiuni (Grupuri)</option>
-            <option value="prevention_activities">
-              Activități de prevenire
-            </option>
+            <option value="prevention_activities">Activități de prevenire</option>
             <option value="prevention_projects">Proiecte Prevenire</option>
             <option value="prevention_campaigns">Campanii de prevenire</option>
           </select>
 
-          <div
-            class="slider-wrapper"
-            style="width: 130px; padding: 0 5px; margin-bottom: 12px"
-          >
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                font-size: 0.8rem;
-                color: #db7093;
-                font-weight: bold;
-                margin-bottom: 8px;
-              "
-            >
+          <div class="slider-wrapper">
+            <div class="slider-labels">
               <span>An:</span>
               <span id="year-display">2020 - 2026</span>
             </div>
             <div id="year-slider"></div>
           </div>
 
-          <select
-            id="filter-drug"
-            class="elegant-select"
-            style="display: none"
-          ></select>
+          <select id="filter-drug" class="elegant-select hidden-select"></select>
 
-          <select
-            id="filter-sentence"
-            class="elegant-select"
-            style="display: none"
-          ></select>
+          <select id="filter-sentence" class="elegant-select hidden-select"></select>
 
-          <div id="dynamic-filters" style="display: flex; gap: 8px"></div>
+          <div id="dynamic-filters" class="dynamic-filters-container"></div>
 
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              gap: 5px;
-              margin-bottom: 5px;
-            "
-          ></div>
-
-          <div id="count-filters" style="display: flex; flex-direction: column">
-            <span
-              style="
-                font-size: 0.8rem;
-                color: #db7093;
-                font-weight: bold;
-                margin-bottom: 4px;
-                text-align: center;
-              "
-              >Cazuri / Count</span
-            >
-            <div style="display: flex; align-items: center; gap: 5px">
-              <input
-                type="number"
-                id="filter-min-count"
-                class="elegant-input"
-                placeholder="Min"
-                style="
-                  width: 85px;
-                  padding: 6px 5px !important;
-                  text-align: center;
-                "
-              />
-              <span style="color: var(--dark-pink); font-weight: bold">-</span>
-              <input
-                type="number"
-                id="filter-max-count"
-                class="elegant-input"
-                placeholder="Max"
-                style="
-                  width: 85px;
-                  padding: 6px 5px !important;
-                  text-align: center;
-                "
-              />
+          <div id="count-filters" class="count-filters-container">
+            <span class="count-label">Cazuri / Count</span>
+            <div class="count-inputs-wrapper">
+              <input type="number" id="filter-min-count" class="elegant-input count-input" placeholder="Min" />
+              <span class="count-separator">-</span>
+              <input type="number" id="filter-max-count" class="elegant-input count-input" placeholder="Max" />
             </div>
           </div>
 
-          <button id="btn-load" class="btn-pink" style="margin-left: auto">
+          <button id="btn-load" class="btn-pink btn-load-right">
             Filtrează Date
           </button>
         </div>
@@ -146,17 +77,11 @@
           <div class="export-row">
             <span>Export raport general:</span>
             <button class="export-btn" onclick="exportData('csv')">CSV</button>
-            <button class="export-btn" onclick="exportData('html')">
-              HTML
-            </button>
+            <button class="export-btn" onclick="exportData('html')">HTML</button>
           </div>
 
           <div class="view-controls" id="view-selector-container">
-            <label
-              for="chart-selector"
-              style="font-weight: bold; color: #db7093; margin-right: 10px"
-              >Afișează:</label
-            >
+            <label for="chart-selector" class="chart-selector-label">Afișează:</label>
             <select id="chart-selector" class="elegant-select">
               <option value="all">Toate (Tabel + Grafice)</option>
               <option value="container-table">Doar Tabelul de Date</option>
@@ -167,53 +92,24 @@
         </div>
       </section>
 
-      <div
-        id="status-message"
-        style="
-          display: none;
-          text-align: center;
-          padding: 15px;
-          color: #db7093;
-          font-weight: bold;
-          font-size: 1.1rem;
-          background: white;
-          border-radius: 15px;
-          border: 2px dashed #ffb6c1;
-          margin-top: 10px;
-        "
-      ></div>
+      <div id="status-message"></div>
 
-      <section class="visualizations" id="charts-wrapper" style="display: none">
+      <section class="visualizations hidden-section" id="charts-wrapper">
         <div class="chart-container view-section" id="container-table">
           <h3 id="table-title">Tabel Date</h3>
 
-          <div style="overflow-x: auto; margin-bottom: 20px">
-            <table
-              id="data-table"
-              style="width: 100%; border-collapse: collapse; text-align: left"
-            >
-              <thead style="background-color: #ffe4e1">
+          <div class="table-responsive-wrapper">
+            <table id="data-table" class="data-table-main">
+              <thead class="table-header-pink">
                 <tr id="table-header"></tr>
               </thead>
               <tbody id="table-body"></tbody>
             </table>
           </div>
 
-          <div
-            class="pagination-wrapper"
-            style="
-              display: flex;
-              justify-content: center;
-              gap: 15px;
-              align-items: center;
-              flex-wrap: wrap;
-            "
-          >
+          <div class="pagination-wrapper">
             <button id="btn-prev" class="btn-pink">← Anterior</button>
-            <span id="page-info" style="font-size: 1.1rem; color: #db7093"
-              >Pagina <strong id="current-page">1</strong> din
-              <strong id="total-pages">1</strong></span
-            >
+            <span id="page-info" class="page-info-text">Pagina <strong id="current-page">1</strong> din <strong id="total-pages">1</strong></span>
             <button id="btn-next" class="btn-pink">Următor →</button>
             <div class="export-table-buttons">
               <button onclick="exportTable('png')">PNG</button>
