@@ -10,5 +10,6 @@ services:
       - APACHE_DOCUMENT_ROOT=/var/www/html
     command: >
       sh -c "chown -R www-data:www-data /var/www/html/uploads &&
-             composer install --no-dev --working-dir=/var/www/html &&
-             apache2-foreground"
+            chown -R www-data:www-data /var/www/html/data &&
+            composer install --no-dev --working-dir=/var/www/html &&
+            apache2-foreground"
