@@ -11,17 +11,17 @@
         <h2>Administrator Control Panel</h2>
         <div id="message"></div>
         
-        <form id="loginForm" style="display: none;">
+        <form id="loginForm" class="hidden-section">
             <label>Username:</label>
             <input type="text" id="username" required placeholder="Introduceți utilizatorul">
             <label>Password:</label>
             <input type="password" id="password" required placeholder="Introduceți parola">
-            <button type="submit" style="width: 100%;">Autentificare</button>
+            <button type="submit" class="full-width-btn">Autentificare</button>
         </form>
         
-        <div id="uploadSection" style="display: none;">
+        <div id="uploadSection" class="hidden-section">
             <button id="logoutBtn">Logout</button>
-            <p style="margin: 0 0 15px 0; font-weight: 500; color: #666;">Ești logat ca administrator.</p>
+            <p class="admin-status-text">Ești logat ca administrator.</p>
             
             <div class="dashboard-layout">
                 <div class="dashboard-column">
@@ -29,16 +29,16 @@
                     <form id="uploadForm">
                         <label>Încarcă un fișier nou (CSV/Excel):</label>
                         <input type="file" id="fileToUpload" required accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                        <button type="submit" style="width: 100%;">Încarcă Fișier</button>
+                        <button type="submit" class="full-width-btn">Încarcă Fișier</button>
                     </form>
                     <hr>
                     <h3>Procesare Fișiere</h3>
                     <label>Importă toate fișierele încărcate:</label>
-                    <button id="importAllBtn" style="width: 100%;">Procesează Toate Fișierele</button>
+                    <button id="importAllBtn" class="full-width-btn">Procesează Toate Fișierele</button>
                     <hr>
-                    <div class="danger-zone" style="padding: 10px; border-radius: 10px; margin-top: 5px;">
-                        <h3 style="color: var(--danger-color); border-bottom-color: #ffd6db; font-size: 1rem; margin-bottom: 5px;">Șterge toată Baza de Date</h3>
-                        <button type="button" id="wipeDataBtn" style="background: var(--danger-color); width: 100%;">Șterge</button>
+                    <div class="danger-zone zone-spacing">
+                        <h3 class="danger-title">Șterge toată Baza de Date</h3>
+                        <button type="button" id="wipeDataBtn" class="btn-wipe full-width-btn">Șterge</button>
                     </div>
                 </div>
 
@@ -50,10 +50,10 @@
                         <label>Parolă:</label>
                         <input type="password" id="newAdminPassword" placeholder="Parolă nouă">
                         
-                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
-                            <button type="button" id="btnCreateAdmin" style="background: var(--pink-dark); width: 100%;">Creează Admin</button>
-                            <button type="button" id="btnUpdateAdmin" style="background: #a35070; width: 100%;">Actualizează Parolă</button>
-                            <button type="button" id="btnDeleteAdmin" style="background: var(--danger-color); width: 100%;">Șterge Admin</button>
+                        <div class="action-buttons-group gap-15">
+                            <button type="button" id="btnCreateAdmin" class="btn-create-admin full-width-btn">Creează Admin</button>
+                            <button type="button" id="btnUpdateAdmin" class="btn-update-admin full-width-btn">Actualizează Parolă</button>
+                            <button type="button" id="btnDeleteAdmin" class="btn-delete-admin full-width-btn">Șterge Admin</button>
                         </div>
                     </div>
                 </div>
@@ -81,10 +81,10 @@
                         <label>Date:</label>
                         <textarea id="recordJsonData" rows="4" placeholder='Exemplu:{"year": 2022, "drug_type": "Cannabis", "count": 14}'></textarea>
                         
-                        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">
-                            <button type="button" id="btnCreateRecord" style="background: var(--success-color); width: 100%;">Inserează Date (POST)</button>
-                            <button type="button" id="btnUpdateRecord" style="background: var(--warning-color); color: #333; width: 100%;">Actualizează Date (PATCH)</button>
-                            <button type="button" id="btnDeleteRecord" style="background: var(--danger-color); width: 100%;">Șterge Înregistrare (DELETE)</button>
+                        <div class="action-buttons-group gap-5">
+                            <button type="button" id="btnCreateRecord" class="btn-success full-width-btn">Inserează Date (POST)</button>
+                            <button type="button" id="btnUpdateRecord" class="btn-warning full-width-btn">Actualizează Date (PATCH)</button>
+                            <button type="button" id="btnDeleteRecord" class="btn-danger full-width-btn">Șterge Înregistrare (DELETE)</button>
                         </div>
                     </div>
                 </div>
