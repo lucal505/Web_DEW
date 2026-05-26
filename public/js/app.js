@@ -252,8 +252,13 @@ function buildBaseUrl() {
     const secondaryFilter = document.getElementById('filter-secondary');
     
     const exactCount = document.getElementById('filter-exact-count')?.value || '';
-    const minCount = document.getElementById('filter-min-count')?.value || '';
-    const maxCount = document.getElementById('filter-max-count')?.value || '';
+    const minCount = document.getElementById('filter-min-count')?.value.trim();
+    const maxCount = document.getElementById('filter-max-count')?.value.trim();
+
+    if (maxCount !== '' && Number(maxCount) <= 0) {
+        displayMessage('Valoarea maximă trebuie să fie un număr mai mare decât 0!');
+        return;
+    }
 
     let generatedUrl = `../api/filters/${mappedTableName}?`;
     
@@ -265,7 +270,7 @@ function buildBaseUrl() {
 
     if (exactCount !== '') generatedUrl += `&total=${exactCount}`;
     if (minCount !== '') generatedUrl += `&min=${minCount}`;
-    if (maxCount !== '') generatedUrl += `&max=${maxCount}`;
+    if (maxCount !== '' && maxCount !== null && Number(maxCount) > 0) generatedUrl += `&max=${maxCount}`;
 
     const textLaw = document.getElementById('filter-text-law')?.value;
     const textName = document.getElementById('filter-text-name')?.value;
