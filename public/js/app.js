@@ -202,8 +202,8 @@ function updateSecondaryFilters() {
         PAGE_ELEMENTS.dynamicFilters.innerHTML = `
             <select id="filter-gender" class="elegant-select">
                 <option value="">Tot (Sex)</option>
-                <option value="Masculin">Masculin</option>
-                <option value="Feminin">Feminin</option>
+                <option value="Bărbați">Bărbați</option>
+                <option value="Femei">Femei</option>
             </select>
             <select id="filter-age" class="elegant-select">
                 <option value="">Tot (Vârstă)</option>
@@ -442,7 +442,7 @@ function renderTable(dataArray) {
         case 'medical_emergencies':
             tableColumns = [
                 { headerTitle: 'An',           columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
-                { headerTitle: 'Drog',         columnWidth: '180px', getCellValue: (rowItem) => rowItem.drug_type || '-' },
+                { headerTitle: 'Drog',         columnWidth: '180px', getCellValue: (rowItem) => rowItem.drug || rowItem.drug_type || '-' },
                 { headerTitle: categoryLabels[secondaryValue] || 'Categorie', columnWidth: '200px', getCellValue: (rowItem) => rowItem.value || '-' },
                 { headerTitle: 'Cazuri / Total', columnWidth: '120px', getCellValue: (rowItem) => rowItem.count || '-' },
             ];

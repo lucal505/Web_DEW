@@ -1,0 +1,195 @@
+:root {
+  --bg-pastel: #fff5f7;
+  --panel-white: #ffffff;
+  --pink-accent: #ff8da1;
+  --pink-dark: #db7093;
+  --pink-light: #ffe4e1;
+  --danger-color: #ff004c;
+  --danger-hover: #880019;
+  --success-color: #b5e46f;
+  --success-hover: #f7d37b;
+  --warning-color: #ffe49e;
+  --text-dark: #361926;
+  --shadow-soft: 0 8px 30px rgba(255, 182, 193, 0.3);
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-pastel);
+  padding: 20px;
+  margin: 0;
+  box-sizing: border-box;
+  color: var(--text-dark);
+}
+
+.container {
+  max-width: 500px;
+  background: var(--panel-white);
+  padding: 30px;
+  margin: 20px auto;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 182, 193, 0.5);
+  box-shadow: var(--shadow-soft);
+  transition: max-width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.container.large-mode {
+  max-width: 1300px;
+  padding: 25px;
+}
+
+h2 {
+  color: var(--pink-dark);
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
+}
+
+h3 {
+  color: var(--pink-dark);
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.2rem;
+  border-bottom: 2px solid var(--pink-light);
+  padding-bottom: 6px;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: linear-gradient(to right, var(--pink-light), transparent);
+  margin: 15px 0;
+}
+
+label {
+  font-size: 0.85rem;
+  color: #7a7a7a;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="file"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 2px solid var(--pink-light);
+  outline: none;
+  font-size: 0.9rem;
+  background: #fffcfc;
+  transition: all 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--pink-accent);
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 141, 161, 0.2);
+}
+
+textarea {
+  resize: none;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.85rem;
+}
+
+button {
+  background: var(--pink-accent);
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+button:hover {
+  background: var(--pink-dark);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+#loginForm button,
+#importAllBtn {
+  background: var(--pink-dark);
+}
+
+#loginForm button:hover,
+#importAllBtn:hover {
+  background: #b84f71;
+}
+
+#logoutBtn {
+  float: right;
+  background: var(--danger-color);
+  padding: 6px 14px;
+  font-size: 0.8rem;
+}
+
+#logoutBtn:hover {
+  background: var(--danger-hover);
+}
+
+#message {
+  margin-bottom: 15px;
+  font-weight: 700;
+  color: var(--pink-dark);
+  text-align: center;
+  font-size: 1rem;
+  min-height: 24px;
+  padding: 6px;
+  border-radius: 10px;
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  color: var(--pink-dark);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.dashboard-layout {
+  display: flex;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.dashboard-column {
+  flex: 1;
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 182, 193, 0.4);
+  box-sizing: border-box;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.danger-zone {
+  border: 1px dashed var(--danger-color);
+  background: #fffbfb;
+}
