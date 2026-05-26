@@ -1,136 +1,250 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ro">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Drug Explorer on Web</title>
-    <link rel="stylesheet" href="css/style.css">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css">
+    <link rel="stylesheet" href="css/style.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <header class="app-header">
-        <div class="brand">
-            <img src="assets/walter-pink.webp" alt="Walter Pink" class="profile-pic">
-            <h1>Walter Pink</h1>
-        </div>
-        <a href="admin.html" class="btn-pink admin-btn">Admin panel</a>
+      <div class="brand">
+        <img
+          src="assets/walter-pink.webp"
+          alt="Walter Pink"
+          class="profile-pic"
+        />
+        <h1>Walter Pink</h1>
+      </div>
+      <a href="admin.html" class="btn-pink admin-btn">Admin panel</a>
     </header>
 
     <div class="container main-content">
-        <section class="filters-section">
-            <h2>Analiză Multicriterială</h2>
-            
-            <div class="filter-controls" style="display: flex; gap: 12px; margin-bottom: 5px; flex-wrap: wrap; align-items: flex-end;">
-                
-                <select id="filter-table" class="elegant-select">
-                    <option value="drug_seizures">Confiscări</option>
-                    <option value="medical_emergencies">Urgențe Medicale</option>
-                    <option value="crimes_article">Infracțiuni (Articole)</option>
-                    <option value="prevention_projects">Proiecte Prevenire</option>
-                    <option value="crimes_demographic">Infracțiuni (Demografic)</option>
-                    <option value="crimes_sentence">Infracțiuni (Sentințe)</option>
-                    <option value="prevention_activities">Activități de prevenire</option>
-                    <option value="prevention_campaigns">Campanii de prevenire</option>
-                </select>
+      <section class="filters-section">
+        <h2>Analiză Multicriterială</h2>
 
-                <div class="slider-wrapper" style="width: 130px; padding: 0 5px; margin-bottom: 12px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #db7093; font-weight: bold; margin-bottom: 8px;">
-                        <span>An:</span>
-                        <span id="year-display">2020 - 2026</span>
-                    </div>
-                    <div id="year-slider"></div>
-                </div>
+        <div
+          class="filter-controls"
+          style="
+            display: flex;
+            gap: 12px;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+          "
+        >
+          <select id="filter-table" class="elegant-select">
+            <option value="drug_seizures">Confiscări</option>
+            <option value="medical_emergencies">Urgențe Medicale</option>
+            <option value="crimes_article">Infracțiuni (Articole)</option>
+            <option value="crimes_demographic">Infracțiuni (Demografic)</option>
+            <option value="crimes_sentence">Infracțiuni (Sentințe)</option>
+            <option value="general">Infracțiuni (General)</option>
+            <option value="groups">Infracțiuni (Grupuri)</option>
+            <option value="prevention_activities">
+              Activități de prevenire
+            </option>
+            <option value="prevention_projects">Proiecte Prevenire</option>
+            <option value="prevention_campaigns">Campanii de prevenire</option>
+          </select>
 
-                <select id="filter-drug" class="elegant-select" style="display: none;"></select>
-                <select id="filter-sentence" class="elegant-select" style="display: none;"></select>
-
-                <div id="dynamic-filters" style="display: flex; gap: 8px;"></div>
-
-                <div id="count-filters" style="display: flex; flex-direction: column;">
-                    <span style="font-size: 0.8rem; color: #db7093; font-weight: bold; margin-bottom: 4px; text-align: center;">Cazuri / Count</span>
-                    <div style="display: flex; align-items: center; gap: 5px;">
-                        <input type="number" id="filter-min-count" class="elegant-input" placeholder="Min" style="width: 85px; padding: 6px 5px !important; text-align: center;">
-                        <span style="color: var(--dark-pink); font-weight: bold;">-</span>
-                        <input type="number" id="filter-max-count" class="elegant-input" placeholder="Max" style="width: 85px; padding: 6px 5px !important; text-align: center;">
-                    </div>
-                </div>
-
-                <button id="btn-load" class="btn-pink" style="margin-left: auto;">Filtrează Date</button>
+          <div
+            class="slider-wrapper"
+            style="width: 130px; padding: 0 5px; margin-bottom: 12px"
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.8rem;
+                color: #db7093;
+                font-weight: bold;
+                margin-bottom: 8px;
+              "
+            >
+              <span>An:</span>
+              <span id="year-display">2020 - 2026</span>
             </div>
+            <div id="year-slider"></div>
+          </div>
 
-            <div class="bottom-actions">
-                <div class="export-row">
-                    <span>Export raport general:</span>
-                    <button class="export-btn" onclick="exportData('csv')">CSV</button>
-                    <button class="export-btn" onclick="exportData('html')">HTML</button>
-                </div>
+          <select
+            id="filter-drug"
+            class="elegant-select"
+            style="display: none"
+          ></select>
 
-                <div class="view-controls" id="view-selector-container">
-                    <label for="chart-selector" style="font-weight: bold; color: #db7093; margin-right: 10px;">Afișează:</label>
-                    <select id="chart-selector" class="elegant-select">
-                        <option value="all">Toate (Tabel + Grafice)</option>
-                        <option value="container-table">Doar Tabelul de Date</option>
-                        <option value="container-bar">Doar Graficul cu Bare</option>
-                        <option value="container-line">Doar Graficul cu Linii</option>
-                    </select>
-                </div>
+          <select
+            id="filter-sentence"
+            class="elegant-select"
+            style="display: none"
+          ></select>
+
+          <div id="dynamic-filters" style="display: flex; gap: 8px"></div>
+
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 5px;
+              margin-bottom: 5px;
+            "
+          >
+          </div>
+
+          <div id="count-filters" style="display: flex; flex-direction: column">
+            <span
+              style="
+                font-size: 0.8rem;
+                color: #db7093;
+                font-weight: bold;
+                margin-bottom: 4px;
+                text-align: center;
+              "
+              >Cazuri / Count</span
+            >
+            <div style="display: flex; align-items: center; gap: 5px">
+              <input
+                type="number"
+                id="filter-min-count"
+                class="elegant-input"
+                placeholder="Min"
+                style="
+                  width: 85px;
+                  padding: 6px 5px !important;
+                  text-align: center;
+                "
+              />
+              <span style="color: var(--dark-pink); font-weight: bold">-</span>
+              <input
+                type="number"
+                id="filter-max-count"
+                class="elegant-input"
+                placeholder="Max"
+                style="
+                  width: 85px;
+                  padding: 6px 5px !important;
+                  text-align: center;
+                "
+              />
             </div>
-        </section>
+          </div>
 
-        <div id="status-message" style="display: none; text-align: center; padding: 15px; color: #db7093; font-weight: bold; font-size: 1.1rem; background: white; border-radius: 15px; border: 2px dashed #ffb6c1; margin-top: 10px;">
+          <button id="btn-load" class="btn-pink" style="margin-left: auto">
+            Filtrează Date
+          </button>
         </div>
 
-        <section class="visualizations" id="charts-wrapper" style="display: none;">
-            <div class="chart-container view-section" id="container-table">
-                <h3 id="table-title">Tabel Date</h3>
-                
-                <div style="overflow-x: auto; margin-bottom: 20px;">
-                    <table id="data-table" style="width: 100%; border-collapse: collapse; text-align: left;">
-                        <thead style="background-color: #ffe4e1;">
-                            <tr id="table-header"></tr>
-                        </thead>
-                        <tbody id="table-body"></tbody>
-                    </table>
-                </div>
+        <div class="bottom-actions">
+          <div class="export-row">
+            <span>Export raport general:</span>
+            <button class="export-btn" onclick="exportData('csv')">CSV</button>
+            <button class="export-btn" onclick="exportData('html')">
+              HTML
+            </button>
+          </div>
 
-                <div class="pagination-wrapper" style="display: flex; justify-content: center; gap: 15px; align-items: center;">
-                    <button id="btn-prev" class="btn-pink">← Anterior</button>
-                    <span id="page-info" style="font-size: 1.1rem; color: #db7093;">Pagina <strong id="current-page">1</strong> din <strong id="total-pages">1</strong></span>
-                    <button id="btn-next" class="btn-pink">Următor →</button>
-                    <div class="export-table-buttons">
-                        <button onclick="exportTable('png')">PNG</button>
-                        <button onclick="exportTable('webp')">WebP</button>
-                        <button onclick="exportTable('svg')">SVG</button>
-                    </div>
-                </div>
-            </div>
+          <div class="view-controls" id="view-selector-container">
+            <label
+              for="chart-selector"
+              style="font-weight: bold; color: #db7093; margin-right: 10px"
+              >Afișează:</label
+            >
+            <select id="chart-selector" class="elegant-select">
+              <option value="all">Toate (Tabel + Grafice)</option>
+              <option value="container-table">Doar Tabelul de Date</option>
+              <option value="container-bar">Doar Graficul cu Bare</option>
+              <option value="container-line">Doar Graficul cu Linii</option>
+            </select>
+          </div>
+        </div>
+      </section>
 
-            <div class="chart-container view-section" id="container-bar">
-                <h3>Bar chart</h3>
-                <div id="chartBar"></div>
-                <div class="download-btns">
-                    <button onclick="downloadChart('chartBar', 'png')">PNG</button>
-                    <button onclick="downloadChart('chartBar', 'webp')">WebP</button>
-                    <button onclick="downloadChart('chartBar', 'svg')">SVG</button>
-                </div>
-            </div>
+      <div
+        id="status-message"
+        style="
+          display: none;
+          text-align: center;
+          padding: 15px;
+          color: #db7093;
+          font-weight: bold;
+          font-size: 1.1rem;
+          background: white;
+          border-radius: 15px;
+          border: 2px dashed #ffb6c1;
+          margin-top: 10px;
+        "
+      ></div>
 
-            <div class="chart-container view-section" id="container-line">
-                <h3>Line chart</h3>
-                <div id="chartLine"></div>
-                <div class="download-btns">
-                    <button onclick="downloadChart('chartLine', 'png')">PNG</button>
-                    <button onclick="downloadChart('chartLine', 'webp')">WebP</button>
-                    <button onclick="downloadChart('chartLine', 'svg')">SVG</button>
-                </div>
+      <section class="visualizations" id="charts-wrapper" style="display: none">
+        <div class="chart-container view-section" id="container-table">
+          <h3 id="table-title">Tabel Date</h3>
+
+          <div style="overflow-x: auto; margin-bottom: 20px">
+            <table
+              id="data-table"
+              style="width: 100%; border-collapse: collapse; text-align: left"
+            >
+              <thead style="background-color: #ffe4e1">
+                <tr id="table-header"></tr>
+              </thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+
+          <div
+            class="pagination-wrapper"
+            style="
+              display: flex;
+              justify-content: center;
+              gap: 15px;
+              align-items: center;
+            "
+          >
+            <button id="btn-prev" class="btn-pink">← Anterior</button>
+            <span id="page-info" style="font-size: 1.1rem; color: #db7093"
+              >Pagina <strong id="current-page">1</strong> din
+              <strong id="total-pages">1</strong></span
+            >
+            <button id="btn-next" class="btn-pink">Următor →</button>
+            <div class="export-table-buttons">
+              <button onclick="exportTable('png')">PNG</button>
+              <button onclick="exportTable('webp')">WebP</button>
+              <button onclick="exportTable('svg')">SVG</button>
             </div>
-        </section>
+          </div>
+        </div>
+
+        <div class="chart-container view-section" id="container-bar">
+          <h3>Bar chart</h3>
+          <div id="chartBar"></div>
+          <div class="download-btns">
+            <button onclick="downloadChart('chartBar', 'png')">PNG</button>
+            <button onclick="downloadChart('chartBar', 'webp')">WebP</button>
+            <button onclick="downloadChart('chartBar', 'svg')">SVG</button>
+          </div>
+        </div>
+
+        <div class="chart-container view-section" id="container-line">
+          <h3>Line chart</h3>
+          <div id="chartLine"></div>
+          <div class="download-btns">
+            <button onclick="downloadChart('chartLine', 'png')">PNG</button>
+            <button onclick="downloadChart('chartLine', 'webp')">WebP</button>
+            <button onclick="downloadChart('chartLine', 'svg')">SVG</button>
+          </div>
+        </div>
+      </section>
     </div>
 
     <script src="js/app.js"></script>
-</body>
+  </body>
 </html>

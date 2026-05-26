@@ -2,113 +2,265 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <title>Admin page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
     <style>
+        :root {
+            --bg-pastel: #fff5f7;
+            --panel-white: #ffffff;
+            --pink-accent: #ff8da1;
+            --pink-dark: #db7093;
+            --pink-light: #ffe4e1;
+            --danger-color: #ff4d6d;
+            --danger-hover: #cc2d4a;
+            --success-color: #2ec4b6;
+            --success-hover: #219a8f;
+            --warning-color: #ffb703;
+            --text-dark: #4a4a4a;
+            --shadow-soft: 0 8px 30px rgba(255, 182, 193, 0.3);
+        }
+
         body { 
-            font-family: Arial, sans-serif; 
-            background: #fff0f5; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-pastel); 
             padding: 20px; 
+            margin: 0;
+            box-sizing: border-box;
+            color: var(--text-dark);
         }
 
         .container { 
             max-width: 500px; 
-            background: #fff; 
-            padding: 20px; 
-            margin: 0 auto; 
-            border-radius: 10px; 
-            border: 2px solid #ffb6c1;
-            box-shadow: 0 0 15px rgba(255, 182, 193, 0.4); 
+            background: var(--panel-white); 
+            padding: 30px; 
+            margin: 20px auto; 
+            border-radius: 20px; 
+            border: 1px solid rgba(255, 182, 193, 0.5);
+            box-shadow: var(--shadow-soft); 
+            transition: max-width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        h2, h3 { color: #db7093; }
+        .container.large-mode { 
+            max-width: 1300px; 
+            padding: 25px;
+        }
+
+        h2 { 
+            color: var(--pink-dark); 
+            margin-top: 0; 
+            margin-bottom: 20px; 
+            text-align: center;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        
+        h3 { 
+            color: var(--pink-dark); 
+            margin-top: 0; 
+            margin-bottom: 12px; 
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--pink-light);
+            padding-bottom: 6px;
+        }
         
         hr { 
             border: 0; 
             height: 1px; 
-            background: #ffb6c1; 
+            background: linear-gradient(to right, var(--pink-light), transparent); 
             margin: 15px 0; 
         }
 
-        input[type="text"], input[type="password"], input[type="file"] { 
-            width: 100%; 
-            padding: 10px; 
-            margin: 10px 0; 
-            box-sizing: border-box; 
-            border-radius: 10px; 
-            border: 2px solid #ffb6c1; 
-            outline: none;
+        label {
+            font-size: 0.85rem;
+            color: #7a7a7a;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
         }
 
-        input:focus {
-            border-color: #db7093;
+        input[type="text"], input[type="password"], input[type="file"], input[type="number"], select, textarea { 
+            width: 100%; 
+            padding: 10px 14px; 
+            margin-bottom: 12px; 
+            box-sizing: border-box; 
+            border-radius: 10px; 
+            border: 2px solid var(--pink-light); 
+            outline: none;
+            font-size: 0.9rem;
+            background: #fffcfc;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--pink-accent);
+            background: #ffffff;
+            box-shadow: 0 0 8px rgba(255, 141, 161, 0.2);
+        }
+
+        textarea {
+            resize: none;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
         }
 
         button { 
-            background: #ffb6c1; 
+            background: var(--pink-accent); 
             color: #fff; 
-            padding: 10px 15px; 
+            padding: 10px 16px; 
             border: none; 
             cursor: pointer; 
             border-radius: 10px; 
             font-weight: bold;
-            transition: 0.3s;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
         }
-        button:hover { background: #ff8da1; }
+        button:hover { 
+            background: var(--pink-dark); 
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(1px);
+        }
 
-        #loginForm button, #importAllBtn { background: #db7093; }
-        #loginForm button:hover, #importAllBtn:hover { background: #c2406a; }
+        #loginForm button, #importAllBtn { background: var(--pink-dark); }
+        #loginForm button:hover, #importAllBtn:hover { background: #b84f71; }
 
-        #logoutBtn { float: right; background: #ff4d4d; }
-        #logoutBtn:hover { background: #cc0000; }
+        #logoutBtn { float: right; background: var(--danger-color); padding: 6px 14px; font-size: 0.8rem; }
+        #logoutBtn:hover { background: var(--danger-hover); }
 
         #message { 
             margin-bottom: 15px; 
-            font-weight: bold; 
-            color: #db7093;
+            font-weight: 700; 
+            color: var(--pink-dark);
+            text-align: center;
+            font-size: 1rem;
+            min-height: 24px;
+            padding: 6px;
+            border-radius: 10px;
         }
 
         .back-link {
             display: block;
             text-align: center;
-            margin-top: 20px;
-            color: #db7093;
+            margin-top: 15px;
+            color: var(--pink-dark);
             text-decoration: none;
             font-weight: bold;
-            transition: 0.3s;
+            font-size: 0.95rem;
         }
-        .back-link:hover { color: #ff8da1; }
+        .back-link:hover { text-decoration: underline; }
+
+        .dashboard-layout {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .dashboard-column {
+            flex: 1;
+            background: #ffffff;
+            padding: 18px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 182, 193, 0.4);
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        }
+
+        .danger-zone {
+            border: 1px dashed var(--danger-color);
+            background: #fffbfb;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Administrator Panel</h2>
+        <h2>Administrator Control Panel</h2>
         <div id="message"></div>
         
         <form id="loginForm" style="display: none;">
             <label>Username:</label>
-            <input type="text" id="username" required>
+            <input type="text" id="username" required placeholder="Introduceți utilizatorul">
             <label>Password:</label>
-            <input type="password" id="password" required>
-            <button type="submit">Login</button>
+            <input type="password" id="password" required placeholder="Introduceți parola">
+            <button type="submit" style="width: 100%;">Autentificare</button>
         </form>
         
         <div id="uploadSection" style="display: none;">
             <button id="logoutBtn">Logout</button>
-            <p>You are logged in.</p>
-            <hr>
+            <p style="margin: 0 0 15px 0; font-weight: 500; color: #666;">Ești logat ca administrator.</p>
             
-            <h3>Upload Data File</h3>
-            <form id="uploadForm">
-                <label>Select a CSV or Excel file:</label>
-                <input type="file" id="fileToUpload" required accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                <button type="submit">Upload File</button>
-                <hr>
-                
-                <h3>Process all uploaded files</h3>
-                <button id="importAllBtn">Process All Files</button>
-            </form>
+            <div class="dashboard-layout">
+                <div class="dashboard-column">
+                    <h3>Preluare Date</h3>
+                    <form id="uploadForm">
+                        <label>Încarcă un fișier nou (CSV/Excel):</label>
+                        <input type="file" id="fileToUpload" required accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                        <button type="submit" style="width: 100%;">Încarcă Fișier</button>
+                    </form>
+                    <hr>
+                    <h3>Procesare Fișiere</h3>
+                    <label>Importă toate fișierele încărcate:</label>
+                    <button id="importAllBtn" style="width: 100%;">Procesează Toate Fișierele</button>
+                    <hr>
+                    <div class="danger-zone" style="padding: 10px; border-radius: 10px; margin-top: 5px;">
+                        <h3 style="color: var(--danger-color); border-bottom-color: #ffd6db; font-size: 1rem; margin-bottom: 5px;">Șterge toată Baza de Date</h3>
+                        <button type="button" id="wipeDataBtn" style="background: var(--danger-color); width: 100%;">Șterge</button>
+                    </div>
+                </div>
+
+                <div class="dashboard-column">
+                    <h3>Management Admini</h3>
+                    <div id="adminManagerForm">
+                        <label>Username:</label>
+                        <input type="text" id="newAdminUsername" placeholder="Ex: walter_white">
+                        <label>Parolă:</label>
+                        <input type="password" id="newAdminPassword" placeholder="Parolă nouă">
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 15px;">
+                            <button type="button" id="btnCreateAdmin" style="background: var(--pink-dark); width: 100%;">Creează Admin</button>
+                            <button type="button" id="btnUpdateAdmin" style="background: #a35070; width: 100%;">Actualizează Parolă</button>
+                            <button type="button" id="btnDeleteAdmin" style="background: var(--danger-color); width: 100%;">Șterge Admin</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-column">
+                    <h3>Gestionare Date</h3>
+                    <div id="recordManagerForm">
+                        <label>Selectează Tabelul:</label>
+                        <select id="crudTableSelect">
+                            <option value="emergencies">Urgențe Medicale (emergencies)</option>
+                            <option value="seizures">Capturi Droguri (seizures)</option>
+                            <option value="demographics">Infracțiuni (demographics)</option>
+                            <option value="sentences">Infracțiuni Sentințe (sentences)</option>
+                            <option value="articles">Infracțiuni Articole (articles)</option>
+                            <option value="projects">Proiecte Prevenire (projects)</option>
+                            <option value="campaigns">Campanii Prevenire (campaigns)</option>
+                            <option value="activities">Activități Prevenire (activities)</option>
+                            <option value="general">Date Generale (general)</option>
+                            <option value="groups">Grupuri Infracționale (groups)</option>
+                        </select>
+
+                        <label>ID Înregistrare:</label>
+                        <input type="number" id="recordId" placeholder="Ex: 5">
+
+                        <label>Date:</label>
+                        <textarea id="recordJsonData" rows="4" placeholder='Exemplu:{"year": 2022, "drug_type": "Cannabis", "count": 14}'></textarea>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 5px;">
+                            <button type="button" id="btnCreateRecord" style="background: var(--success-color); width: 100%;">Inserează Date (POST)</button>
+                            <button type="button" id="btnUpdateRecord" style="background: var(--warning-color); color: #333; width: 100%;">Actualizează Date (PATCH)</button>
+                            <button type="button" id="btnDeleteRecord" style="background: var(--danger-color); width: 100%;">Șterge Înregistrare (DELETE)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <a href="index.html" class="back-link">⬅ Înapoi la Dashboard</a>
+        <a href="index.html" class="back-link">⬅ Înapoi la Dashboard public</a>
     </div>
 
     <script src="js/admin.js" defer></script>

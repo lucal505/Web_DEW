@@ -1,348 +1,368 @@
 :root {
-    --bg-pink: #fff0f5;
-    --border-pink: #ffb6c1;
-    --hover-pink: #ff8da1;
-    --dark-pink: #db7093;
-    --text-color: #555555;
-    --shadow-soft: 0 5px 15px rgba(255, 182, 193, 0.2);
-    --shadow-hover: 0 8px 20px rgba(255, 182, 193, 0.4);
+  --bg-pink: #fff0f5;
+  --border-pink: #ffb6c1;
+  --hover-pink: #ff8da1;
+  --dark-pink: #db7093;
+  --text-color: #555555;
+  --shadow-soft: 0 5px 15px rgba(255, 182, 193, 0.2);
+  --shadow-hover: 0 8px 20px rgba(255, 182, 193, 0.4);
 }
 
 body {
-    background-color: var(--bg-pink);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: var(--text-color);
-    margin: 0;
-    padding-bottom: 20px;
+  background-color: var(--bg-pink);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+  margin: 0;
+  padding-bottom: 20px;
 }
 
 /* --- HEADER & BRANDING --- */
 .app-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 20px;
-    background-color: white;
-    box-shadow: var(--shadow-soft);
-    border-bottom: 3px solid var(--border-pink);
-    margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background-color: white;
+  box-shadow: var(--shadow-soft);
+  border-bottom: 3px solid var(--border-pink);
+  margin-bottom: 15px;
 }
 
 .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .profile-pic {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%; 
-    object-fit: cover;
-    border: 2px solid var(--border-pink);
-    transition: transform 0.3s ease;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-pink);
+  transition: transform 0.3s ease;
 }
 
 .profile-pic:hover {
-    transform: scale(1.1) rotate(5deg);
+  transform: scale(1.1) rotate(5deg);
 }
 
 .app-header h1 {
-    margin: 0;
-    color: var(--dark-pink);
-    font-size: 1.4rem;
-    font-weight: 800;
+  margin: 0;
+  color: var(--dark-pink);
+  font-size: 1.4rem;
+  font-weight: 800;
 }
 
 .admin-btn {
-    height: auto !important;
-    padding: 8px 18px !important;
-    font-size: 0.9rem !important;
-    border-radius: 20px !important;
+  height: auto !important;
+  padding: 8px 18px !important;
+  font-size: 0.9rem !important;
+  border-radius: 20px !important;
 }
 
 .container {
-    max-width: 1250px;
-    margin: 0 auto;
-    padding: 0 15px;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+.container.large-mode {
+  max-width: 1200px;
 }
 
-/* --- SECȚIUNEA DE FILTRARE --- */
+.dashboard-layout {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.dashboard-column {
+  flex: 1;
+  min-width: 340px;
+  background: #fffdfd;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px dashed #ffb6c1;
+  box-sizing: border-box;
+}
 .filters-section {
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
-    border: 2px solid var(--border-pink);
-    box-shadow: var(--shadow-soft);
-    animation: fadeInUp 0.5s ease-out;
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  border: 2px solid var(--border-pink);
+  box-shadow: var(--shadow-soft);
+  animation: fadeInUp 0.5s ease-out;
 }
 
 .filters-section h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-    color: var(--dark-pink);
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: var(--dark-pink);
 }
 
 .filter-controls {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
-/* --- STILIZARE UNIVERSALĂ FORMULARE (INPUT & SELECT PASTILĂ) --- */
-.filters-section input, 
+.filters-section input,
 .filters-section select,
 .view-controls select,
 .elegant-select,
 #dynamic-filters select {
-    padding: 6px 14px !important;
-    border: 2px solid var(--border-pink) !important;
-    border-radius: 20px !important;
-    outline: none !important;
-    background-color: white !important;
-    color: var(--text-color) !important;
-    font-size: 0.9rem !important;
-    font-family: inherit !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    box-shadow: none !important;
-    box-sizing: border-box !important;
-    height: 36px !important;
+  padding: 6px 14px !important;
+  border: 2px solid var(--border-pink) !important;
+  border-radius: 20px !important;
+  outline: none !important;
+  background-color: white !important;
+  color: var(--text-color) !important;
+  font-size: 0.9rem !important;
+  font-family: inherit !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  height: 36px !important;
 }
 
-.filters-section input:focus, 
+.filters-section input:focus,
 .filters-section select:focus,
 .view-controls select:focus,
 .elegant-select:focus,
 #dynamic-filters select:focus {
-    border-color: var(--dark-pink) !important;
-    box-shadow: 0 0 10px rgba(248, 165, 194, 0.4) !important;
+  border-color: var(--dark-pink) !important;
+  box-shadow: 0 0 10px rgba(248, 165, 194, 0.4) !important;
 }
 
-/* --- BUTOANE PRINCIPALE ROZ --- */
 .btn-pink {
-    background-color: var(--border-pink) !important;
-    color: white !important;
-    border: none !important;
-    padding: 6px 20px !important;
-    border-radius: 20px !important;
-    cursor: pointer !important;
-    font-weight: bold !important;
-    font-size: 0.95rem !important;
-    transition: all 0.3s ease !important;
-    height: 36px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-decoration: none !important;
+  background-color: var(--border-pink) !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 20px !important;
+  border-radius: 20px !important;
+  cursor: pointer !important;
+  font-weight: bold !important;
+  font-size: 0.95rem !important;
+  transition: all 0.3s ease !important;
+  height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
 }
 
 .btn-pink:hover {
-    background-color: var(--hover-pink) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: var(--shadow-hover) !important;
+  background-color: var(--hover-pink) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-hover) !important;
 }
 
 .btn-pink:active {
-    transform: translateY(1px) scale(0.95) !important;
+  transform: translateY(1px) scale(0.95) !important;
 }
 
-/* --- ZONA DE REZULTATE ȘI EXPORT (COMPACTĂ) --- */
 .bottom-actions {
-    margin-top: 15px !important; /* Spațiu mic deasupra liniei */
-    padding-top: 15px !important; /* Spațiu mic sub linie până la primul rând */
-    border-top: 2px dashed var(--border-pink) !important;
-    display: flex;
-    flex-direction: column;
-    gap: 8px !important; /* Spațiu FOARTE MIC între rândul Export și Afișează */
+  margin-top: 15px !important;
+  padding-top: 15px !important;
+  border-top: 2px dashed var(--border-pink) !important;
+  display: flex;
+  flex-direction: column;
+  gap: 8px !important;
 }
 
 .export-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    height: 32px; /* Forțăm înălțimea rândului */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 32px;
 }
 
 .export-row span {
-    font-weight: bold;
-    color: var(--dark-pink);
-    margin-right: 10px;
+  font-weight: bold;
+  color: var(--dark-pink);
+  margin-right: 10px;
 }
 
-/* Butoane tip pastilă, finuțe și aliniate */
-.export-btn, 
+.export-btn,
 .download-btns button,
 .pagination-wrapper button {
-    background-color: white !important;
-    color: var(--dark-pink) !important;
-    border: 2px solid var(--border-pink) !important;
-    padding: 2px 12px !important; /* Padding mai mic pentru a fi mai finuțe */
-    border-radius: 20px !important;
-    cursor: pointer !important;
-    font-weight: bold !important;
-    font-size: 0.85rem !important;
-    margin-right: 5px !important;
-    height: 28px !important; /* Înălțime mai mică pentru butoanele de export */
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.3s ease !important;
+  background-color: white !important;
+  color: var(--dark-pink) !important;
+  border: 2px solid var(--border-pink) !important;
+  padding: 2px 12px !important;
+  border-radius: 20px !important;
+  cursor: pointer !important;
+  font-weight: bold !important;
+  font-size: 0.85rem !important;
+  margin-right: 5px !important;
+  height: 28px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
 }
 
 .export-btn:hover {
-    background-color: var(--bg-pink) !important;
-    border-color: var(--hover-pink) !important;
+  background-color: var(--bg-pink) !important;
+  border-color: var(--hover-pink) !important;
 }
 
 #view-selector-container {
-    margin-top: 0 !important; 
-    padding-left: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    height: 32px; /* Să aibă aceeași înălțime cu rândul de export pentru consistență */
+  margin-top: 0 !important;
+  padding-left: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 32px;
 }
 
-/* Micșorăm și selectorul 'Afișează' ca să nu pară gigant pe lângă butoane */
 #view-selector-container .elegant-select {
-    height: 28px !important;
-    padding: 2px 10px !important;
-    font-size: 0.85rem !important;
+  height: 28px !important;
+  padding: 2px 10px !important;
+  font-size: 0.85rem !important;
 }
 
-/* --- CONTAINERE GRAFICE ȘI VIZUALIZARE --- */
 .visualizations {
-    display: grid;
-    grid-template-columns: 1fr 1fr; 
-    gap: 15px;
-    margin-top: 15px;
-    animation: fadeIn 0.8s ease-in-out;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
 .chart-container {
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
-    border: 1px solid #ffdae0;
-    box-shadow: var(--shadow-soft);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid #ffdae0;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* Spațiere între tabel și grafice */
 #charts-wrapper .view-section {
-    margin-bottom: 30px !important; 
-    padding-bottom: 20px !important;
+  margin-bottom: 30px !important;
+  padding-bottom: 20px !important;
 }
 
 #charts-wrapper .view-section:last-child {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 @media (max-width: 768px) {
-    .visualizations {
-        grid-template-columns: 1fr;
-    }
+  .visualizations {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* Adaptare pentru ApexCharts */
 .apexcharts-canvas {
-    margin: 0 auto;
+  margin: 0 auto;
 }
 
 .chart-container h3 {
-    color: var(--dark-pink);
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 1.1rem;
+  color: var(--dark-pink);
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
 }
 
 .download-btns {
-    text-align: center;
-    margin-top: 10px;
-    padding-top: 10px;
-    padding-bottom: 7px;
-    border-top: 1px dashed var(--border-pink);
+  text-align: center;
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 7px;
+  border-top: 1px dashed var(--border-pink);
 }
 
 #status-message {
-    animation: fadeInUp 0.5s ease-out;
-    padding: 20px;
-    margin-top: 15px;
-    font-size: 1.2rem;
+  animation: fadeInUp 0.5s ease-out;
+  padding: 20px;
+  margin-top: 15px;
+  font-size: 1.2rem;
 }
 
 #container-line {
-    grid-column: 1 / -1;
+  grid-column: 1 / -1;
 }
 
-/* --- ANIMAȚII --- */
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 th .col-label {
-    display: block;
-    font-weight: bold;
+  display: block;
+  font-weight: bold;
 }
 
 th .filter-badge {
-    display: inline-block;
-    margin-top: 4px;
-    margin-right: 3px;
-    padding: 2px 7px;
-    background: rgba(255, 141, 161, 0.2);
-    border: 1px solid #ff8da1;
-    border-radius: 10px;
-    font-size: 0.7em;
-    font-weight: normal;
-    color: #c0507a;
-    white-space: nowrap;
+  display: inline-block;
+  margin-top: 4px;
+  margin-right: 3px;
+  padding: 2px 7px;
+  background: rgba(255, 141, 161, 0.2);
+  border: 1px solid #ff8da1;
+  border-radius: 10px;
+  font-size: 0.7em;
+  font-weight: normal;
+  color: #c0507a;
+  white-space: nowrap;
 }
 
 #container-table table {
-    table-layout: fixed;
-    width: 100%;
+  table-layout: fixed;
+  width: 100%;
 }
 #container-table th,
 #container-table td {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .noUi-connect {
-    background: var(--dark-pink) !important;
+  background: var(--dark-pink) !important;
 }
 .noUi-handle {
-    border: 2px solid var(--dark-pink) !important;
-    background: #fff !important;
-    border-radius: 50% !important;
-    box-shadow: none !important;
-    cursor: pointer;
-    width: 18px !important;
-    height: 18px !important;
-    right: -9px !important;
-    top: -6px !important;
+  border: 2px solid var(--dark-pink) !important;
+  background: #fff !important;
+  border-radius: 50% !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  width: 18px !important;
+  height: 18px !important;
+  right: -9px !important;
+  top: -6px !important;
 }
-.noUi-handle::before, .noUi-handle::after {
-    display: none !important; /* Ascunde liniuțele inestetice implicite */
+.noUi-handle::before,
+.noUi-handle::after {
+  display: none !important;
 }
 .noUi-target {
-    border: none !important;
-    background: #ffe4e1 !important;
-    height: 6px !important;
-    border-radius: 10px !important;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1) !important;
+  border: none !important;
+  background: #ffe4e1 !important;
+  height: 6px !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
