@@ -27,9 +27,9 @@ class ImportController
         $originalName = basename($file['name']);
         $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
 
-        if (!in_array($extension, ['csv', 'xls', 'xlsx'], true)) {
+        if (!in_array($extension, ['csv'], true)) {
             http_response_code(400);
-            echo json_encode(['success' => false, 'message' => 'Forbidden file type.']);
+            echo json_encode(['success' => false, 'message' => 'Only CSV files are allowed.']);
             return;
         }
 
