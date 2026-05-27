@@ -78,6 +78,11 @@ class CrimeRepository extends BaseRepository
             $params['law'] = "%" . $data['law'] . "%";
         }
 
+        if (!empty($data['sentence_type'])) {
+            $sql .= " AND sentence_type = :sentence_type";
+            $params['sentence_type'] = $data['sentence_type'];
+        }
+
         $this->applyCommonFilters($sql, $params, $data);
         return [$sql, $params];
     }

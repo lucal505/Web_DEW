@@ -8,6 +8,7 @@ class CrimeSentenceFilterDTO extends BaseFilterDTO
 {
     public function __construct(
         private readonly ?string $law       = null,
+        private readonly ?string $sentence  = null,
         private readonly ?int    $year      = null,
         private readonly ?int    $minYear   = null,
         private readonly ?int    $maxYear   = null,
@@ -28,11 +29,13 @@ class CrimeSentenceFilterDTO extends BaseFilterDTO
 
     // getteri pentru campurile specifice
     public function getLaw(): ?string { return $this->law; }
+    public function getSentence(): ?string { return $this->sentence; }
 
     public static function fromRequest(array $params): self
     {
         return new self(
             law:      $params['law']   ?? null,
+            sentence: $params['sentence'] ?? null,
             year:     isset($params['year'])  ? (int)$params['year']  : null,
             minYear:  isset($params['from'])  ? (int)$params['from']  : null,
             maxYear:  isset($params['to'])    ? (int)$params['to']    : null,
@@ -46,14 +49,15 @@ class CrimeSentenceFilterDTO extends BaseFilterDTO
     public function toArray(): array
     {
         return array_filter([
-            'law'       => $this->law,
-            'year'      => $this->year,
-            'min_year'  => $this->minYear,
-            'max_year'  => $this->maxYear,
-            'count'     => $this->count,
-            'min_count' => $this->minCount,
-            'max_count' => $this->maxCount,
-            'page'      => $this->page,
+            'law'           => $this->law,
+            'sentence_type' => $this->sentence,
+            'year'          => $this->year,
+            'min_year'      => $this->minYear,
+            'max_year'      => $this->maxYear,
+            'count'         => $this->count,
+            'min_count'     => $this->minCount,
+            'max_count'     => $this->maxCount,
+            'page'          => $this->page,
         ], fn($value) => $value !== null);
     }
 }

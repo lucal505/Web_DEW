@@ -61,14 +61,6 @@ abstract class BaseRepository
         return $stmt->fetchAll();
     }
 
-    // pentru optiunile de filtrare 
-    protected function fetchColumn(string $sql, array $params = []): array
-    {
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
-    }
-
     // pentru paginare
     protected function fetchCount(string $sql, array $params): int
     {
@@ -76,6 +68,14 @@ abstract class BaseRepository
         $stmt = $this->pdo->prepare($countSql);
         $stmt->execute($params);
         return (int) $stmt->fetchColumn();
+    }
+
+    // pentru optiunile de filtrare 
+    protected function fetchColumn(string $sql, array $params = []): array
+    {
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
     protected function getDistinct(string $table, string $column, string $sort = 'ASC'): array
