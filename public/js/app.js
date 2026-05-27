@@ -49,6 +49,7 @@ const PAGE_ELEMENTS = {
 
 const activeCharts = { bar: null, line: null };
 
+let currentTable = '';
 let currentPage = 1;
 let currentTotalPages = 1;
 let currentApiUrl = '';
@@ -77,7 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
             yearDisplay.innerText = startYear === endYear ? startYear : `${startYear} - ${endYear}`;
         });
 
-        // abia ACUM slider-ul exista, actualizezi anii
         const initialTable = document.getElementById('filter-table').value;
         updateYearSlider(initialTable);
     }
@@ -283,8 +283,15 @@ function updateSecondaryFilters() {
         PAGE_ELEMENTS.dynamicFilters.appendChild(selectAge);
 
     } else if (table === 'sentences' || table === 'articles') {
-        const inputLaw = createDomInput('filter-text-law', 'Caută lege/articol...', '180px');
-        PAGE_ELEMENTS.dynamicFilters.appendChild(inputLaw);
+    const inputLaw = createDomInput('filter-text-law', 'Caută lege/articol...', '180px');
+    PAGE_ELEMENTS.dynamicFilters.appendChild(inputLaw);
+
+    if (table === 'sentences') {
+        if (PAGE_ELEMENTS.sentenceSelect) {
+            PAGE_ELEMENTS.sentenceSelect.style.display = 'block';
+            loadDynamicOptions('sentences', 'filter-sentence', 'Toate tipurile');
+        }
+    }
 
     } else if (table === 'projects' || table === 'campaigns') {
         const inputName = createDomInput('filter-text-name', 'Caută după nume...', '180px');
@@ -374,14 +381,13 @@ function buildBaseUrl() {
     const textBeneficiary = document.getElementById('filter-text-beneficiary')?.value;
 
     if (table === 'sentences' || table === 'articles') {
-    if (textLaw) generatedUrl += `&law=${encodeURIComponent(textLaw)}`;
-    
-    if (table === 'sentences') {
-        const sentenceValue = document.getElementById('filter-sentence')?.value;
-        if (sentenceValue) generatedUrl += `&sentence_type=${encodeURIComponent(sentenceValue)}`;
+        if (textLaw) generatedUrl += `&law=${encodeURIComponent(textLaw)}`;
+        if (table === 'sentences') {
+            const sentenceValue = document.getElementById('filter-sentence')?.value;
+            if (sentenceValue) generatedUrl += `&sentence=${encodeURIComponent(sentenceValue)}`;
         }
     }
-    
+
     if ((table === 'projects' || table === 'campaigns') && textName) {
         generatedUrl += `&name=${encodeURIComponent(textName)}`;
     }
@@ -420,6 +426,7 @@ async function handleLoadData() {
     if (!apiGeneratedUrl) return;
 
     currentApiUrl = apiGeneratedUrl;
+    currentTable = PAGE_ELEMENTS.tableSelect.value;
     currentPage = 1;
     displayMessage("Se încarcă datele...");
 
@@ -444,7 +451,7 @@ async function handleLoadData() {
             return;
         }
 
-        const table = PAGE_ELEMENTS.tableSelect.value;
+        const table = currentTable || PAGE_ELEMENTS.tableSelect.value;
         const secondaryFilter = document.getElementById('filter-secondary');
         const secondaryValue = secondaryFilter ? secondaryFilter.value : null;
 
@@ -510,7 +517,7 @@ function renderTable(dataArray) {
         const emptyRow = document.createElement('tr');
         const emptyCell = document.createElement('td');
         emptyCell.colSpan = 100;
-        emptyCell.className = 'text-center'; // Folosim clasa CSS în loc de style="text-align:center;"
+        emptyCell.className = 'text-center';
         emptyCell.textContent = '0 rezultate. Nu există date.';
         
         emptyRow.appendChild(emptyCell);
@@ -518,7 +525,7 @@ function renderTable(dataArray) {
         return;
     }
 
-    const table = PAGE_ELEMENTS.tableSelect.value;
+    const table = currentTable || PAGE_ELEMENTS.tableSelect.value;
     const secondaryElement = document.getElementById('filter-secondary');
     const secondaryValue = secondaryElement ? secondaryElement.value : '';
 
@@ -668,8 +675,11 @@ function extractChartData(apiData, table, secondaryValue) {
                 extractedValues.push(numericValue);
             }
         } else if (table === 'emergencies') {
-            extractedLabels.push(`${dataItem.drug_type} (${dataItem.value})`);
-            extractedValues.push(Number(dataItem.count));
+            const drug = dataItem.drug || dataItem.drug_type || '';
+            const val = dataItem.value || '';
+            const label = val ? `${drug} (${val})` : drug;
+            extractedLabels.push(label);
+            extractedValues.push(Number(dataItem.count || 0));
         } else if (table === 'groups') {
             extractedLabels.push(String(dataItem.year));
             const val = Number(dataItem.groups || dataItem.identified_groups || 0);
@@ -739,7 +749,6 @@ async function exportTable(exportFormat) {
     const btnPrev = document.getElementById('btn-prev');
     const btnNext = document.getElementById('btn-next');
 
-    // ascunde
     if (titleEl) titleEl.style.visibility = 'hidden';
     if (exportButtons) exportButtons.style.visibility = 'hidden';
     if (btnPrev) btnPrev.style.visibility = 'hidden';
