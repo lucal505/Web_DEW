@@ -297,7 +297,7 @@ if ($section === 'admin') {
     switch ($resource) {
 
         // POST   /api/admin/emergencies       
-        // PATCH    /api/admin/emergencies/{id} 
+        // PATCH  /api/admin/emergencies/{id} 
         // DELETE /api/admin/emergencies/{id} 
         case 'emergencies':
             if ($method === 'POST') $emergencyController->createEmergency();
