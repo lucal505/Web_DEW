@@ -1,25 +1,30 @@
 const msgDiv = document.getElementById("message");
 const loginForm = document.getElementById("loginForm");
 const uploadSection = document.getElementById("uploadSection");
+const adminContainer = document.querySelector('.container'); // L-am mutat aici!
 
 function showMessage(text, isError = false) {
     msgDiv.textContent = text;
-    msgDiv.style.color = isError ? "var(--danger-color)" : "var(--success-color)";
-    msgDiv.style.backgroundColor = isError ? "#fff5f5" : "#f5fff7";
-    msgDiv.style.border = `1px solid ${isError ? "var(--danger-color)" : "var(--success-color)"}`;
+    
+    msgDiv.classList.remove("msg-error", "msg-success");
+    
+    if (isError) {
+        msgDiv.classList.add("msg-error");
+    } else {
+        msgDiv.classList.add("msg-success");
+    }
 }
 
 function checkSession() {
-    const adminContainer = document.querySelector('.container');
     const token = localStorage.getItem('jwt_token');
 
     if (token) {
-        loginForm.style.display = 'none';
-        uploadSection.style.display = 'block';
+        loginForm.classList.add('hidden-section');
+        uploadSection.classList.remove('hidden-section');
         adminContainer.classList.add('large-mode'); 
     } else {
-        loginForm.style.display = 'block';
-        uploadSection.style.display = 'none';
+        loginForm.classList.remove('hidden-section');
+        uploadSection.classList.add('hidden-section');
         adminContainer.classList.remove('large-mode'); 
     }
 }
@@ -36,7 +41,6 @@ loginForm.addEventListener('submit', (submitEvent) => {
         .then(responseData => {
             if (responseData.success) {
                 localStorage.setItem('jwt_token', responseData.token);
-                showMessage('Autentificare reușită!');
                 checkSession();
             } else {
                 showMessage(responseData.message, true);
@@ -48,72 +52,77 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
     fetch('../api/auth/logout', { method: 'POST' })
         .then(() => {
             localStorage.removeItem('jwt_token');
-            showMessage('Sesiune închisă.');
             checkSession();
         });
 });
 
-document.getElementById("uploadForm").addEventListener("submit", (submitEvent) => {
+document.getElementById("uploadForm").addEventListener("submit", async (submitEvent) => {
     submitEvent.preventDefault();
     const formData = new FormData();
     formData.append("fileToUpload", document.getElementById("fileToUpload").files[0]);
 
-    fetch("../api/admin/import/upload", { 
-        method: "POST", 
-        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') },
-        body: formData 
-    })
-    .then(serverResponse => serverResponse.json())
-    .then(responseData => {
+    try {
+        const serverResponse = await fetch("../api/admin/import/upload", { 
+            method: "POST", 
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') },
+            body: formData 
+        });
+        const responseData = await serverResponse.json();
+
         if (responseData.success) {
             showMessage(responseData.message);
             document.getElementById("uploadForm").reset();
         } else {
             showMessage(responseData.message, true);
         }
-    })
-    .catch(() => showMessage("Eroare de rețea la încărcare.", true));
+    } catch (error) {
+        showMessage("Eroare de rețea la încărcare.", true);
+    }
 });
 
-document.getElementById("importAllBtn").addEventListener("click", () => {
+document.getElementById("importAllBtn").addEventListener("click", async () => {
     showMessage("Se procesează toate fișierele încărcate, vă rugăm așteptați...");
 
-    fetch("../api/admin/import/all", { 
-        method: "POST",
-        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') }
-    })
-    .then(serverResponse => serverResponse.json())
-    .then(responseData => {
+    try {
+        const serverResponse = await fetch("../api/admin/import/all", { 
+            method: "POST",
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') }
+        });
+        const responseData = await serverResponse.json();
+
         if (responseData.success) {
             showMessage(responseData.message);
         } else {
             showMessage(responseData.message, true);
         }
-    })
-    .catch(() => showMessage("Eroare de rețea la import.", true));
+    } catch (error) {
+        showMessage("Eroare de rețea la import.", true);
+    }
 });
 
 // WIPE!!
 const wipeButton = document.getElementById("wipeDataBtn");
 if (wipeButton) {
-    wipeButton.addEventListener("click", () => {
+    wipeButton.addEventListener("click", async () => {
         const userConfirmation = confirm("Ești sigur? Toate datele din sistem vor fi șterse definitiv!");
         if (userConfirmation) {
-            showMessage("Se execută curățarea bazei de date...", false);
+            showMessage("Se șterg datele din baza de date...", false);
             
-            fetch("../api/admin/wipe", { 
-                method: "DELETE",
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') }
-            })
-            .then(serverResponse => serverResponse.json())
-            .then(responseData => {
+            try {
+                const serverResponse = await fetch("../api/admin/wipe", { 
+                    method: "DELETE",
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt_token') }
+                });
+                const responseData = await serverResponse.json();
+
                 if (responseData.success) {
                     showMessage("Toate datele au fost șterse cu succes!");
                 } else {
                     showMessage(responseData.message || "Eroare la ștergerea bazei de date.", true);
                 }
-            })
-            .catch(() => showMessage("Eroare de comunicare.", true));
+            } catch (error) {
+                showMessage("Eroare de comunicare.", true);
+            }
         }
     });
 }
@@ -181,7 +190,7 @@ async function handleRecordAction(actionType, httpMethod) {
         try {
             parsedPayload = JSON.parse(rawJsonInput);
         } catch (jsonParseError) {
-            showMessage("Formatul JSON introdus nu este valid. Verificați sintaxa.", true);
+            showMessage("Formatul JSON introdus nu este valid.", true);
             return;
         }
     }
@@ -202,7 +211,7 @@ async function handleRecordAction(actionType, httpMethod) {
             document.getElementById("recordJsonData").value = "";
         } else {
             const errorResponseData = await serverResponse.json();
-            showMessage(errorResponseData.error || `Eroare backend la operația de ${actionType}.`, true);
+            showMessage(errorResponseData.error || `Eroare la operația de ${actionType}.`, true);
         }
     } catch (networkError) {
         showMessage("Eroare de conexiune la serverul API.", true);

@@ -1,24 +1,26 @@
-const API_BASE_URL = '../api/index.php';
-
-const TABLE_MAP = {
-    'drug_seizures': 'seizures',
-    'medical_emergencies': 'emergencies',
-    'crimes_demographic': 'demographics',
-    'crimes_sentence': 'sentences',
-    'crimes_article': 'articles',
-    'prevention_projects': 'projects',
-    'prevention_campaigns': 'campaigns',
-    'prevention_activities': 'activities',
-    'crimes_general': 'general',
-    'crimes_group': 'groups'
-};
-
 const CHART_COLORS = {
     bar: '#ff8da1',
     line: '#db7093',
-    lineArea: 'rgba(255, 182, 193, 0.4)'
+    lineArea: 'rgba(255, 182, 193, 0.4)',
+    marker: '#ff1493'
 };
 
+const measureLabels = {
+    seizures_count: 'Nr. capturi',
+    grams: 'Grame',
+    tablets: 'Comprimate',
+    doses_units: 'Doze',
+    milliliters: 'Mililitri'
+};
+
+const categoryLabels = {
+    gender: 'Sex',
+    age: 'Grupă de vârstă',
+    administration_route: 'Cale de administrare',
+    consumption_pattern: 'Mod de consum',
+    diagnosis: 'Diagnostic'
+};
+    
 const PAGE_ELEMENTS = {
     tableSelect: document.getElementById('filter-table'),
     drugInput: document.getElementById('filter-drug'),
@@ -38,7 +40,11 @@ const PAGE_ELEMENTS = {
     currentPageSpan: document.getElementById('current-page'),
     totalPagesSpan: document.getElementById('total-pages'),
     ctxBar: document.getElementById('chartBar'),
-    ctxLine: document.getElementById('chartLine')
+    ctxLine: document.getElementById('chartLine'),
+    sentenceSelect: document.getElementById('filter-sentence'),
+    countFilters: document.getElementById('count-filters'),
+    filterSecondary: document.getElementById('filter-secondary'),
+    tertiaryContainer: document.getElementById('tertiary-container')
 };
 
 const activeCharts = { bar: null, line: null };
@@ -82,15 +88,16 @@ async function loadDynamicOptions(table, elementId, defaultValue = "Toate") {
     const selectElement = document.getElementById(elementId);
     if (!selectElement) return;
 
-    selectElement.innerHTML = `<option value="">${defaultValue}</option>`;
-    
-    const mappedTableName = TABLE_MAP[table] || table;
+    selectElement.replaceChildren();
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = "";
+    defaultOpt.textContent = defaultValue;
+    selectElement.appendChild(defaultOpt);
 
     try {
-        const response = await fetch(`../api/options/${mappedTableName}`);
+        const response = await fetch(`../api/options/${table}`);
         const rawApiResponse = await response.json();
         
-        // Extragem datele în caz că vin învelite într-un sub-obiect "data"
         const parsedData = rawApiResponse.data ? rawApiResponse.data : rawApiResponse;
 
         let dynamicOptionsArray = [];
@@ -112,7 +119,6 @@ async function loadDynamicOptions(table, elementId, defaultValue = "Toate") {
             dynamicOptionsArray = parsedData;
         }
 
-        // Conversie de siguranță în caz că primim un JSON Object în loc de Array
         if (typeof dynamicOptionsArray === 'object' && !Array.isArray(dynamicOptionsArray)) {
             dynamicOptionsArray = Object.values(dynamicOptionsArray);
         }
@@ -163,96 +169,157 @@ if (PAGE_ELEMENTS.chartSelector) {
     });
 }
 
+function createDomSelect(id, className, options, onChangeCallback = null) {
+    const select = document.createElement('select');
+    select.id = id;
+    select.className = className;
+    
+    options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        select.appendChild(option);
+    });
+    
+    if (onChangeCallback) {
+        select.addEventListener('change', onChangeCallback);
+    }
+    return select;
+}
+
+function createDomInput(id, placeholder, widthStyle) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = id;
+    input.className = 'elegant-input';
+    input.placeholder = placeholder;
+    if (widthStyle) input.style.width = widthStyle;
+    return input;
+}
+
 function updateSecondaryFilters() {
     const table = PAGE_ELEMENTS.tableSelect.value;
 
-    if(PAGE_ELEMENTS.drugInput) PAGE_ELEMENTS.drugInput.style.display = 'none';
-    const sentenceSelect = document.getElementById('filter-sentence');
-    if(sentenceSelect) sentenceSelect.style.display = 'none';
-    PAGE_ELEMENTS.dynamicFilters.innerHTML = '';
+    if (PAGE_ELEMENTS.drugInput) PAGE_ELEMENTS.drugInput.style.display = 'none';
+    if (PAGE_ELEMENTS.sentenceSelect) PAGE_ELEMENTS.sentenceSelect.style.display = 'none';
+    
+    PAGE_ELEMENTS.dynamicFilters.replaceChildren();
+
     const countFilters = document.getElementById('count-filters');
     if (table === 'general' || table === 'groups') {
-        countFilters.style.display = 'none';
+        if (countFilters) countFilters.style.display = 'none';
     } else {
-        countFilters.style.display = 'flex';
+        if (countFilters) countFilters.style.display = 'flex';
     }
-    if (table === 'drug_seizures' || table === 'medical_emergencies') {
-        PAGE_ELEMENTS.drugInput.style.display = 'block';
+
+    if (table === 'seizures' || table === 'emergencies') {
+        if (PAGE_ELEMENTS.drugInput) PAGE_ELEMENTS.drugInput.style.display = 'block';
         loadDynamicOptions(table, 'filter-drug', 'Toate drogurile');
     }
 
-    if (table === 'drug_seizures') {
-        PAGE_ELEMENTS.dynamicFilters.innerHTML = `
-            <select id="filter-secondary" class="elegant-select">
-                <option value="seizures_count">Număr de Capturi</option>
-                <option value="grams">Grame</option>
-                <option value="tablets">Comprimate</option>
-                <option value="doses_units">Doze</option>
-                <option value="milliliters">Mililitri</option>
-            </select>
-        `;
-    } else if (table === 'medical_emergencies') {
-        PAGE_ELEMENTS.dynamicFilters.innerHTML = `
-            <select id="filter-secondary" class="elegant-select" onchange="updateTertiaryFilter()">
-                <option value="">Alege o categorie...</option>
-                <option value="gender">Sex</option>
-                <option value="age">Vârstă</option>
-                <option value="administration_route">Cale Administrare</option>
-                <option value="consumption_pattern">Mod Consum</option>
-                <option value="diagnosis">Diagnostic</option>
-            </select>
-            <span id="tertiary-container" style="display: flex;"></span>
-        `;
-    } else if (table === 'crimes_demographic') {
-        PAGE_ELEMENTS.dynamicFilters.innerHTML = `
-            <select id="filter-gender" class="elegant-select">
-                <option value="">Tot (Sex)</option>
-                <option value="Bărbați">Bărbați</option>
-                <option value="Femei">Femei</option>
-            </select>
-            <select id="filter-age" class="elegant-select">
-                <option value="">Tot (Vârstă)</option>
-                <option value="Minori">Minori</option>
-                <option value="Majori">Majori</option>
-            </select>
-        `;
-    } 
-    else if (table === 'crimes_sentence' || table === 'crimes_article') {
-        PAGE_ELEMENTS.dynamicFilters.innerHTML = `
-            <input type="text" id="filter-text-law" class="elegant-input" placeholder="Caută lege / articol..." style="width: 180px;">
-        `;
-    } else if (table === 'prevention_projects' || table === 'prevention_campaigns') {
-        PAGE_ELEMENTS.dynamicFilters.innerHTML = `
-            <input type="text" id="filter-text-name" class="elegant-input" placeholder="Caută după nume..." style="width: 180px;">
-        `;
-    } else if (table === 'prevention_activities') {
-        PAGE_ELEMENTS.dynamicFilters.innerHTML = `
-            <input type="text" id="filter-text-setting" class="elegant-input" placeholder="Mediu (ex: școală)" style="width: 150px;">
-            <select id="filter-text-beneficiary" class="elegant-select" style="width: 160px;">
-                <option value="">Alege beneficiar...</option>
-            </select>
-        `;
+    if (table === 'seizures') {
+        const select = createDomSelect('filter-secondary', 'elegant-select', [
+            { value: '', label: 'Toate' },
+            { value: 'seizures_count', label: 'Număr de Capturi' },
+            { value: 'grams', label: 'Grame' },
+            { value: 'tablets', label: 'Comprimate' },
+            { value: 'doses_units', label: 'Doze' },
+            { value: 'milliliters', label: 'Mililitri' }
+        ]);
+        PAGE_ELEMENTS.dynamicFilters.appendChild(select);
+
+    } else if (table === 'emergencies') {
+        const select = createDomSelect('filter-secondary', 'elegant-select', [
+            { value: '', label: 'Toate Categoriile' },
+            { value: 'gender', label: 'Sex' },
+            { value: 'age', label: 'Vârstă' },
+            { value: 'administration_route', label: 'Cale Administrare' },
+            { value: 'consumption_pattern', label: 'Mod Consum' },
+            { value: 'diagnosis', label: 'Diagnostic' }
+        ], updateTertiaryFilter);
+
+        const tertiaryContainer = document.createElement('span');
+        tertiaryContainer.id = 'tertiary-container';
+        tertiaryContainer.style.display = 'flex';
+
+        PAGE_ELEMENTS.dynamicFilters.appendChild(select);
+        PAGE_ELEMENTS.dynamicFilters.appendChild(tertiaryContainer);
+
+    } else if (table === 'demographics') {
+        const selectGender = createDomSelect('filter-gender', 'elegant-select', [
+            { value: '', label: 'Tot (Sex)' },
+            { value: 'Bărbați', label: 'Bărbați' },
+            { value: 'Femei', label: 'Femei' }
+        ]);
+        const selectAge = createDomSelect('filter-age', 'elegant-select', [
+            { value: '', label: 'Tot (Vârstă)' },
+            { value: 'Minori', label: 'Minori' },
+            { value: 'Majori', label: 'Majori' }
+        ]);
+        PAGE_ELEMENTS.dynamicFilters.appendChild(selectGender);
+        PAGE_ELEMENTS.dynamicFilters.appendChild(selectAge);
+
+    } else if (table === 'sentences' || table === 'articles') {
+        const inputLaw = createDomInput('filter-text-law', 'Caută lege/articol...', '180px');
+        PAGE_ELEMENTS.dynamicFilters.appendChild(inputLaw);
+
+    } else if (table === 'projects' || table === 'campaigns') {
+        const inputName = createDomInput('filter-text-name', 'Caută după nume...', '180px');
+        PAGE_ELEMENTS.dynamicFilters.appendChild(inputName);
+
+    } else if (table === 'activities') {
+        const inputSetting = createDomInput('filter-text-setting', 'Caută după mediu...', '150px');
+        
+        const selectBeneficiary = createDomSelect('filter-text-beneficiary', 'elegant-select', [
+            { value: '', label: 'Alege beneficiar...' }
+        ]);
+        selectBeneficiary.style.width = '160px';
+
+        PAGE_ELEMENTS.dynamicFilters.appendChild(inputSetting);
+        PAGE_ELEMENTS.dynamicFilters.appendChild(selectBeneficiary);
+        
         loadDynamicOptions(table, 'filter-text-beneficiary', 'Toți beneficiarii');
     }
 }
 
-window.updateTertiaryFilter = function() {
-    const categoryName = document.getElementById('filter-secondary').value;
+function updateTertiaryFilter() {
+    const secondarySelect = document.getElementById('filter-secondary');
+    const categoryName = secondarySelect ? secondarySelect.value : '';
     const containerElement = document.getElementById('tertiary-container');
+    
+    if (!containerElement) return;
+
+    containerElement.replaceChildren();
+
+    if (!categoryName) return;
+
     const filterOptions = {
-        gender: `<option value="">Toate</option><option value="Masculin">Masculin</option><option value="Feminin">Feminin</option>`,
-        age: `<option value="">Toate</option><option value="<25">&lt;25</option><option value="25-34">25-34</option><option value=">35">&gt;35</option>`,
-        administration_route: `<option value="">Toate</option><option value="Oral/fumat/prizat">Oral/fumat/prizat</option><option value="Injectabil">Injectabil</option><option value="Altele">Altele</option>`,
-        consumption_pattern: `<option value="">Toate</option><option value="Consum singular">Consum singular</option><option value="Consum combinat">Consum combinat</option>`,
-        diagnosis: `<option value="">Toate</option><option value="Intoxicație">Intoxicație</option><option value="Utilizare nocivă">Utilizare nocivă</option><option value="Dependență">Dependență</option><option value="Sevraj">Sevraj</option><option value="Tulburări de comportament">Tulburări de comportament</option><option value="Supradoză">Supradoză</option><option value="Testare toxicologică">Testare toxicologică</option>`
+        gender: [
+            { value: '', label: 'Toate' }, { value: 'Masculin', label: 'Masculin' }, { value: 'Feminin', label: 'Feminin' }
+        ],
+        age: [
+            { value: '', label: 'Toate' }, { value: '<25', label: '<25' }, { value: '25-34', label: '25-34' }, { value: '>35', label: '>35' }
+        ],
+        administration_route: [
+            { value: '', label: 'Toate' }, { value: 'Oral/fumat/prizat', label: 'Oral/fumat/prizat' }, { value: 'Injectabil', label: 'Injectabil' }, { value: 'Altele', label: 'Altele' }
+        ],
+        consumption_pattern: [
+            { value: '', label: 'Toate' }, { value: 'Consum singular', label: 'Consum singular' }, { value: 'Consum combinat', label: 'Consum combinat' }
+        ],
+        diagnosis: [
+            { value: '', label: 'Toate' }, { value: 'Intoxicație', label: 'Intoxicație' }, { value: 'Utilizare nocivă', label: 'Utilizare nocivă' }, { value: 'Dependență', label: 'Dependență' }, { value: 'Sevraj', label: 'Sevraj' }, { value: 'Tulburări de comportament', label: 'Tulburări de comportament' }, { value: 'Supradoză', label: 'Supradoză' }, { value: 'Testare toxicologică', label: 'Testare toxicologică' }
+        ]
     };
-    containerElement.innerHTML = categoryName ? `<select id="filter-tertiary" class="elegant-select">${filterOptions[categoryName] || ''}</select>` : '';
-};
+
+    const optionsForCategory = filterOptions[categoryName];
+    if (optionsForCategory) {
+        const tertiarySelect = createDomSelect('filter-tertiary', 'elegant-select', optionsForCategory);
+        containerElement.appendChild(tertiarySelect);
+    }
+}
 
 function buildBaseUrl() {
     const table = PAGE_ELEMENTS.tableSelect.value;
-    const mappedTableName = TABLE_MAP[table] || table;
-
     const selectedDrug = document.getElementById('filter-drug')?.value || '';
     const secondaryFilter = document.getElementById('filter-secondary');
     
@@ -265,7 +332,7 @@ function buildBaseUrl() {
         return;
     }
 
-    let generatedUrl = `../api/filters/${mappedTableName}?`;
+    let generatedUrl = `../api/filters/${table}?`;
     
     if (startYear === endYear) {
         generatedUrl += `&year=${startYear}`;
@@ -282,42 +349,42 @@ function buildBaseUrl() {
     const textSetting = document.getElementById('filter-text-setting')?.value;
     const textBeneficiary = document.getElementById('filter-text-beneficiary')?.value;
 
-    if (table === 'crimes_sentence' || table === 'crimes_article') {
+    if (table === 'sentences' || table === 'articles') {
     if (textLaw) generatedUrl += `&law=${encodeURIComponent(textLaw)}`;
     
-    if (table === 'crimes_sentence') {
+    if (table === 'sentences') {
         const sentenceValue = document.getElementById('filter-sentence')?.value;
         if (sentenceValue) generatedUrl += `&sentence_type=${encodeURIComponent(sentenceValue)}`;
         }
     }
     
-    if ((table === 'prevention_projects' || table === 'prevention_campaigns') && textName) {
+    if ((table === 'projects' || table === 'campaigns') && textName) {
         generatedUrl += `&name=${encodeURIComponent(textName)}`;
     }
     
-    if (table === 'prevention_activities') {
+    if (table === 'activities') {
         if (textSetting) generatedUrl += `&set=${encodeURIComponent(textSetting)}`;
         if (textBeneficiary) generatedUrl += `&ben_type=${encodeURIComponent(textBeneficiary)}`;
     }
 
-    if (table === 'crimes_demographic') {
+    if (table === 'demographics') {
         const genderValue = document.getElementById('filter-gender')?.value;
         const ageValue = document.getElementById('filter-age')?.value;
         if (genderValue) generatedUrl += `&gender=${encodeURIComponent(genderValue)}`;
         if (ageValue) generatedUrl += `&age=${encodeURIComponent(ageValue)}`;
     }
 
-    if (table === 'medical_emergencies' && secondaryFilter?.value) {
+    if (table === 'emergencies' && secondaryFilter?.value) {
         generatedUrl += `&type=${secondaryFilter.value}`;
         const tertiaryFilter = document.getElementById('filter-tertiary');
         if (tertiaryFilter?.value) generatedUrl += `&val=${encodeURIComponent(tertiaryFilter.value)}`;
     }
 
-    if (table === 'drug_seizures' && secondaryFilter?.value) {
+    if (table === 'seizures' && secondaryFilter?.value) {
         generatedUrl += `&type=${encodeURIComponent(secondaryFilter.value)}`;
     }
     
-    if (selectedDrug && (table === 'drug_seizures' || table === 'medical_emergencies')) {
+    if (selectedDrug && (table === 'seizures' || table === 'emergencies')) {
         generatedUrl += `&drug=${encodeURIComponent(selectedDrug)}`;
     }
 
@@ -410,11 +477,18 @@ PAGE_ELEMENTS.btnNext.addEventListener('click', () => {
 });
 
 function renderTable(dataArray) {
-    PAGE_ELEMENTS.tableHeader.innerHTML = '';
-    PAGE_ELEMENTS.tableBody.innerHTML = '';
+    PAGE_ELEMENTS.tableHeader.replaceChildren();
+    PAGE_ELEMENTS.tableBody.replaceChildren();
 
     if (!dataArray || dataArray.length === 0) {
-        PAGE_ELEMENTS.tableBody.innerHTML = '<tr><td colspan="100%" style="text-align:center;">0 rezultate. Nu există date.</td></tr>';
+        const emptyRow = document.createElement('tr');
+        const emptyCell = document.createElement('td');
+        emptyCell.colSpan = 100;
+        emptyCell.className = 'text-center'; // Folosim clasa CSS în loc de style="text-align:center;"
+        emptyCell.textContent = '0 rezultate. Nu există date.';
+        
+        emptyRow.appendChild(emptyCell);
+        PAGE_ELEMENTS.tableBody.appendChild(emptyRow);
         return;
     }
 
@@ -422,34 +496,30 @@ function renderTable(dataArray) {
     const secondaryElement = document.getElementById('filter-secondary');
     const secondaryValue = secondaryElement ? secondaryElement.value : '';
 
-    const measureLabels = {
-        seizures_count: 'Nr. capturi',
-        grams: 'Grame',
-        tablets: 'Comprimate',
-        doses_units: 'Doze',
-        milliliters: 'Mililitri'
-    };
-
-    const categoryLabels = {
-        gender: 'Sex',
-        age: 'Grupă de vârstă',
-        administration_route: 'Cale de administrare',
-        consumption_pattern: 'Mod de consum',
-        diagnosis: 'Diagnostic'
-    };
-
     let tableColumns = [];
 
     switch (table) {
-        case 'drug_seizures':
+        case 'seizures':
+        if (!secondaryValue) {
             tableColumns = [
-                { headerTitle: 'An',      columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
+                { headerTitle: 'An',          columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year  || '-' },
+                { headerTitle: 'Drog',        columnWidth: '150px', getCellValue: (rowItem) => rowItem.drug  || '-' },
+                { headerTitle: 'Nr. Capturi', columnWidth: '120px', getCellValue: (rowItem) => rowItem.count ?? '-' },
+                { headerTitle: 'Grame',       columnWidth: '110px', getCellValue: (rowItem) => rowItem.grams ?? '-' },
+                { headerTitle: 'Comprimate',  columnWidth: '120px', getCellValue: (rowItem) => rowItem.tabs  ?? '-' },
+                { headerTitle: 'Doze',        columnWidth: '100px', getCellValue: (rowItem) => rowItem.doses ?? '-' },
+                { headerTitle: 'Mililitri',   columnWidth: '110px', getCellValue: (rowItem) => rowItem.mills ?? '-' },
+            ];
+        } else {
+            tableColumns = [
+                { headerTitle: 'An',   columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
                 { headerTitle: 'Drog', columnWidth: '150px', getCellValue: (rowItem) => rowItem.drug_name || rowItem.drug || '-' },
                 { headerTitle: measureLabels[secondaryValue] || 'Valoare', columnWidth: '150px', getCellValue: (rowItem) => rowItem[secondaryValue] ?? rowItem.count ?? '-' },
             ];
-            break;
+        }
+        break;
 
-        case 'medical_emergencies':
+        case 'emergencies':
             tableColumns = [
                 { headerTitle: 'An',           columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
                 { headerTitle: 'Drog',         columnWidth: '180px', getCellValue: (rowItem) => rowItem.drug || rowItem.drug_type || '-' },
@@ -458,7 +528,7 @@ function renderTable(dataArray) {
             ];
             break;
 
-        case 'crimes_demographic':
+        case 'demographics':
             tableColumns = [
                 { headerTitle: 'An',               columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
                 { headerTitle: 'Sex',              columnWidth: '150px', getCellValue: (rowItem) => rowItem.gender || '-' },
@@ -467,7 +537,7 @@ function renderTable(dataArray) {
             ];
             break;
 
-        case 'crimes_sentence':
+        case 'sentences':
             tableColumns = [
                 { headerTitle: 'An',             columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
                 { headerTitle: 'Tip sentință',   columnWidth: '220px', getCellValue: (rowItem) => rowItem.sentence || '-' },
@@ -476,7 +546,7 @@ function renderTable(dataArray) {
             ];
             break;
 
-        case 'crimes_article':
+        case 'articles':
             tableColumns = [
                 { headerTitle: 'An',            columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
                 { headerTitle: 'Articol legal', columnWidth: '280px', getCellValue: (rowItem) => rowItem.article || '-' },
@@ -493,7 +563,7 @@ function renderTable(dataArray) {
             ];
             break;
 
-        case 'prevention_activities':
+        case 'activities':
             tableColumns = [
             { headerTitle: 'An',              columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
             { headerTitle: 'Mediu',           columnWidth: '200px', getCellValue: (rowItem) => rowItem.set || rowItem.setting || '-' },
@@ -503,7 +573,7 @@ function renderTable(dataArray) {
             ];
             break;
 
-        case 'prevention_campaigns':
+        case 'campaigns':
             tableColumns = [
                 { headerTitle: 'An',              columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
                 { headerTitle: 'Nume campanie',   columnWidth: '320px', getCellValue: (rowItem) => rowItem.name || '-' },
@@ -511,7 +581,7 @@ function renderTable(dataArray) {
             ];
             break;
 
-        case 'prevention_projects':
+        case 'projects':
             tableColumns = [
                 { headerTitle: 'An',              columnWidth: '80px',  getCellValue: (rowItem) => rowItem.year || '-' },
                 { headerTitle: 'Nume proiect',    columnWidth: '320px', getCellValue: (rowItem) => rowItem.name || '-' },
@@ -565,13 +635,13 @@ function extractChartData(apiData, table, secondaryValue) {
     const dataArray = apiData.data ? apiData.data : apiData;
 
     dataArray.forEach(dataItem => {
-        if (table === 'drug_seizures') {
+        if (table === 'seizures') {
             const numericValue = Number(dataItem[secondaryValue] || dataItem.count || 0);
             if (numericValue > 0) {
                 extractedLabels.push(dataItem.drug_name || dataItem.drug_type || dataItem.drug);
                 extractedValues.push(numericValue);
             }
-        } else if (table === 'medical_emergencies') {
+        } else if (table === 'emergencies') {
             extractedLabels.push(`${dataItem.drug_type} (${dataItem.value})`);
             extractedValues.push(Number(dataItem.count));
         } else if (table === 'groups') {
@@ -606,7 +676,7 @@ function renderCharts(labelsArray, valuesArray) {
     destroyCharts();
 
     const barChartOptions = {
-        series: [{ name: 'Statistici', data: valuesArray }],
+        series: [{ name: 'Valoare', data: valuesArray }],
         chart: { type: 'bar', height: 350, fontFamily: 'inherit', toolbar: { show: false } },
         plotOptions: { bar: { borderRadius: 4, horizontal: false } },
         dataLabels: { enabled: false },
@@ -617,27 +687,26 @@ function renderCharts(labelsArray, valuesArray) {
     activeCharts.bar.render();
 
     const lineChartOptions = {
-        series: [{ name: 'Trend', data: valuesArray }],
+        series: [{ name: 'Valoare', data: valuesArray }],
         chart: { type: 'area', height: 350, fontFamily: 'inherit', toolbar: { show: false } },
         dataLabels: { enabled: false },
         stroke: { curve: 'smooth', width: 2 },
         colors: [CHART_COLORS.line],
-        fill: { type: 'solid', opacity: 0.2 },
-        markers: { size: 4, colors: ['#ff1493'], strokeColors: '#fff', strokeWidth: 2 },
+        fill: { type: 'solid', color: CHART_COLORS.lineArea },
+        markers: { size: 4, colors: [CHART_COLORS.marker], strokeColors: '#fff', strokeWidth: 2 },
         xaxis: { categories: labelsArray }
     };
     activeCharts.line = new ApexCharts(PAGE_ELEMENTS.ctxLine, lineChartOptions);
     activeCharts.line.render();
 }
 
-window.exportData = function(exportFormat) {
+function exportData(exportFormat) {
     const table = PAGE_ELEMENTS.tableSelect.value;
-    const mappedTableName = TABLE_MAP[table] || table;
-    const currentParams = currentApiUrl.split('?')[1] || ''; 
-    window.location.href = `../api/export/${mappedTableName}?format=${exportFormat}&${currentParams}`;
+    const currentParams = currentApiUrl.split('?')[1] || '';
+    window.location.href = `../api/export/${table}?format=${exportFormat}&${currentParams}`;
 };
 
-window.exportTable = async function(exportFormat) {
+async function exportTable(exportFormat) {
     const tableContainer = PAGE_ELEMENTS.containerTable;
     const titleEl = tableContainer.querySelector('h3');
     const exportButtons = tableContainer.querySelector('.export-table-buttons');
@@ -710,7 +779,7 @@ window.exportTable = async function(exportFormat) {
     }
 };
 
-window.downloadChart = async function(containerElementId, exportFormat) {
+async function downloadChart(containerElementId, exportFormat) {
     let selectedChartInstance;
     if (containerElementId === 'chartBar') selectedChartInstance = activeCharts.bar;
     if (containerElementId === 'chartLine') selectedChartInstance = activeCharts.line;
@@ -768,6 +837,25 @@ function downloadBase64File(base64DataString, targetFilename) {
 
 PAGE_ELEMENTS.tableSelect.addEventListener('change', updateSecondaryFilters);
 PAGE_ELEMENTS.btnLoad.addEventListener('click', handleLoadData);
+
+//raport general
+document.getElementById('btn-export-csv')?.addEventListener('click', () => exportData('csv'));
+document.getElementById('btn-export-html')?.addEventListener('click', () => exportData('html'));
+
+//tabel
+document.getElementById('btn-export-table-png')?.addEventListener('click', () => exportTable('png'));
+document.getElementById('btn-export-table-webp')?.addEventListener('click', () => exportTable('webp'));
+document.getElementById('btn-export-table-svg')?.addEventListener('click', () => exportTable('svg'));
+
+//bar chart
+document.getElementById('btn-export-bar-png')?.addEventListener('click', () => downloadChart('chartBar', 'png'));
+document.getElementById('btn-export-bar-webp')?.addEventListener('click', () => downloadChart('chartBar', 'webp'));
+document.getElementById('btn-export-bar-svg')?.addEventListener('click', () => downloadChart('chartBar', 'svg'));
+
+//line chart
+document.getElementById('btn-export-line-png')?.addEventListener('click', () => downloadChart('chartLine', 'png'));
+document.getElementById('btn-export-line-webp')?.addEventListener('click', () => downloadChart('chartLine', 'webp'));
+document.getElementById('btn-export-line-svg')?.addEventListener('click', () => downloadChart('chartLine', 'svg'));
 
 updateSecondaryFilters();
 displayMessage("Selectează criteriile dorite și apasă 'Filtrează Date' pentru a vedea datele.");

@@ -1,37 +1,106 @@
 :root {
-  --bg-pastel: #fff5f7;
-  --panel-white: #ffffff;
-  --pink-accent: #ff8da1;
-  --pink-dark: #db7093;
-  --pink-light: #ffe4e1;
+  --bg-pink: #fff0f5;
+  --border-pink: #ffb6c1;
+  --hover-pink: #ff8da1;
+  --dark-pink: #db7093;
+  --text-color: #555555;
+  --shadow-soft: 0 5px 15px rgba(255, 182, 193, 0.2);
+  --shadow-hover: 0 8px 20px rgba(255, 182, 193, 0.4);
+  
   --danger-color: #ff004c;
-  --danger-hover: #880019;
+  --danger-hover: #c00d48;
   --success-color: #b5e46f;
   --success-hover: #f7d37b;
   --warning-color: #ffe49e;
   --text-dark: #361926;
-  --shadow-soft: 0 8px 30px rgba(255, 182, 193, 0.3);
 }
 
 body {
+  background-color: var(--bg-pink);
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: var(--bg-pastel);
-  padding: 20px;
-  margin: 0;
-  box-sizing: border-box;
   color: var(--text-dark);
+  margin: 0;
+  padding-bottom: 20px;
 }
 
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background-color: white;
+  box-shadow: var(--shadow-soft);
+  border-bottom: 3px solid var(--border-pink);
+  margin-bottom: 15px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-pic {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-pink);
+  transition: transform 0.3s ease;
+}
+
+.profile-pic:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.app-header h1 {
+  margin: 0;
+  color: var(--dark-pink);
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.btn-pink {
+  background-color: var(--border-pink);
+  color: white;
+  border: none;
+  padding: 6px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-pink:hover {
+  background-color: var(--hover-pink);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.btn-pink:active {
+  transform: translateY(1px) scale(0.95);
+}
+
+.admin-btn {
+  height: auto;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+}
+
+/* --- STILURI ADMIN PANEL --- */
 @media (max-width: 900px) {
   .dashboard-layout {
     flex-direction: column;
   }
-
   .dashboard-column {
     min-width: unset;
     width: 100%;
   }
-
   .container.large-mode {
     max-width: 100%;
     padding: 15px;
@@ -40,13 +109,14 @@ body {
 
 .container {
   max-width: 500px;
-  background: var(--panel-white);
+  background: white;
   padding: 30px;
   margin: 20px auto;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 182, 193, 0.5);
+  border-radius: 15px;
+  border: 2px solid var(--border-pink);
   box-shadow: var(--shadow-soft);
   transition: max-width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  animation: fadeIn 0.6s ease-out;
 }
 
 .container.large-mode {
@@ -55,7 +125,7 @@ body {
 }
 
 h2 {
-  color: var(--pink-dark);
+  color: var(--dark-pink);
   margin-top: 0;
   margin-bottom: 20px;
   text-align: center;
@@ -64,18 +134,18 @@ h2 {
 }
 
 h3 {
-  color: var(--pink-dark);
+  color: var(--dark-pink);
   margin-top: 0;
   margin-bottom: 12px;
   font-size: 1.2rem;
-  border-bottom: 2px solid var(--pink-light);
+  border-bottom: 2px solid var(--border-pink);
   padding-bottom: 6px;
 }
 
 hr {
   border: 0;
   height: 1px;
-  background: linear-gradient(to right, var(--pink-light), transparent);
+  background: linear-gradient(to right, var(--border-pink), transparent);
   margin: 15px 0;
 }
 
@@ -97,20 +167,20 @@ textarea {
   padding: 10px 14px;
   margin-bottom: 12px;
   box-sizing: border-box;
-  border-radius: 10px;
-  border: 2px solid var(--pink-light);
+  border-radius: 20px;
+  border: 2px solid var(--border-pink);
   outline: none;
   font-size: 0.9rem;
-  background: #fffcfc;
-  transition: all 0.2s ease;
+  background: white;
+  color: var(--text-color);
+  transition: all 0.3s ease;
 }
 
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--pink-accent);
-  background: #ffffff;
-  box-shadow: 0 0 8px rgba(255, 141, 161, 0.2);
+  border-color: var(--dark-pink);
+  box-shadow: 0 0 10px rgba(248, 165, 194, 0.4);
 }
 
 textarea {
@@ -119,39 +189,42 @@ textarea {
   font-size: 0.85rem;
 }
 
-button {
-  background: var(--pink-accent);
-  color: #fff;
+button:not(.btn-pink) {
+  background: var(--border-pink);
+  color: white;
   padding: 10px 16px;
   border: none;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 20px;
   font-weight: bold;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   gap: 6px;
 }
 
-button:hover {
-  background: var(--pink-dark);
-  transform: translateY(-1px);
+button:not(.btn-pink):hover {
+  background: var(--hover-pink);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
-button:active {
-  transform: translateY(1px);
+button:not(.btn-pink):active {
+  transform: translateY(1px) scale(0.95);
 }
 
 #loginForm button,
-#importAllBtn {
-  background: var(--pink-dark);
+#importAllBtn,
+.btn-create-admin {
+  background: var(--dark-pink);
 }
 
 #loginForm button:hover,
-#importAllBtn:hover {
-  background: #b84f71;
+#importAllBtn:hover,
+.btn-create-admin:hover {
+  background: #c0507a;
 }
 
 #logoutBtn {
@@ -168,7 +241,7 @@ button:active {
 #message {
   margin-bottom: 15px;
   font-weight: 700;
-  color: var(--pink-dark);
+  color: var(--dark-pink);
   text-align: center;
   font-size: 1rem;
   min-height: 24px;
@@ -176,17 +249,16 @@ button:active {
   border-radius: 10px;
 }
 
-.back-link {
-  display: block;
-  text-align: center;
-  margin-top: 15px;
-  color: var(--pink-dark);
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 0.95rem;
+.msg-error {
+  color: var(--danger-color) !important;
+  background-color: #fff5f5 !important;
+  border: 1px solid var(--danger-color) !important;
 }
-.back-link:hover {
-  text-decoration: underline;
+
+.msg-success {
+  color: var(--success-color) !important;
+  background-color: #f5fff7 !important;
+  border: 1px solid var(--success-color) !important;
 }
 
 .dashboard-layout {
@@ -197,12 +269,13 @@ button:active {
 
 .dashboard-column {
   flex: 1;
-  background: #ffffff;
+  background: #fffdfd;
   padding: 18px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 182, 193, 0.4);
+  border-radius: 15px;
+  border: 2px solid var(--border-pink);
   box-sizing: border-box;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-soft);
+  animation: fadeInUp 0.5s ease-out;
 }
 
 .danger-zone {
@@ -235,9 +308,6 @@ button:active {
   font-size: 1rem;
   margin-bottom: 5px;
 }
-.btn-wipe {
-  background: var(--danger-color);
-}
 
 .action-buttons-group {
   display: flex;
@@ -252,20 +322,49 @@ button:active {
   margin-top: 5px;
 }
 
-.btn-create-admin {
-  background: var(--pink-dark);
+.btn-update-admin { background: #d66993 !important; }
+.btn-delete-admin, .btn-danger, .btn-wipe { background: var(--danger-color) !important; color: white !important; }
+.btn-success { background: var(--success-color) !important; color: #333 !important; }
+.btn-warning { background: var(--warning-color) !important; color: #333 !important; }
+
+.btn-danger:hover, .btn-delete-admin:hover, .btn-wipe:hover { background: var(--danger-hover) !important; }
+.btn-success:hover { background: #a3d25d !important; }
+.btn-warning:hover { background: #e6cd8e !important; }
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 15px;
+  color: var(--dark-pink);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
 }
-.btn-update-admin {
-  background: #a35070;
+
+.back-link:hover {
+  color: var(--hover-pink);
+  transform: translateY(-2px);
+  text-decoration: none;
 }
-.btn-delete-admin,
-.btn-danger {
-  background: var(--danger-color);
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.btn-success {
-  background: var(--success-color);
-}
-.btn-warning {
-  background: var(--warning-color);
-  color: #333;
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

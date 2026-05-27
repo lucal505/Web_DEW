@@ -323,6 +323,7 @@ body {
   border-radius: 15px;
   border: 2px dashed #ffb6c1;
   margin-top: 10px;
+  animation: fadeInUp 0.5s ease-out;
 }
 
 #container-line {
@@ -486,3 +487,9 @@ th .filter-badge {
   gap: 10px;
   margin-left: 20px;
 }
+
+.input-law, .input-name { width: 180px; }
+.input-setting { width: 150px; }
+.select-beneficiary { width: 160px; }
+.flex-container { display: flex; }
+.text-center { text-align: center; }
