@@ -717,7 +717,12 @@ function renderCharts(labelsArray, valuesArray) {
         plotOptions: { bar: { borderRadius: 4, horizontal: false } },
         dataLabels: { enabled: false },
         colors: [CHART_COLORS.bar],
-        xaxis: { categories: labelsArray }
+        xaxis: {
+            categories: labelsArray,
+            labels: {
+                formatter: (val) => val && val.length > 20 ? val.substring(0, 20) + '...' : val
+            }
+        }
     };
     activeCharts.bar = new ApexCharts(PAGE_ELEMENTS.ctxBar, barChartOptions);
     activeCharts.bar.render();
@@ -730,7 +735,12 @@ function renderCharts(labelsArray, valuesArray) {
         colors: [CHART_COLORS.line],
         fill: { type: 'solid', color: CHART_COLORS.lineArea },
         markers: { size: 4, colors: [CHART_COLORS.marker], strokeColors: '#fff', strokeWidth: 2 },
-        xaxis: { categories: labelsArray }
+        xaxis: {
+            categories: labelsArray,
+            labels: {
+                formatter: (val) => val && val.length > 20 ? val.substring(0, 20) + '...' : val
+            }
+        }
     };
     activeCharts.line = new ApexCharts(PAGE_ELEMENTS.ctxLine, lineChartOptions);
     activeCharts.line.render();

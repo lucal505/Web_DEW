@@ -46,7 +46,6 @@ body {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--border-pink);
-  transition: transform 0.3s ease;
 }
 
 .profile-pic:hover {
@@ -69,7 +68,6 @@ body {
   cursor: pointer;
   font-weight: bold;
   font-size: 0.95rem;
-  transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -115,7 +113,6 @@ body {
   border-radius: 15px;
   border: 2px solid var(--border-pink);
   box-shadow: var(--shadow-soft);
-  transition: max-width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 .container.large-mode {
@@ -172,7 +169,6 @@ textarea {
   font-size: 0.9rem;
   background: white;
   color: var(--text-color);
-  transition: all 0.3s ease;
 }
 
 input:focus,
@@ -197,7 +193,6 @@ button:not(.btn-pink) {
   border-radius: 20px;
   font-weight: bold;
   font-size: 0.95rem;
-  transition: all 0.3s ease;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -338,11 +333,19 @@ button:not(.btn-pink):active {
   text-decoration: none;
   font-weight: bold;
   font-size: 1.05rem;
-  transition: all 0.3s ease;
 }
 
 .back-link:hover {
   color: var(--hover-pink);
   transform: translateY(-2px);
   text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .container,
+  .container.large-mode {
+    margin: 10px !important;
+    width: auto !important;
+    box-sizing: border-box !important;
+  }
 }
