@@ -30,4 +30,14 @@ class CrimeGroupDTO implements \JsonSerializable
             'persons'  => $this->involvedPersons,
         ], fn($value) => $value !== null);
     }
+
+    public function exportSerialize(): array
+    {
+        return [
+            'id'       => $this->id,
+            'year'     => $this->year,
+            'groups'   => $this->identifiedGroups,
+            'persons'  => $this->involvedPersons,
+        ];
+    }
 }

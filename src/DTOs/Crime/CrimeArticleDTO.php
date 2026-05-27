@@ -30,4 +30,14 @@ class CrimeArticleDTO implements \JsonSerializable
             'count'   => $this->count,
         ], fn($value) => $value !== null);
     }
+
+    public function exportSerialize(): array
+    {
+        return [
+            'id'      => $this->id,
+            'year'    => $this->year,
+            'article' => $this->legalArticle,
+            'count'   => $this->count,
+        ];
+    }
 }

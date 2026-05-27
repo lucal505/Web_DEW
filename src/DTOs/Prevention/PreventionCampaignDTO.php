@@ -30,4 +30,14 @@ class PreventionCampaignDTO implements \JsonSerializable
             'count' => $this->beneficiariesCount,
         ], fn($value) => $value !== null);
     }
+
+    public function exportSerialize(): array
+    {
+        return [
+            'id'    => $this->id,
+            'year'  => $this->year,
+            'name'  => $this->campaignName,
+            'count' => $this->beneficiariesCount,
+        ];
+    }
 }

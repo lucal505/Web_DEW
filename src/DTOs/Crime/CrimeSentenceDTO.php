@@ -33,4 +33,15 @@ class CrimeSentenceDTO implements \JsonSerializable
             'count'    => $this->count,
         ], fn($value) => $value !== null);
     }
+
+    public function exportSerialize(): array
+    {
+        return [
+            'id'       => $this->id,
+            'year'     => $this->year,
+            'sentence' => $this->sentenceType,
+            'law'      => $this->lawReference,
+            'count'    => $this->count,
+        ];
+    }
 }

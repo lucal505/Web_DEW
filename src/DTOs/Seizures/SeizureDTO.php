@@ -45,4 +45,18 @@ class SeizureDTO implements \JsonSerializable
             'count' => $this->count,
         ], fn($value) => $value !== null);
     }
+
+    public function exportSerialize(): array
+    {
+        return [
+            'id'    => $this->id,
+            'year'  => $this->year,
+            'drug'  => $this->drugName,
+            'grams' => $this->grams,
+            'tabs'  => $this->tabs,
+            'doses' => $this->doses,
+            'mills' => $this->mills,
+            'count' => $this->count,
+        ];
+    }
 }

@@ -33,4 +33,15 @@ class CrimeGeneralDTO implements \JsonSerializable
             'convicted'   => $this->convictedPersons,
         ], fn($value) => $value !== null);
     }
+
+    public function exportSerialize(): array
+    {
+        return [
+            'id'          => $this->id,
+            'year'        => $this->year,
+            'investigated' => $this->investigatedPersons,
+            'indicted'    => $this->indictedPersons,
+            'convicted'   => $this->convictedPersons,
+        ];
+    }
 }

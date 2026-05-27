@@ -37,4 +37,16 @@ class EmergencyDTO implements \JsonSerializable
             'count'    => $this->count,
         ], fn($value) => $value !== null);
     }
+
+    public function exportSerialize(): array
+    {
+        return [
+            'id'       => $this->id,
+            'year'     => $this->year,
+            'drug'     => $this->drugType,
+            'category' => $this->category,
+            'value'    => $this->value,
+            'count'    => $this->count,
+        ];
+    }
 }
