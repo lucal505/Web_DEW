@@ -250,7 +250,7 @@ if ($section === 'export' && $method === 'GET') {
 
 // private routes
 if ($section === 'admin') {
-    if (!$authController->requireAuth()) 
+    if (!$authController->requireAuth())
         exit;
 
     // POST /api/admin/admins
@@ -300,8 +300,8 @@ if ($section === 'admin') {
         // PATCH    /api/admin/emergencies/{id} 
         // DELETE /api/admin/emergencies/{id} 
         case 'emergencies':
-            if ($method === 'POST')   $emergencyController->createEmergency();
-            elseif ($method === 'PATCH')    $emergencyController->updateEmergency($id);
+            if ($method === 'POST') $emergencyController->createEmergency();
+            elseif ($method === 'PATCH') $emergencyController->updateEmergency($id);
             elseif ($method === 'DELETE') $emergencyController->deleteEmergency($id);
             else {
                 http_response_code(405);
@@ -310,8 +310,8 @@ if ($section === 'admin') {
             break;
 
         case 'demographics':
-            if ($method === 'POST')   $crimeController->createDemographic();
-            elseif ($method === 'PATCH')    $crimeController->updateDemographic($id);
+            if ($method === 'POST') $crimeController->createDemographic();
+            elseif ($method === 'PATCH') $crimeController->updateDemographic($id);
             elseif ($method === 'DELETE') $crimeController->deleteDemographic($id);
             else {
                 http_response_code(405);
@@ -320,8 +320,8 @@ if ($section === 'admin') {
             break;
 
         case 'sentences':
-            if ($method === 'POST')   $crimeController->createSentence();
-            elseif ($method === 'PATCH')    $crimeController->updateSentence($id);
+            if ($method === 'POST') $crimeController->createSentence();
+            elseif ($method === 'PATCH') $crimeController->updateSentence($id);
             elseif ($method === 'DELETE') $crimeController->deleteSentence($id);
             else {
                 http_response_code(405);
@@ -330,8 +330,8 @@ if ($section === 'admin') {
             break;
 
         case 'articles':
-            if ($method === 'POST')   $crimeController->createArticle();
-            elseif ($method === 'PATCH')    $crimeController->updateArticle($id);
+            if ($method === 'POST') $crimeController->createArticle();
+            elseif ($method === 'PATCH') $crimeController->updateArticle($id);
             elseif ($method === 'DELETE') $crimeController->deleteArticle($id);
             else {
                 http_response_code(405);
@@ -340,8 +340,8 @@ if ($section === 'admin') {
             break;
 
         case 'general':
-            if ($method === 'POST')   $crimeController->createGeneral();
-            elseif ($method === 'PATCH')    $crimeController->updateGeneral($id);
+            if ($method === 'POST') $crimeController->createGeneral();
+            elseif ($method === 'PATCH') $crimeController->updateGeneral($id);
             elseif ($method === 'DELETE') $crimeController->deleteGeneral($id);
             else {
                 http_response_code(405);
@@ -350,8 +350,8 @@ if ($section === 'admin') {
             break;
 
         case 'groups':
-            if ($method === 'POST')   $crimeController->createGroup();
-            elseif ($method === 'PATCH')    $crimeController->updateGroup($id);
+            if ($method === 'POST') $crimeController->createGroup();
+            elseif ($method === 'PATCH') $crimeController->updateGroup($id);
             elseif ($method === 'DELETE') $crimeController->deleteGroup($id);
             else {
                 http_response_code(405);
@@ -360,8 +360,8 @@ if ($section === 'admin') {
             break;
 
         case 'projects':
-            if ($method === 'POST')   $preventionController->createProject();
-            elseif ($method === 'PATCH')    $preventionController->updateProject($id);
+            if ($method === 'POST') $preventionController->createProject();
+            elseif ($method === 'PATCH') $preventionController->updateProject($id);
             elseif ($method === 'DELETE') $preventionController->deleteProject($id);
             else {
                 http_response_code(405);
@@ -370,8 +370,8 @@ if ($section === 'admin') {
             break;
 
         case 'campaigns':
-            if ($method === 'POST')   $preventionController->createCampaign();
-            elseif ($method === 'PATCH')    $preventionController->updateCampaign($id);
+            if ($method === 'POST') $preventionController->createCampaign();
+            elseif ($method === 'PATCH') $preventionController->updateCampaign($id);
             elseif ($method === 'DELETE') $preventionController->deleteCampaign($id);
             else {
                 http_response_code(405);
@@ -380,8 +380,8 @@ if ($section === 'admin') {
             break;
 
         case 'activities':
-            if ($method === 'POST')   $preventionController->createActivity();
-            elseif ($method === 'PATCH')    $preventionController->updateActivity($id);
+            if ($method === 'POST') $preventionController->createActivity();
+            elseif ($method === 'PATCH') $preventionController->updateActivity($id);
             elseif ($method === 'DELETE') $preventionController->deleteActivity($id);
             else {
                 http_response_code(405);
@@ -390,8 +390,8 @@ if ($section === 'admin') {
             break;
 
         case 'seizures':
-            if ($method === 'POST')   $seizureController->createSeizure();
-            elseif ($method === 'PATCH')    $seizureController->updateSeizure($id);
+            if ($method === 'POST') $seizureController->createSeizure();
+            elseif ($method === 'PATCH') $seizureController->updateSeizure($id);
             elseif ($method === 'DELETE') $seizureController->deleteSeizure($id);
             else {
                 http_response_code(405);
