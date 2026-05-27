@@ -92,7 +92,6 @@ body {
   border-radius: 15px;
   border: 2px solid var(--border-pink);
   box-shadow: var(--shadow-soft);
-  animation: fadeInUp 0.5s ease-out;
 }
 
 .filters-section h2 {
@@ -237,7 +236,6 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 15px;
   margin-top: 15px;
-  animation: fadeIn 0.8s ease-in-out;
 }
 
 .chart-container {
@@ -323,31 +321,10 @@ body {
   border-radius: 15px;
   border: 2px dashed #ffb6c1;
   margin-top: 10px;
-  animation: fadeInUp 0.5s ease-out;
 }
 
 #container-line {
   grid-column: 1 / -1;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 th .col-label {

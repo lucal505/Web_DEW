@@ -116,7 +116,6 @@ body {
   border: 2px solid var(--border-pink);
   box-shadow: var(--shadow-soft);
   transition: max-width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  animation: fadeIn 0.6s ease-out;
 }
 
 .container.large-mode {
@@ -275,7 +274,6 @@ button:not(.btn-pink):active {
   border: 2px solid var(--border-pink);
   box-sizing: border-box;
   box-shadow: var(--shadow-soft);
-  animation: fadeInUp 0.5s ease-out;
 }
 
 .danger-zone {
@@ -347,24 +345,4 @@ button:not(.btn-pink):active {
   color: var(--hover-pink);
   transform: translateY(-2px);
   text-decoration: none;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }

@@ -74,16 +74,39 @@ document.addEventListener('DOMContentLoaded', () => {
         yearSlider.noUiSlider.on('update', function (sliderValues) {
             startYear = parseInt(sliderValues[0]);
             endYear = parseInt(sliderValues[1]);
-            
-            if (startYear === endYear) {
-                yearDisplay.innerText = startYear;
-            } else {
-                yearDisplay.innerText = `${startYear} - ${endYear}`;
-            }
+            yearDisplay.innerText = startYear === endYear ? startYear : `${startYear} - ${endYear}`;
         });
-    }
-});
 
+        // abia ACUM slider-ul exista, actualizezi anii
+        const initialTable = document.getElementById('filter-table').value;
+        updateYearSlider(initialTable);
+    }
+
+    updateSecondaryFilters();
+});
+async function updateYearSlider(table) {
+    try {
+        const response = await fetch(`../api/options/${table}`);
+        const rawData = await response.json();
+        const parsed = rawData.data ? rawData.data : rawData;
+
+        const years = parsed.years;
+        if (!years || years.length === 0) return;
+
+        const minYear = Math.min(...years);
+        const maxYear = Math.max(...years);
+
+        const yearSlider = document.getElementById('year-slider');
+        if (!yearSlider || !yearSlider.noUiSlider) return;
+
+        yearSlider.noUiSlider.updateOptions({
+            range: { 'min': minYear, 'max': maxYear },
+            start: [minYear, maxYear]
+        });
+    } catch (err) {
+        console.error('Eroare la preluarea anilor:', err);
+    }
+}
 async function loadDynamicOptions(table, elementId, defaultValue = "Toate") {
     const selectElement = document.getElementById(elementId);
     if (!selectElement) return;
@@ -280,6 +303,7 @@ function updateSecondaryFilters() {
         
         loadDynamicOptions(table, 'filter-text-beneficiary', 'Toți beneficiarii');
     }
+    updateYearSlider(table);
 }
 
 function updateTertiaryFilter() {
@@ -434,6 +458,8 @@ async function handleLoadData() {
 
         hideMessage();
         renderCharts(chartData.labels, chartData.values);
+        //fix pt display bug
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
 
     } catch (error) {
         console.error(error);
@@ -857,5 +883,4 @@ document.getElementById('btn-export-line-png')?.addEventListener('click', () => 
 document.getElementById('btn-export-line-webp')?.addEventListener('click', () => downloadChart('chartLine', 'webp'));
 document.getElementById('btn-export-line-svg')?.addEventListener('click', () => downloadChart('chartLine', 'svg'));
 
-updateSecondaryFilters();
 displayMessage("Selectează criteriile dorite și apasă 'Filtrează Date' pentru a vedea datele.");
