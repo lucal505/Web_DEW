@@ -29,20 +29,20 @@
 
     <div class="container main-content">
       <section class="filters-section">
-        <h2>Analiză Multicriterială</h2>
+        <h2>Selectează Filtre</h2>
 
         <div class="filter-controls">
           <select id="filter-table" class="elegant-select">
-            <option value="drug_seizures">Confiscări</option>
-            <option value="medical_emergencies">Urgențe Medicale</option>
-            <option value="crimes_article">Infracțiuni (Articole)</option>
-            <option value="crimes_demographic">Infracțiuni (Demografic)</option>
-            <option value="crimes_sentence">Infracțiuni (Sentințe)</option>
+            <option value="seizures">Confiscări</option>
+            <option value="emergencies">Urgențe Medicale</option>
+            <option value="articles">Infracțiuni (Articole)</option>
+            <option value="demographics">Infracțiuni (Demografic)</option>
+            <option value="sentences">Infracțiuni (Sentințe)</option>
             <option value="general">Infracțiuni (General)</option>
             <option value="groups">Infracțiuni (Grupuri)</option>
-            <option value="prevention_activities">Activități de prevenire</option>
-            <option value="prevention_projects">Proiecte Prevenire</option>
-            <option value="prevention_campaigns">Campanii de prevenire</option>
+            <option value="activities">Activități de prevenire</option>
+            <option value="projects">Proiecte de Prevenire</option>
+            <option value="campaigns">Campanii de prevenire</option>
           </select>
 
           <div class="slider-wrapper">
@@ -53,18 +53,34 @@
             <div id="year-slider"></div>
           </div>
 
-          <select id="filter-drug" class="elegant-select hidden-select"></select>
+          <select
+            id="filter-drug"
+            class="elegant-select hidden-select"
+          ></select>
 
-          <select id="filter-sentence" class="elegant-select hidden-select"></select>
+          <select
+            id="filter-sentence"
+            class="elegant-select hidden-select"
+          ></select>
 
           <div id="dynamic-filters" class="dynamic-filters-container"></div>
 
           <div id="count-filters" class="count-filters-container">
             <span class="count-label">Cazuri / Count</span>
             <div class="count-inputs-wrapper">
-              <input type="number" id="filter-min-count" class="elegant-input count-input" placeholder="Min" />
+              <input
+                type="number"
+                id="filter-min-count"
+                class="elegant-input count-input"
+                placeholder="Min"
+              />
               <span class="count-separator">-</span>
-              <input type="number" id="filter-max-count" class="elegant-input count-input" placeholder="Max" />
+              <input
+                type="number"
+                id="filter-max-count"
+                class="elegant-input count-input"
+                placeholder="Max"
+              />
             </div>
           </div>
 
@@ -76,12 +92,14 @@
         <div class="bottom-actions">
           <div class="export-row">
             <span>Export raport general:</span>
-            <button class="export-btn" onclick="exportData('csv')">CSV</button>
-            <button class="export-btn" onclick="exportData('html')">HTML</button>
+            <button class="export-btn" id="btn-export-csv">CSV</button>
+            <button class="export-btn" id="btn-export-html">HTML</button>
           </div>
 
           <div class="view-controls" id="view-selector-container">
-            <label for="chart-selector" class="chart-selector-label">Afișează:</label>
+            <label for="chart-selector" class="chart-selector-label"
+              >Afișează:</label
+            >
             <select id="chart-selector" class="elegant-select">
               <option value="all">Toate (Tabel + Grafice)</option>
               <option value="container-table">Doar Tabelul de Date</option>
@@ -109,12 +127,15 @@
 
           <div class="pagination-wrapper">
             <button id="btn-prev" class="btn-pink">← Anterior</button>
-            <span id="page-info" class="page-info-text">Pagina <strong id="current-page">1</strong> din <strong id="total-pages">1</strong></span>
+            <span id="page-info" class="page-info-text"
+              >Pagina <strong id="current-page">1</strong> din
+              <strong id="total-pages">1</strong></span
+            >
             <button id="btn-next" class="btn-pink">Următor →</button>
             <div class="export-table-buttons">
-              <button onclick="exportTable('png')">PNG</button>
-              <button onclick="exportTable('webp')">WebP</button>
-              <button onclick="exportTable('svg')">SVG</button>
+              <button id="btn-export-table-png">PNG</button>
+              <button id="btn-export-table-webp">WebP</button>
+              <button id="btn-export-table-svg">SVG</button>
             </div>
           </div>
         </div>
@@ -123,9 +144,9 @@
           <h3>Bar chart</h3>
           <div id="chartBar"></div>
           <div class="download-btns">
-            <button onclick="downloadChart('chartBar', 'png')">PNG</button>
-            <button onclick="downloadChart('chartBar', 'webp')">WebP</button>
-            <button onclick="downloadChart('chartBar', 'svg')">SVG</button>
+            <button id="btn-export-bar-png">PNG</button>
+            <button id="btn-export-bar-webp">WebP</button>
+            <button id="btn-export-bar-svg">SVG</button>
           </div>
         </div>
 
@@ -133,9 +154,9 @@
           <h3>Line chart</h3>
           <div id="chartLine"></div>
           <div class="download-btns">
-            <button onclick="downloadChart('chartLine', 'png')">PNG</button>
-            <button onclick="downloadChart('chartLine', 'webp')">WebP</button>
-            <button onclick="downloadChart('chartLine', 'svg')">SVG</button>
+            <button id="btn-export-line-png">PNG</button>
+            <button id="btn-export-line-webp">WebP</button>
+            <button id="btn-export-line-svg">SVG</button>
           </div>
         </div>
       </section>
