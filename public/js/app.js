@@ -727,7 +727,7 @@ function renderCharts(labelsArray, valuesArray) {
             x: { formatter: (_, opts) => labelsArray[opts.dataPointIndex] || '' }
         },
         grid: {
-            padding: { left: 22, right: 10}
+            padding: { left: 30, right: 10}
         },
     };
     activeCharts.bar = new ApexCharts(PAGE_ELEMENTS.ctxBar, barChartOptions);
@@ -749,7 +749,7 @@ function renderCharts(labelsArray, valuesArray) {
             x: { formatter: (_, opts) => labelsArray[opts.dataPointIndex] || '' }
         },
         grid: {
-            padding: { left: 32, right: 10 }
+            padding: { left: 40, right: 10 }
         },
     };
     activeCharts.line = new ApexCharts(PAGE_ELEMENTS.ctxLine, lineChartOptions);
