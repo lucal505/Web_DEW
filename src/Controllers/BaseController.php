@@ -54,7 +54,7 @@ abstract class BaseController
         }
     }
 
-    // citeste body-ul request-ului ca JSON, cu fallback pe $_POST
+    // citeste body-ul request-ului ca JSON
     protected function getRequestData(): array
     {
         $raw = file_get_contents('php://input');
@@ -65,7 +65,7 @@ abstract class BaseController
             }
         }
 
-        return $_POST;
+        return[];
     }
 
     protected function getIdFromRequest(): ?int
