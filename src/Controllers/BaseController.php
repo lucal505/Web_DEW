@@ -67,9 +67,4 @@ abstract class BaseController
 
         return[];
     }
-
-    protected function getIdFromRequest(): ?int
-    {
-        return isset($_GET['id']) ? (int)$_GET['id'] : null;
-    }
 }
