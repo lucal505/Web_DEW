@@ -344,7 +344,7 @@ button:not(.btn-pink):active {
 @media (max-width: 900px) {
   .container,
   .container.large-mode {
-    margin: 10px !important;
+    margin: 15px !important;
     width: auto !important;
     box-sizing: border-box !important;
   }
