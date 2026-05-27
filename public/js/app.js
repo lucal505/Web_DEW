@@ -711,6 +711,8 @@ function destroyCharts() {
 function renderCharts(labelsArray, valuesArray) {
     destroyCharts();
 
+    const truncatedLabels = labelsArray.map(l => l && l.length > 20 ? l.substring(0, 20) + '...' : l);
+
     const barChartOptions = {
         series: [{ name: 'Valoare', data: valuesArray }],
         chart: { type: 'bar', height: 350, fontFamily: 'inherit', toolbar: { show: false } },
@@ -718,11 +720,15 @@ function renderCharts(labelsArray, valuesArray) {
         dataLabels: { enabled: false },
         colors: [CHART_COLORS.bar],
         xaxis: {
-            categories: labelsArray,
-            labels: {
-                formatter: (val) => val && val.length > 20 ? val.substring(0, 20) + '...' : val
-            }
-        }
+            categories: truncatedLabels,
+            labels: { rotate: -45 }
+        },
+        tooltip: {
+            x: { formatter: (_, opts) => labelsArray[opts.dataPointIndex] || '' }
+        },
+        grid: {
+            padding: { left: 22, right: 10}
+        },
     };
     activeCharts.bar = new ApexCharts(PAGE_ELEMENTS.ctxBar, barChartOptions);
     activeCharts.bar.render();
@@ -736,11 +742,15 @@ function renderCharts(labelsArray, valuesArray) {
         fill: { type: 'solid', color: CHART_COLORS.lineArea },
         markers: { size: 4, colors: [CHART_COLORS.marker], strokeColors: '#fff', strokeWidth: 2 },
         xaxis: {
-            categories: labelsArray,
-            labels: {
-                formatter: (val) => val && val.length > 20 ? val.substring(0, 20) + '...' : val
-            }
-        }
+            categories: truncatedLabels,
+            labels: { rotate: -45 }
+        },
+        tooltip: {
+            x: { formatter: (_, opts) => labelsArray[opts.dataPointIndex] || '' }
+        },
+        grid: {
+            padding: { left: 32, right: 10 }
+        },
     };
     activeCharts.line = new ApexCharts(PAGE_ELEMENTS.ctxLine, lineChartOptions);
     activeCharts.line.render();
