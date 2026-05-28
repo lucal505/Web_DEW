@@ -1,106 +1,183 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ro">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Panel</title>
-    <link rel="stylesheet" href="css/admin.css">
-</head>
-<body>
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body>
     <header class="app-header">
-        <div class="brand">
-            <img src="assets/walter-pink.webp" alt="Walter Pink Admin" class="profile-pic" />
-            <h1>Walter Pink Admin</h1>
-        </div>
+      <div class="brand">
+        <img
+          src="assets/walter-pink.webp"
+          alt="Walter Pink Admin"
+          class="profile-pic"
+        />
+        <h1>Walter Pink Admin</h1>
+      </div>
     </header>
 
     <div class="container">
-        <h2>Administrator Control Panel</h2>
-        <div id="message"></div>
-        
-        <form id="loginForm" class="hidden-section">
-            <label>Username:</label>
-            <input type="text" id="username" required placeholder="Introduceți utilizatorul">
-            <label>Password:</label>
-            <input type="password" id="password" required placeholder="Introduceți parola">
-            <button type="submit" class="full-width-btn">Autentificare</button>
-        </form>
-        
-        <div id="uploadSection" class="hidden-section">
-            <button id="logoutBtn">Logout</button>
-            <p class="admin-status-text">Ești logat ca administrator.</p>
-            
-            <div class="dashboard-layout">
-                <div class="dashboard-column">
-                    <h3>Preluare Date</h3>
-                    <form id="uploadForm">
-                        <label>Încarcă un fișier nou:</label>
-                        <input type="file" id="fileToUpload" required accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                        <button type="submit" class="full-width-btn">Încarcă Fișier</button>
-                    </form>
-                    <hr>
-                    <h3>Procesare Fișiere</h3>
-                    <label>Importă toate fișierele încărcate:</label>
-                    <button id="importAllBtn" class="full-width-btn">Procesează Toate Fișierele</button>
-                    <hr>
-                    <div class="danger-zone zone-spacing">
-                        <h3 class="danger-title">Șterge toată Baza de Date</h3>
-                        <button type="button" id="wipeDataBtn" class="btn-wipe full-width-btn">Șterge</button>
-                    </div>
-                </div>
+      <h2>Administrator Control Panel</h2>
+      <div id="message"></div>
 
-                <div class="dashboard-column">
-                    <h3>Management Admini</h3>
-                    <div id="adminManagerForm">
-                        <label>Username:</label>
-                        <input type="text" id="newAdminUsername" placeholder="Ex: walter_white">
-                        <label>Parolă:</label>
-                        <input type="password" id="newAdminPassword" placeholder="Parolă nouă">
-                        
-                        <div class="action-buttons-group gap-15">
-                            <button type="button" id="btnCreateAdmin" class="btn-create-admin full-width-btn">Creează Admin</button>
-                            <button type="button" id="btnUpdateAdmin" class="btn-update-admin full-width-btn">Actualizează Parolă</button>
-                            <button type="button" id="btnDeleteAdmin" class="btn-delete-admin full-width-btn">Șterge Admin</button>
-                        </div>
-                    </div>
-                </div>
+      <form id="loginForm" class="hidden-section">
+        <label>Username:</label>
+        <input
+          type="text"
+          id="username"
+          required
+          placeholder="Introduceți utilizatorul"
+        />
+        <label>Password:</label>
+        <input
+          type="password"
+          id="password"
+          required
+          placeholder="Introduceți parola"
+        />
+        <button type="submit" class="full-width-btn">Autentificare</button>
+      </form>
 
-                <div class="dashboard-column">
-                    <h3>Gestionare Date</h3>
-                    <div id="recordManagerForm">
-                        <label>Selectează Tabelul:</label>
-                        <select id="crudTableSelect">
-                            <option value="seizures">Confiscări</option>
-                            <option value="emergencies">Urgențe Medicale</option>
-                            <option value="articles">Infracțiuni (Articole)</option>
-                            <option value="demographics">Infracțiuni (Demografic)</option>
-                            <option value="sentences">Infracțiuni (Sentințe)</option>
-                            <option value="general">Infracțiuni (General)</option>
-                            <option value="groups">Infracțiuni (Grupuri)</option>
-                            <option value="activities">Activități de Prevenire</option>
-                            <option value="projects">Proiecte de Prevenire</option>
-                            <option value="campaigns">Campanii de Prevenire</option>
-                        </select>
+      <div id="uploadSection" class="hidden-section">
+        <button id="logoutBtn">Logout</button>
+        <p class="admin-status-text">Ești logat ca administrator.</p>
 
-                        <label>ID Înregistrare:</label>
-                        <input type="number" id="recordId" placeholder="Ex: 5">
-
-                        <label>Date:</label>
-                        <textarea id="recordJsonData" rows="4" placeholder='Exemplu:{"year": 2022, "drug_type": "Cannabis", "count": 14}'></textarea>
-                        
-                        <div class="action-buttons-group gap-5">
-                            <button type="button" id="btnCreateRecord" class="btn-success full-width-btn">Inserează Date (POST)</button>
-                            <button type="button" id="btnUpdateRecord" class="btn-warning full-width-btn">Actualizează Date (PATCH)</button>
-                            <button type="button" id="btnDeleteRecord" class="btn-danger full-width-btn">Șterge Înregistrare (DELETE)</button>
-                        </div>
-                    </div>
-                </div>
+        <div class="dashboard-layout">
+          <div class="dashboard-column">
+            <h3>Preluare Date</h3>
+            <form id="uploadForm">
+              <label>Încarcă un fișier nou:</label>
+              <input
+                type="file"
+                id="fileToUpload"
+                required
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              />
+              <button type="submit" class="full-width-btn">
+                Încarcă Fișier
+              </button>
+            </form>
+            <hr />
+            <h3>Procesare Fișiere</h3>
+            <label>Importă toate fișierele încărcate:</label>
+            <button id="importAllBtn" class="full-width-btn">
+              Procesează Toate Fișierele
+            </button>
+            <hr />
+            <div class="danger-zone zone-spacing">
+              <h3 class="danger-title">Șterge toată Baza de Date</h3>
+              <button
+                type="button"
+                id="wipeDataBtn"
+                class="btn-wipe full-width-btn"
+              >
+                Șterge
+              </button>
             </div>
+          </div>
+
+          <div class="dashboard-column">
+            <h3>Management Admini</h3>
+            <div id="adminManagerForm">
+              <label>Username:</label>
+              <input
+                type="text"
+                id="newAdminUsername"
+                placeholder="Ex: walter_white"
+              />
+              <label>Parolă:</label>
+              <input
+                type="password"
+                id="newAdminPassword"
+                placeholder="Parolă nouă"
+              />
+
+              <div class="action-buttons-group gap-15">
+                <button
+                  type="button"
+                  id="btnCreateAdmin"
+                  class="btn-create-admin full-width-btn"
+                >
+                  Creează Admin
+                </button>
+                <button
+                  type="button"
+                  id="btnUpdateAdmin"
+                  class="btn-update-admin full-width-btn"
+                >
+                  Actualizează Parolă
+                </button>
+                <button
+                  type="button"
+                  id="btnDeleteAdmin"
+                  class="btn-delete-admin full-width-btn"
+                >
+                  Șterge Admin
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-column">
+            <h3>Gestionare Date</h3>
+            <div id="recordManagerForm">
+              <label>Selectează Tabelul:</label>
+              <select id="crudTableSelect">
+                <option value="seizures">Confiscări</option>
+                <option value="emergencies">Urgențe Medicale</option>
+                <option value="articles">Infracțiuni (Articole)</option>
+                <option value="demographics">Infracțiuni (Demografic)</option>
+                <option value="sentences">Infracțiuni (Sentințe)</option>
+                <option value="general">Infracțiuni (General)</option>
+                <option value="groups">Infracțiuni (Grupuri)</option>
+                <option value="activities">Activități de Prevenire</option>
+                <option value="projects">Proiecte de Prevenire</option>
+                <option value="campaigns">Campanii de Prevenire</option>
+              </select>
+
+              <label>ID Înregistrare:</label>
+              <input type="number" id="recordId" placeholder="Ex: 5" />
+
+              <label>Date:</label>
+              <textarea
+                id="recordJsonData"
+                rows="4"
+                placeholder='Exemplu:{"year": 2022, "drug_type": "Cannabis", "count": 14}'
+              ></textarea>
+
+              <div class="action-buttons-group gap-5">
+                <button
+                  type="button"
+                  id="btnCreateRecord"
+                  class="btn-success full-width-btn"
+                >
+                  Inserează Date (POST)
+                </button>
+                <button
+                  type="button"
+                  id="btnUpdateRecord"
+                  class="btn-warning full-width-btn"
+                >
+                  Actualizează Date (PATCH)
+                </button>
+                <button
+                  type="button"
+                  id="btnDeleteRecord"
+                  class="btn-danger full-width-btn"
+                >
+                  Șterge Înregistrare (DELETE)
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        
-        <a href="index.html" class="back-link">⬅ Înapoi la Pagina Principală</a>
+      </div>
+
+      <a href="index.html" class="back-link">⬅ Înapoi la Pagina Principală</a>
     </div>
 
     <script src="js/admin.js" defer></script>
-</body>
+  </body>
 </html>

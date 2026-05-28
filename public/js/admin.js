@@ -1,7 +1,7 @@
 const msgDiv = document.getElementById("message");
 const loginForm = document.getElementById("loginForm");
 const uploadSection = document.getElementById("uploadSection");
-const adminContainer = document.querySelector('.container'); // L-am mutat aici!
+const adminContainer = document.querySelector('.container');
 
 function showMessage(text, isError = false) {
     msgDiv.textContent = text;
