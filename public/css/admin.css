@@ -90,7 +90,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* --- STILURI ADMIN PANEL --- */
 @media (max-width: 900px) {
   .dashboard-layout {
     flex-direction: column;
