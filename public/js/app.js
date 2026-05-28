@@ -459,7 +459,7 @@ async function handleLoadData() {
 
         if (chartData.labels.length === 0) {
             destroyCharts();
-            displayMessage(`Valoarea este 0 pentru această selecție.`);
+            displayMessage(`Fara valori numerice de afisat (grafice goale).`);
             return;
         }
 
