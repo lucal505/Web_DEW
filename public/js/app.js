@@ -455,18 +455,16 @@ async function handleLoadData() {
         const secondaryFilter = document.getElementById('filter-secondary');
         const secondaryValue = secondaryFilter ? secondaryFilter.value : null;
 
-        const chartData = extractChartData(dataArray, table, secondaryValue);
+    const chartData = extractChartData(dataArray, table, secondaryValue);
 
-        if (chartData.labels.length === 0) {
-            destroyCharts();
-            displayMessage(`Valoarea este 0 pentru această selecție.`);
-            return;
-        }
-
+    if (chartData.labels.length > 0) {
         hideMessage();
         renderCharts(chartData.labels, chartData.values);
-        //fix pt display bug
         setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+    } else {
+        destroyCharts();
+        hideMessage();
+    }
 
     } catch (error) {
         console.error(error);
