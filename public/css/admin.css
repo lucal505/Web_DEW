@@ -222,10 +222,10 @@ button:not(.btn-pink):active {
 }
 
 #logoutBtn {
-  float: right;
   background: var(--danger-color);
   padding: 6px 14px;
   font-size: 0.8rem;
+  float: right;
 }
 
 #logoutBtn:hover {
@@ -243,16 +243,16 @@ button:not(.btn-pink):active {
   border-radius: 10px;
 }
 
-.msg-error {
-  color: var(--danger-color) !important;
-  background-color: #fff5f5 !important;
-  border: 1px solid var(--danger-color) !important;
+#message.msg-error {
+  color: var(--danger-color);
+  background-color: #fff5f5;
+  border: 1px solid var(--danger-color);
 }
 
-.msg-success {
-  color: var(--success-color) !important;
-  background-color: #f5fff7 !important;
-  border: 1px solid var(--success-color) !important;
+#message.msg-success {
+  color: var(--success-color);
+  background-color: #f5fff7;
+  border: 1px solid var(--success-color);
 }
 
 .dashboard-layout {
@@ -315,14 +315,14 @@ button:not(.btn-pink):active {
   margin-top: 5px;
 }
 
-.btn-update-admin { background: #d66993 !important; }
-.btn-delete-admin, .btn-danger, .btn-wipe { background: var(--danger-color) !important; color: white !important; }
-.btn-success { background: var(--success-color) !important; color: #333 !important; }
-.btn-warning { background: var(--warning-color) !important; color: #333 !important; }
+button.btn-update-admin { background: #d66993; }
+button.btn-delete-admin, button.btn-danger, button.btn-wipe { background: var(--danger-color); color: white; }
+button.btn-success { background: var(--success-color); color: #333; }
+button.btn-warning { background: var(--warning-color); color: #333; }
 
-.btn-danger:hover, .btn-delete-admin:hover, .btn-wipe:hover { background: var(--danger-hover) !important; }
-.btn-success:hover { background: #a3d25d !important; }
-.btn-warning:hover { background: #e6cd8e !important; }
+button.btn-danger:hover, button.btn-delete-admin:hover, button.btn-wipe:hover { background: var(--danger-hover); }
+button.btn-success:hover { background: #a3d25d; }
+button.btn-warning:hover { background: #e6cd8e; }
 
 .back-link {
   display: block;
@@ -344,8 +344,8 @@ button:not(.btn-pink):active {
 @media (max-width: 900px) {
   .container,
   .container.large-mode {
-    margin: 15px !important;
-    width: auto !important;
-    box-sizing: border-box !important;
+    margin: 15px;
+    width: auto;
+    box-sizing: border-box;
   }
 }

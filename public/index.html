@@ -10,9 +10,9 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.css"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.0/nouislider.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
   </head>
   <body>
     <header class="app-header">
@@ -71,14 +71,14 @@
               <input
                 type="number"
                 id="filter-min-count"
-                class="elegant-input count-input"
+                class="count-input"
                 placeholder="Min"
               />
               <span class="count-separator">-</span>
               <input
                 type="number"
                 id="filter-max-count"
-                class="elegant-input count-input"
+                class="count-input"
                 placeholder="Max"
               />
             </div>
@@ -97,9 +97,7 @@
           </div>
 
           <div class="view-controls" id="view-selector-container">
-            <label for="chart-selector" class="chart-selector-label"
-              >Afișează:</label
-            >
+            <label for="chart-selector" class="chart-selector-label">Afișează:</label>
             <select id="chart-selector" class="elegant-select">
               <option value="all">Toate (Tabel + Grafice)</option>
               <option value="container-table">Doar Tabelul de Date</option>
@@ -114,7 +112,7 @@
 
       <section class="visualizations hidden-section" id="charts-wrapper">
         <div class="chart-container view-section" id="container-table">
-          <h3 id="table-title">Tabel Date</h3>
+          <h3>Tabel Date</h3>
 
           <div class="table-responsive-wrapper">
             <table id="data-table" class="data-table-main">
